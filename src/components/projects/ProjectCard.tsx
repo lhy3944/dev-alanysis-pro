@@ -57,18 +57,18 @@ export const ProjectCard = memo(function ProjectCard({
         </div>
       </div>
 
-      <p className="text-fg-secondary mb-3 line-clamp-2 min-h-[2lh] text-xs">
+      <p className="text-fg-secondary mb-3 line-clamp-2 min-h-[2lh] text-sm">
         {project.description}
       </p>
 
-      <div className="text-fg-muted border-line-primary flex items-center gap-4 border-t border-dotted pt-5 text-[12px]">
-        <span className="flex items-center gap-1">
-          <Clock className="size-4" />
-          {formatRelativeTime(project.updated_at)}
+      <div className="text-fg-muted border-line-primary flex items-center justify-end gap-3.5 border-t border-dotted pt-4 text-[12px]">
+        <span className="flex items-center gap-1" title={`멤버 ${project.member_count}명`}>
+          <Users className="size-4 text-fg-muted" />
+          <span className="font-semibold text-fg-secondary">{project.member_count}</span>
         </span>
-        <span className="flex items-center gap-1">
-          <Users className="size-4" />
-          {project.member_count}
+        <span className="flex items-center gap-1 border-l border-line-primary/50 pl-3.5" title="최근 업데이트">
+          <Clock className="size-4 text-fg-muted" />
+          <span className="font-semibold text-fg-secondary">{formatRelativeTime(project.updated_at)}</span>
         </span>
       </div>
     </Link>

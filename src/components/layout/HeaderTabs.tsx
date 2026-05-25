@@ -17,7 +17,7 @@ export function HeaderTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              "group rounded-sm p-4 text-xs hover:bg-canvas-surface-2 whitespace-nowrap",
+              "group rounded-sm p-4 text-sm hover:bg-canvas-surface-2 whitespace-nowrap",
               isActive && "bg-canvas-surface-2",
             )}
           >

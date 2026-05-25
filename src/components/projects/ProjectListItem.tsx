@@ -69,13 +69,13 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
         </div>
 
         {project.description && (
-          <p className='text-fg-secondary mt-0.5 hidden truncate text-xs sm:block'>
+          <p className='text-fg-secondary mt-0.5 hidden truncate text-sm sm:block'>
             {project.description}
           </p>
         )}
       </div>
 
-      <div className='text-fg-muted hidden shrink-0 items-center gap-4 text-xs lg:flex'>
+      <div className='text-fg-muted hidden shrink-0 items-center gap-4 text-sm lg:flex'>
         <span className='flex items-center gap-1'>
           <Clock className='size-4' />
           {formatRelativeTime(project.updated_at)}

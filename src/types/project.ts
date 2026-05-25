@@ -80,6 +80,25 @@ export interface ProjectListResponse {
   projects: Project[];
 }
 
+// --- Project Group ---
+
+export interface ProjectGroup {
+  group_id: string;
+  name: string;
+  description: string | null;
+  project_count: number;
+  projects: Project[];
+  manager_count: number;
+  member_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectGroupListResponse {
+  groups: ProjectGroup[];
+}
+
+
 // --- Requirement ---
 
 // --- Section (요구사항 그룹) ---

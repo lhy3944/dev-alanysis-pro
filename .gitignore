@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+/npm-debug.log*
+/yarn-error.log*
+/yarn-debug.log*
+/pnpm-debug.log*
+
+# Next.js Build Output
+.next/
+out/
+build/
+dist/
+
+# Production / Build Assets
+*.gemini/
+.turbo/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env.local
+
+# Allow env.example template to be committed
+!.env.example
+
+# IDEs and Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing Caches & Coverage reports
+coverage/
+.nyc_output/
+.jest/
+.cypress/
+cypress/videos/
+cypress/screenshots/
+.playwright/
+playwright-report/
+test-results/
+
+# System Files & Caches
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+.eslintcache
+.tsbuildinfo
+
+# Reference (LOCAL)
+reference/
+
+# Docker files (if you want to ignore docker local data)
+# docker-compose.override.yml

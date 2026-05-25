@@ -60,7 +60,7 @@ export function MobileMenu() {
           </Button>
         </DrawerTrigger>
         <DrawerContent className="w-[280px] sm:w-[320px] p-0 flex flex-col border-r-line-primary bg-canvas-primary h-full">
-          <DrawerHeader className="p-4 border-b border-line-primary text-left">
+          <DrawerHeader className="h-15 flex flex-row items-center px-6 py-0 border-b border-line-primary text-left shrink-0">
             <DrawerTitle asChild>
               <div
                 onClick={() => setOpen(false)}
@@ -69,7 +69,7 @@ export function MobileMenu() {
                 <Logo showName={true} />
               </div>
             </DrawerTitle>
-            <DrawerDescription />
+            <DrawerDescription className="hidden" />
           </DrawerHeader>
           {/* Navigation */}
           <div className="flex flex-col py-4 flex-1">

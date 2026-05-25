@@ -24,7 +24,7 @@ export function Header({ showLayoutToggle = false }: HeaderProps) {
     >
       <div
         className={cn(
-          "mx-auto flex h-full w-full items-center justify-between px-2 transition-[max-width] duration-300 ease-in-out sm:px-6 lg:px-8",
+          "mx-auto flex h-full w-full items-center justify-between px-2 transition-[max-width] duration-300 ease-in-out sm:px-6",
           layoutMaxW(fullWidthMode),
         )}
       >

@@ -22,10 +22,10 @@ interface ProjectToolbarProps {
   searchInput: string;
   onSearchInputChange: (value: string) => void;
   onSearch: () => void;
-  analysisTypeFilter: AnalysisType | "all";
-  onAnalysisTypeFilterChange: (value: AnalysisType | "all") => void;
-  viewMode: "card" | "list";
-  onViewModeChange: (mode: "card" | "list") => void;
+  analysisTypeFilter?: AnalysisType | "all";
+  onAnalysisTypeFilterChange?: (value: AnalysisType | "all") => void;
+  viewMode?: "card" | "list";
+  onViewModeChange?: (mode: "card" | "list") => void;
   disabled: boolean;
 }
 
@@ -65,56 +65,60 @@ export function ProjectToolbar({
       </div>
 
       <div className="flex items-center gap-3">
-        <Select
-          value={analysisTypeFilter}
-          onValueChange={(v) =>
-            onAnalysisTypeFilterChange(v as AnalysisType | "all")
-          }
-        >
-          <SelectTrigger className="border-line-primary h-9 w-[180px] rounded-xs text-sm">
-            <SelectValue placeholder="Analysis Type" />
-          </SelectTrigger>
-          <SelectContent position="popper" side="bottom" align="start">
-            <SelectItem value="all">전체</SelectItem>
-            {Object.entries(ANALYSIS_TYPE_LABELS).map(([key, label]) => (
-              <SelectItem key={key} value={key}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {analysisTypeFilter !== undefined && onAnalysisTypeFilterChange && (
+          <Select
+            value={analysisTypeFilter}
+            onValueChange={(v) =>
+              onAnalysisTypeFilterChange(v as AnalysisType | "all")
+            }
+          >
+            <SelectTrigger className="border-line-primary h-9 w-[180px] rounded-xs text-sm">
+              <SelectValue placeholder="Analysis Type" />
+            </SelectTrigger>
+            <SelectContent position="popper" side="bottom" align="start">
+              <SelectItem value="all">전체</SelectItem>
+              {Object.entries(ANALYSIS_TYPE_LABELS).map(([key, label]) => (
+                <SelectItem key={key} value={key}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
-        <div className="border-line-primary flex h-9 items-center rounded-xs border">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant={viewMode === "card" ? "secondary" : "ghost"}
-                size="icon-sm"
-                onClick={() => onViewModeChange("card")}
-                aria-label="카드 뷰"
-                className="h-full rounded-l-xs rounded-r-none border-0"
-              >
-                <Grid2X2 />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>카드 보기</TooltipContent>
-          </Tooltip>
+        {viewMode && onViewModeChange && (
+          <div className="border-line-primary flex h-9 items-center rounded-xs border">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={viewMode === "card" ? "secondary" : "ghost"}
+                  size="icon-sm"
+                  onClick={() => onViewModeChange("card")}
+                  aria-label="카드 뷰"
+                  className="h-full rounded-l-xs rounded-r-none border-0"
+                >
+                  <Grid2X2 />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>카드 보기</TooltipContent>
+            </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant={viewMode === "list" ? "secondary" : "ghost"}
-                size="icon-sm"
-                onClick={() => onViewModeChange("list")}
-                aria-label="리스트 뷰"
-                className="h-full rounded-l-none rounded-r-xs border-0"
-              >
-                <TextAlignJustify />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>리스트 보기</TooltipContent>
-          </Tooltip>
-        </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={viewMode === "list" ? "secondary" : "ghost"}
+                  size="icon-sm"
+                  onClick={() => onViewModeChange("list")}
+                  aria-label="리스트 뷰"
+                  className="h-full rounded-l-none rounded-r-xs border-0"
+                >
+                  <TextAlignJustify />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>리스트 보기</TooltipContent>
+            </Tooltip>
+          </div>
+        )}
       </div>
     </div>
   );

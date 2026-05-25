@@ -53,8 +53,14 @@ export default function ProjectWorkspaceLayout({
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      <ProjectWorkspaceLeftPanel />
-      <div className="h-full w-px shrink-0 bg-line-primary" />
+      <div
+        className={cn(
+          "shrink-0 overflow-hidden border-r border-line-primary bg-canvas-secondary transition-[width] duration-300 ease-in-out",
+          leftSidebarOpen ? "w-[220px]" : "w-[60px]",
+        )}
+      >
+        <ProjectWorkspaceLeftPanel />
+      </div>
       <main className="min-w-0 flex-1 flex-col overflow-hidden">
         {children}
       </main>
