@@ -17,6 +17,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { NotificationPanel } from "./NotificationPanel";
+import { cn } from "@/lib/utils";
 
 interface HeaderActionsProps {
   showLayoutToggle?: boolean;
@@ -52,7 +53,7 @@ export function HeaderActions({
             <Button
               onClick={() => setSearchOpen(true)}
               variant={"ghost"}
-              className="text-icon-default hover:text-icon-active transition-colors"
+              className="text-[var(--header-fg-muted)] hover:text-[var(--header-fg)] hover:bg-[var(--header-bg-hover)] transition-colors duration-200"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -69,7 +70,10 @@ export function HeaderActions({
                 toggleNotification();
               }}
               variant={"ghost"}
-              className={`transition-colors ${notificationOpen ? "text-icon-active" : "text-icon-default hover:text-icon-active"}`}
+              className={cn(
+                "transition-colors duration-200 text-[var(--header-fg-muted)] hover:text-[var(--header-fg)] hover:bg-[var(--header-bg-hover)]",
+                notificationOpen && "text-[var(--header-fg)] bg-[var(--header-bg-active)]"
+              )}
             >
               <Bell className="h-5 w-5" />
               <span className="pointer-events-none absolute mb-5 ml-3 h-[8px] w-[7px] rounded-full bg-red-500 px-1 leading-none"></span>
@@ -80,7 +84,7 @@ export function HeaderActions({
 
         <Separator
           orientation="vertical"
-          className="mx-2 hidden data-[orientation=vertical]:h-6 md:block"
+          className="mx-2 hidden data-[orientation=vertical]:h-6 md:block bg-white/20 dark:bg-border/60"
         />
 
         {/* 레이아웃 토글 - Hide on mobile */}
@@ -92,7 +96,10 @@ export function HeaderActions({
                   <Button
                     onClick={toggleFullWidth}
                     variant={"ghost"}
-                    className={`transition-colors ${fullWidthMode ? "text-icon-active" : "text-icon-default hover:text-icon-active"}`}
+                    className={cn(
+                      "transition-colors duration-200 text-[var(--header-fg-muted)] hover:text-[var(--header-fg)] hover:bg-[var(--header-bg-hover)]",
+                      fullWidthMode && "text-[var(--header-fg)] bg-[var(--header-bg-active)]"
+                    )}
                   >
                     <Fullscreen
                       className="h-5 w-5"

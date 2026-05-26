@@ -29,10 +29,10 @@ export function Logo({ showName = false }: LogoProps) {
         className="hidden dark:block size-6 sm:size-9"
       /> */}
       <div className="flex items-center gap-1.5 ml-1 select-none">
-        <span className="text-sm sm:text-xl font-bold tracking-tight text-fg-primary">
+        <span className="text-sm sm:text-xl font-bold tracking-tight text-[var(--header-fg)]">
           DevAnalysis
         </span>
-        <span className="rounded-[4px] bg-accent-primary p-1.5 py-1 text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-canvas-primary leading-none">
+        <span className="rounded-[4px] bg-white text-[var(--header-bg)] dark:bg-white/10 dark:text-[var(--header-fg)] px-1.5 py-1 text-[8px] sm:text-[9px] font-black uppercase tracking-widest leading-none">
           pro
         </span>
       </div>

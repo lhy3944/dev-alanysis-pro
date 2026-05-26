@@ -17,8 +17,8 @@ export function HeaderTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              "group rounded-sm p-4 text-sm hover:bg-canvas-surface-2 whitespace-nowrap",
-              isActive && "bg-canvas-surface-2",
+              "group rounded-sm p-4 text-sm whitespace-nowrap transition-all duration-200 text-[var(--header-fg-muted)] hover:text-[var(--header-fg)] hover:bg-[var(--header-bg-hover)]",
+              isActive && "bg-[var(--header-bg-active)] text-[var(--header-fg)] font-semibold",
             )}
           >
             <div className="flex items-center gap-1 transition-transform duration-150 group-hover:-translate-y-0.5">

@@ -19,7 +19,7 @@ export function Header({ showLayoutToggle = false }: HeaderProps) {
   return (
     <header
       className={cn(
-        "bg-sidebar-bg border-line-primary sticky top-0 z-50 flex h-15 shrink-0 items-center border-b backdrop-blur-xl",
+        "bg-[var(--header-bg)] border-[var(--header-border)] text-[var(--header-fg)] sticky top-0 z-50 flex h-15 shrink-0 items-center border-b backdrop-blur-xl",
       )}
     >
       <div
@@ -37,7 +37,7 @@ export function Header({ showLayoutToggle = false }: HeaderProps) {
           <HeaderTabs />
           <Separator
             orientation="vertical"
-            className="mx-3 hidden data-[orientation=vertical]:h-6 md:block"
+            className="mx-3 hidden data-[orientation=vertical]:h-6 md:block bg-white/20 dark:bg-border/60"
           />
           <HeaderActions showLayoutToggle={showLayoutToggle} />
         </div>
