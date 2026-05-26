@@ -1,4 +1,4 @@
-# AISE+ 프로젝트 가이드
+# 프로젝트 가이드
 
 ## 기술 스택
 
@@ -17,23 +17,27 @@
 ```
 src/
 ├── app/                    # Next.js 라우팅 (route groups 사용)
-│   ├── (main)/             # 랜딩 페이지
-│   └── (agent)/            # 메인 앱 (chat, workflow)
-├── components/
-│   ├── ui/                 # shadcn 기본 컴포넌트 (수정 최소화)
-│   │   └── ai-elements/    # AI 전용 커스텀 UI 컴포넌트
-│   ├── providers/          # Context/Provider 래퍼 (StoreProvider, OverlayProvider 등)
-│   ├── layout/             # 레이아웃 컴포넌트 (Header, LeftSidebar, RightPanel 등)
-│   ├── chat/               # 채팅 도메인 컴포넌트
-│   ├── overlay/            # Modal, Dialog, Dropdown 등 오버레이 컴포넌트
-│   └── shared/             # 도메인 무관 공통 컴포넌트
+│   ├── (auth)/             # 인증 화면
+│   └── (main)/             # 서비스 화면
+├── components/             # UI 컴포넌트
+│   ├── ui/                   # shadcn/ui 기반 원자 컴포넌트 (Button, Badge, Input 등)
+│   ├── shared/               # 여러 도메인에서 공유하는 컴포넌트 (Logo, ThemeToggle)
+│   ├── layout/               # 레이아웃 컴포넌트 (Header, Sidebar, Footer)
+│   ├── overlay/              # 다이얼로그, 드롭다운 등 오버레이
+│   ├── {{도메인명}}/        # 해당 도메인 전용 컴포넌트
+├── constants/                # 도메인별 상수 (project.ts, requirement.ts 등)
+├── hooks/                    # 커스텀 훅 (useResize, useMediaQuery 등)
+│   ├── utils.ts              # cn() 등 범용 유틸
+│   ├── format.ts             # 포맷팅 유틸 (formatDate 등)
+│   ├── api.ts                # API 클라이언트
+│   └── fonts.ts              # 폰트 설정
 ├── stores/                 # Zustand 스토어
-├── hooks/                  # 커스텀 훅
 ├── lib/                    # 유틸리티 (utils.ts, fonts.ts)
 └── types/                  # 전역 타입 정의
 ```
 
 **배치 원칙:**
+
 - 오버레이(모달/다이얼로그/드롭다운)는 `components/overlay/`
 - Provider 컴포넌트는 `components/providers/`
 - 특정 도메인에서만 쓰이면 해당 도메인 폴더, 여러 곳에서 쓰이면 `shared/`
@@ -74,15 +78,15 @@ export default function MyProjectsPage() {
 
 ## 네이밍 컨벤션
 
-| 대상 | 규칙 | 예시 |
-|---|---|---|
-| 컴포넌트 파일 | PascalCase | `LeftSidebar.tsx`, `ChatArea.tsx` |
-| 스토어 파일 | kebab-case + `-store` 접미사 | `chat-store.ts`, `overlay-store.ts` |
-| 훅 파일 | camelCase + `use` 접두사 | `useOverlay.ts`, `useResize.ts` |
-| Props 인터페이스 | `{ComponentName}Props` | `ConfirmDialogProps` |
-| 이벤트 핸들러 | `handle{Event}` (내부), `on{Event}` (props) | `handleConfirm`, `onOpenChange` |
-| 상수 배열/객체 | UPPER_SNAKE_CASE (모듈 스코프) | `BOTTOM_ICONS`, `PROMPT_CARDS` |
-| Zustand 스토어 훅 | `use{Domain}Store` | `usePanelStore`, `useChatStore` |
+| 대상              | 규칙                                        | 예시                                |
+| ----------------- | ------------------------------------------- | ----------------------------------- |
+| 컴포넌트 파일     | PascalCase                                  | `LeftSidebar.tsx`, `ChatArea.tsx`   |
+| 스토어 파일       | kebab-case + `-store` 접미사                | `chat-store.ts`, `overlay-store.ts` |
+| 훅 파일           | camelCase + `use` 접두사                    | `useOverlay.ts`, `useResize.ts`     |
+| Props 인터페이스  | `{ComponentName}Props`                      | `ConfirmDialogProps`                |
+| 이벤트 핸들러     | `handle{Event}` (내부), `on{Event}` (props) | `handleConfirm`, `onOpenChange`     |
+| 상수 배열/객체    | UPPER_SNAKE_CASE (모듈 스코프)              | `BOTTOM_ICONS`, `PROMPT_CARDS`      |
+| Zustand 스토어 훅 | `use{Domain}Store`                          | `usePanelStore`, `useChatStore`     |
 
 ---
 
@@ -139,34 +143,19 @@ import type { AlertOptions } from "@/stores/overlay-store";
 ```tsx
 import { cn } from "@/lib/utils";
 
-<div className={cn("base-class", isActive && "active-class", className)} />
+<div className={cn("base-class", isActive && "active-class", className)} />;
 ```
-
-### 디자인 토큰 (CSS 변수 → Tailwind 유틸리티)
-
-shadcn 기본 컬러가 아닌 **AISE+ 전용 토큰**을 우선 사용:
-
-| Tailwind 유틸리티 | 의미 |
-|---|---|
-| `bg-canvas-primary` | 메인 배경 |
-| `bg-canvas-secondary` | 서브 배경 |
-| `bg-canvas-surface` | 카드/표면 |
-| `text-fg-primary` | 기본 텍스트 |
-| `text-fg-secondary` | 보조 텍스트 |
-| `text-fg-muted` | 비활성 텍스트 |
-| `text-accent-primary` | 강조색 (teal) |
-| `border-line-primary` | 기본 보더 |
-| `text-icon-default` | 아이콘 기본색 |
-| `text-icon-active` | 아이콘 활성색 |
 
 ### 조건부 스타일
 
 ```tsx
 // 상태에 따라 클래스 분기
-<div className={cn(
-  "flex h-full flex-col",
-  isOpen ? "w-[220px] gap-2 pl-3" : "w-[60px] items-center",
-)} />
+<div
+  className={cn(
+    "flex h-full flex-col",
+    isOpen ? "w-[220px] gap-2 pl-3" : "w-[60px] items-center",
+  )}
+/>
 ```
 
 ### 크기는 Tailwind 단위 사용
@@ -197,7 +186,7 @@ export const useExampleStore = create<ExampleState>()(
       setValue: (v) => set({ value: v }),
     }),
     {
-      name: "aise-example",       // localStorage key
+      name: "aise-example", // localStorage key
       partialize: (s) => ({ value: s.value }), // 영속화할 필드만
     },
   ),
@@ -238,13 +227,14 @@ overlay.confirm({
 // Modal (커스텀 컨텐츠)
 overlay.modal({
   title: "편집",
-  size: "sm" | "md" | "lg" | "xl",  // 기본값: "md"
+  size: "sm" | "md" | "lg" | "xl", // 기본값: "md"
   content: <MyForm />,
   footer: <Button onClick={() => overlay.closeModal()}>저장</Button>,
 });
 ```
 
 **새 오버레이 컴포넌트 추가 시:**
+
 1. `components/overlay/` 에 컴포넌트 작성
 2. `stores/overlay-store.ts` 에 options 인터페이스 + 상태 추가
 3. `components/providers/OverlayProvider.tsx` 에 렌더링 추가
@@ -314,9 +304,9 @@ import { motion, AnimatePresence } from "motion/react";
 
 ```tsx
 // Tailwind 반응형 유틸리티
-className="max-md:hidden"   // 모바일에서 숨김
-className="lg:block"        // 데스크탑에서만 표시
-className="hidden lg:flex"  // 데스크탑에서만 flex
+className = "max-md:hidden"; // 모바일에서 숨김
+className = "lg:block"; // 데스크탑에서만 표시
+className = "hidden lg:flex"; // 데스크탑에서만 flex
 ```
 
 `useMediaQuery` 훅으로 JS 레벨 분기도 가능.

@@ -2,11 +2,14 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ProjectCard } from "@/components/projects/ProjectCard";
+import { ProjectGroupFilterToolbar } from "@/components/projects/ProjectGroupFilterToolbar";
+import { ProjectGroupPagination } from "@/components/projects/ProjectGroupPagination";
+import { ProjectListItem } from "@/components/projects/ProjectListItem";
 import { formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { ProjectGroup } from "@/types/project";
-import { ChevronDown, ChevronUp, Package, Users, UserCog, Clock } from "lucide-react";
-import { memo, useEffect, useState, useMemo } from "react";
+import type { AnalysisType, ProjectGroup, ProjectLifecycleStatus } from "@/types/project";
+import { ChevronDown, Package, Users, UserCog, Clock } from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 interface ProjectGroupCardProps {
@@ -20,21 +23,37 @@ const LIFECYCLE_ORDER: Record<string, number> = {
   deleted: 2,
 };
 
+const ITEMS_PER_PAGE = 12;
+
 export const ProjectGroupCard = memo(function ProjectGroupCard({
   group,
   initialExpanded = false,
 }: ProjectGroupCardProps) {
   const [isExpanded, setIsExpanded] = useState(initialExpanded);
-  const [showAll, setShowAll] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [lifecycleStatusFilter, setLifecycleStatusFilter] =
+    useState<ProjectLifecycleStatus | "all">("all");
+  const [analysisTypeFilter, setAnalysisTypeFilter] =
+    useState<AnalysisType | "all">("all");
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setIsExpanded(initialExpanded);
     if (!initialExpanded) {
-      setShowAll(false);
+      setSearchKeyword("");
+      setLifecycleStatusFilter("all");
+      setAnalysisTypeFilter("all");
+      setCurrentPage(1);
     }
   }, [initialExpanded]);
 
-  // 1. Sort projects inside the group to match 'My Projects' ordering
+  const derivedAnalysisTypes = useMemo(() => {
+    if (!group.projects) return [];
+    const types = new Set(group.projects.map((p) => p.analysis_type));
+    return Array.from(types);
+  }, [group.projects]);
+
   const sortedProjects = useMemo(() => {
     if (!group.projects) return [];
     return [...group.projects].sort((a, b) => {
@@ -48,11 +67,46 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
     });
   }, [group.projects]);
 
-  // 1.5 Limit visible projects based on 'showAll' state for progressive disclosure (up to 6 projects by default)
-  const visibleProjects = useMemo(() => {
-    if (showAll) return sortedProjects;
-    return sortedProjects.slice(0, 6);
-  }, [sortedProjects, showAll]);
+  const filteredProjects = useMemo(() => {
+    return sortedProjects.filter((p) => {
+      const query = searchKeyword.trim().toLowerCase();
+      if (
+        query &&
+        !p.name.toLowerCase().includes(query) &&
+        !(p.description?.toLowerCase().includes(query) ?? false)
+      ) {
+        return false;
+      }
+      if (
+        lifecycleStatusFilter !== "all" &&
+        p.lifecycle_status !== lifecycleStatusFilter
+      ) {
+        return false;
+      }
+      if (
+        analysisTypeFilter !== "all" &&
+        p.analysis_type !== analysisTypeFilter
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [sortedProjects, searchKeyword, lifecycleStatusFilter, analysisTypeFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / ITEMS_PER_PAGE));
+
+  const paginatedProjects = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProjects.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredProjects, currentPage]);
+
+  const handleFilterChange = useCallback(
+    <T,>(setter: (value: T) => void, value: T) => {
+      setter(value);
+      setCurrentPage(1);
+    },
+    [],
+  );
 
   return (
     <div
@@ -60,16 +114,18 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
         "border-line-primary bg-canvas-surface rounded-lg border transition-all duration-300",
         isExpanded
           ? "shadow-md ring-1 ring-accent-primary/10 border-accent-primary/30"
-          : "hover:border-accent-primary/25 hover:shadow-xs"
+          : "hover:border-accent-primary/25 hover:shadow-xs",
       )}
     >
-      {/* Header - Clickable for toggle */}
       <button
         onClick={() => {
           const nextExpanded = !isExpanded;
           setIsExpanded(nextExpanded);
           if (!nextExpanded) {
-            setShowAll(false);
+            setSearchKeyword("");
+            setLifecycleStatusFilter("all");
+            setAnalysisTypeFilter("all");
+            setCurrentPage(1);
           }
         }}
         aria-expanded={isExpanded}
@@ -77,13 +133,12 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
       >
         <div className="mb-3 flex items-start justify-between gap-4 w-full">
           <div className="flex items-center gap-3 min-w-0">
-            {/* 2. Dynamic Package Icon style for active state (subtle highlight, no harsh solid color) */}
             <div
               className={cn(
                 "flex size-10 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
                 isExpanded
                   ? "bg-accent-primary/20 text-accent-primary shadow-sm shadow-accent-primary/15 scale-105 ring-1 ring-accent-primary/20"
-                  : "bg-accent-primary/10 text-accent-primary group-hover:scale-105"
+                  : "bg-accent-primary/10 text-accent-primary group-hover:scale-105",
               )}
             >
               <Package
@@ -91,7 +146,7 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
                   "size-5 transition-all duration-300",
                   isExpanded
                     ? "fill-accent-primary/25 stroke-current"
-                    : "fill-accent-primary/10 stroke-current"
+                    : "fill-accent-primary/10 stroke-current",
                 )}
               />
             </div>
@@ -100,7 +155,6 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
                 <h3 className="text-fg-primary truncate text-base font-semibold">
                   {group.name}
                 </h3>
-                {/* 4. Padding of Chip label increased */}
                 <Badge
                   variant="secondary"
                   className="bg-accent-primary/10 text-accent-primary border-none text-[11px] font-semibold px-2.5 py-1 shrink-0 rounded-full"
@@ -124,26 +178,22 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
           <p
             className={cn(
               "text-fg-secondary mb-4 text-sm transition-all duration-300 leading-relaxed",
-              isExpanded ? "" : "line-clamp-2"
+              isExpanded ? "" : "line-clamp-2",
             )}
           >
             {group.description}
           </p>
         )}
 
-        {/* 3. Footer layout refined: Right-aligned, ordered: Manager -> Member -> Update, icons-only */}
         <div className="text-fg-muted border-line-primary flex items-center justify-end gap-3.5 border-t border-dotted w-full pt-4 text-[12px]">
-          {/* Manager count */}
           <div className="flex items-center gap-1" title={`관리자 ${group.manager_count}명`}>
             <UserCog className="size-4 text-fg-muted" />
             <span className="font-semibold text-fg-secondary">{group.manager_count}</span>
           </div>
-          {/* Member count */}
           <div className="flex items-center gap-1 border-l border-line-primary/50 pl-3.5">
             <Users className="size-4 text-fg-muted" />
             <span className="font-semibold text-fg-secondary">{group.member_count}</span>
           </div>
-          {/* Last updated */}
           <div className="flex items-center gap-1 border-l border-line-primary/50 pl-3.5">
             <Clock className="size-4 text-fg-muted" />
             <span className="font-semibold text-fg-secondary">{formatRelativeTime(group.updated_at)}</span>
@@ -151,7 +201,6 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
         </div>
       </button>
 
-      {/* Expanded Nested Projects Grid */}
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
@@ -175,36 +224,61 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
             className="overflow-hidden"
           >
             <div className="border-line-primary border-t border-dotted px-6 pb-6 pt-5 bg-canvas-elevated/40 rounded-b-lg">
-              {/* 5. Removed "소속 프로젝트 목록" title for a cleaner layout */}
-              {visibleProjects && visibleProjects.length > 0 ? (
+              {sortedProjects.length > 0 ? (
                 <div className="flex flex-col">
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {visibleProjects.map((project) => (
-                      <div
-                        key={project.project_id}
-                        className="transition-transform duration-200 hover:-translate-y-0.5"
-                      >
-                        <ProjectCard project={project} />
-                      </div>
-                    ))}
-                  </div>
+                  <ProjectGroupFilterToolbar
+                    searchInput={searchKeyword}
+                    onSearchInputChange={(v) =>
+                      handleFilterChange(setSearchKeyword, v)
+                    }
+                    lifecycleStatusFilter={lifecycleStatusFilter}
+                    onLifecycleStatusFilterChange={(v) =>
+                      handleFilterChange(setLifecycleStatusFilter, v)
+                    }
+                    analysisTypeFilter={analysisTypeFilter}
+                    onAnalysisTypeFilterChange={(v) =>
+                      handleFilterChange(setAnalysisTypeFilter, v)
+                    }
+                    analysisTypes={derivedAnalysisTypes}
+                    viewMode={viewMode}
+                    onViewModeChange={setViewMode}
+                  />
 
-                  {sortedProjects.length > 6 && (
+                  {filteredProjects.length === 0 ? (
+                    <div className="text-fg-muted py-8 text-center text-sm">
+                      조건에 맞는 프로젝트가 없습니다.
+                    </div>
+                  ) : viewMode === "card" ? (
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {paginatedProjects.map((project) => (
+                        <div
+                          key={project.project_id}
+                          className="transition-transform duration-200 hover:-translate-y-0.5"
+                        >
+                          <ProjectCard project={project} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      {paginatedProjects.map((project) => (
+                        <ProjectListItem
+                          key={project.project_id}
+                          project={project}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {totalPages > 1 && (
                     <div className="mt-6 flex justify-center">
-                      <button
-                        onClick={() => setShowAll(!showAll)}
-                        className="flex items-center gap-1.5 px-5 py-2 text-xs font-semibold rounded-full border border-line-primary bg-canvas-surface hover:bg-canvas-elevated hover:border-accent-primary/30 text-fg-secondary hover:text-fg-primary transition-all duration-300 shadow-xs active:scale-95 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40"
-                      >
-                        {showAll ? (
-                          <>
-                            접기 <ChevronUp className="size-3.5" />
-                          </>
-                        ) : (
-                          <>
-                            {sortedProjects.length - 6}개 프로젝트 더보기 <ChevronDown className="size-3.5" />
-                          </>
-                        )}
-                      </button>
+                      <ProjectGroupPagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        totalItems={filteredProjects.length}
+                        pageSize={ITEMS_PER_PAGE}
+                      />
                     </div>
                   )}
                 </div>

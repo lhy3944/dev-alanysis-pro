@@ -56,9 +56,11 @@ desktop.ini
 *.log
 .eslintcache
 .tsbuildinfo
+tsconfig.tsbuildinfo
 
 # Reference (LOCAL)
 reference/
+glm.bat
 
 # Docker files (if you want to ignore docker local data)
 # docker-compose.override.yml

@@ -14,16 +14,11 @@ import {
 import { cn } from "@/lib/utils";
 import { usePanelStore } from "@/stores/panel-store";
 import { useProjectStore } from "@/stores/project-store";
+import { WORKSPACE_MENU_ITEMS } from "@/config/workspace-navigation";
 import {
-  Activity,
   Box,
   ChevronLeft,
   CircleHelp,
-  FileText,
-  FlaskConical,
-  GitCommit,
-  LayoutDashboard,
-  Monitor,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
@@ -33,40 +28,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SettingsDialog } from "@/components/overlay/SettingsDialog";
-
-const MENU_ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: "" },
-  {
-    id: "code-impact",
-    label: "Code Impact Analysis",
-    icon: Activity,
-    href: "/code-impact",
-  },
-  {
-    id: "requirement",
-    label: "Requirement",
-    icon: FileText,
-    href: "/requirement",
-  },
-  {
-    id: "unit-test",
-    label: "Unit Test",
-    icon: FlaskConical,
-    href: "/unit-test",
-  },
-  {
-    id: "system-test",
-    label: "System Test",
-    icon: Monitor,
-    href: "/system-test",
-  },
-  {
-    id: "commit-history",
-    label: "Commit History",
-    icon: GitCommit,
-    href: "/commit-history",
-  },
-];
 
 export function ProjectWorkspaceLeftPanel() {
   const leftSidebarOpen = usePanelStore((s) => s.leftSidebarOpen);
@@ -202,7 +163,7 @@ export function ProjectWorkspaceLeftPanel() {
               )}
 
               <nav className="flex-1 space-y-px pl-2 py-2">
-                {MENU_ITEMS.map((item) => {
+                {WORKSPACE_MENU_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
                   return (
@@ -307,7 +268,7 @@ export function ProjectWorkspaceLeftPanel() {
               <div className="border-line-subtle my-1 w-8 border-t" />
 
               <nav className="w-full space-y-px px-2 py-2">
-                {MENU_ITEMS.map((item) => {
+                {WORKSPACE_MENU_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
                   return (

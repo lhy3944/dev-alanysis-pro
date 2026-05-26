@@ -11,6 +11,7 @@ import { formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Project } from '@/types/project';
 import { Box, Clock, Users } from 'lucide-react';
+import Link from 'next/link';
 
 interface ProjectListItemProps {
   project: Project;
@@ -18,7 +19,10 @@ interface ProjectListItemProps {
 
 export function ProjectListItem({ project }: ProjectListItemProps) {
   return (
-    <div className='group border-line-primary bg-canvas-surface hover:border-accent-primary/50 flex items-center gap-4 rounded-lg border px-5 py-3.5 transition-all'>
+    <Link
+      href={`/projects/${project.project_id}`}
+      className='group border-line-primary bg-canvas-surface hover:border-accent-primary/50 flex items-center gap-4 rounded-lg border px-5 py-3.5 transition-all hover:shadow-md'
+    >
       <div className='bg-accent-primary/10 flex size-9 shrink-0 items-center justify-center rounded-md'>
         <Box className='text-accent-primary size-4' />
       </div>
@@ -85,6 +89,6 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
           {project.member_count}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }
