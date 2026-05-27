@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   @theme inline — expose CSS variables to Tailwind v4 utilities.
+   New tokens (brand-*, header-*, status-*, semantic split, etc.)
+   are added below shadcn core so they become utilities like
+   `bg-brand-primary`, `text-header-fg`, `bg-status-emerald-bg`.
+   ============================================================ */
 @theme inline {
   /* shadcn core */
   --color-background: var(--background);
@@ -23,11 +29,79 @@
   --color-destructive: var(--destructive);
   --color-warning: var(--warning);
   --color-success: var(--success);
+  --color-info: var(--info);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* radius */
+  /* brand (header chrome + landing/hero CTAs only) */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-primary-soft: var(--brand-primary-soft);
+
+  /* header chrome */
+  --color-header-bg: var(--header-bg);
+  --color-header-fg: var(--header-fg);
+  --color-header-fg-muted: var(--header-fg-muted);
+  --color-header-fg-active: var(--header-fg-active);
+  --color-header-divider: var(--header-divider);
+
+  /* canvas / surfaces */
+  --color-canvas-primary: var(--bg-primary);
+  --color-canvas-secondary: var(--bg-secondary);
+  --color-canvas-surface: var(--bg-surface);
+  --color-canvas-surface-2: var(--bg-surface-2);
+  --color-canvas-surface-3: var(--bg-surface-3);
+  --color-canvas-input: var(--bg-input);
+
+  /* lines / borders */
+  --color-line-primary: var(--border-primary);
+  --color-line-subtle: var(--border-subtle);
+  --color-line-strong: var(--border-strong);
+
+  /* foreground (text) */
+  --color-fg-primary: var(--text-primary);
+  --color-fg-secondary: var(--text-secondary);
+  --color-fg-muted: var(--text-muted);
+  --color-fg-tertiary: var(--text-tertiary);
+
+  /* in-canvas accent (links, ghost btn) — black/white, not brand */
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+  --color-icon-default: var(--icon-default);
+  --color-icon-active: var(--icon-active);
+
+  /* semantic — split into base / soft / fg for badge composition */
+  --color-success-soft: var(--success-soft);
+  --color-success-fg: var(--success-fg);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-fg: var(--warning-fg);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-destructive-fg: var(--destructive-fg);
+  --color-info-soft: var(--info-soft);
+  --color-info-fg: var(--info-fg);
+
+  /* status palette — used by StatusBadge primitive */
+  --color-status-amber-bg: var(--status-amber-bg);
+  --color-status-amber-fg: var(--status-amber-fg);
+  --color-status-emerald-bg: var(--status-emerald-bg);
+  --color-status-emerald-fg: var(--status-emerald-fg);
+  --color-status-red-bg: var(--status-red-bg);
+  --color-status-red-fg: var(--status-red-fg);
+  --color-status-blue-bg: var(--status-blue-bg);
+  --color-status-blue-fg: var(--status-blue-fg);
+  --color-status-cyan-bg: var(--status-cyan-bg);
+  --color-status-cyan-fg: var(--status-cyan-fg);
+  --color-status-indigo-bg: var(--status-indigo-bg);
+  --color-status-indigo-fg: var(--status-indigo-fg);
+  --color-status-orange-bg: var(--status-orange-bg);
+  --color-status-orange-fg: var(--status-orange-fg);
+  --color-status-purple-bg: var(--status-purple-bg);
+  --color-status-purple-fg: var(--status-purple-fg);
+  --color-status-teal-bg: var(--status-teal-bg);
+  --color-status-teal-fg: var(--status-teal-fg);
+
+  /* radius — shadcn-compatible scale + named extras */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -36,43 +110,38 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  /* font sizes (compact density scale) */
-  --text-xs: 0.6875rem;
+  /* compact density type scale (px values from design system) */
+  --text-xs: 0.6875rem;          /* 11px — meta, micro-badges       */
   --text-xs--line-height: 0.9375rem;
-  --text-sm: 0.8125rem;
+  --text-sm: 0.8125rem;          /* 13px — body small, table cells  */
   --text-sm--line-height: 1.125rem;
-  --text-base: 0.9375rem;
+  --text-base: 0.9375rem;        /* 15px — body                     */
   --text-base--line-height: 1.375rem;
-  --text-lg: 1.0625rem;
+  --text-lg: 1.0625rem;          /* 17px — card title               */
   --text-lg--line-height: 1.5625rem;
-  --text-xl: 1.1875rem;
+  --text-xl: 1.1875rem;          /* 19px — section header           */
   --text-xl--line-height: 1.6875rem;
-  --text-2xl: 1.375rem;
+  --text-2xl: 1.375rem;          /* 22px — page H2                  */
   --text-2xl--line-height: 1.875rem;
+  --text-3xl: 1.75rem;           /* 28px — page H1                  */
+  --text-3xl--line-height: 2.125rem;
+  --text-display: 3.5rem;        /* 56px — hero (AuroraText) only   */
+  --text-display--line-height: 3.75rem;
 
-  /* design tokens */
-  --color-canvas-primary: var(--bg-primary);
-  --color-canvas-secondary: var(--bg-secondary);
-  --color-canvas-surface: var(--bg-surface);
-  --color-canvas-surface-2: var(--bg-surface-2);
-  --color-canvas-surface-3: var(--bg-surface-3);
-  --color-canvas-input: var(--bg-input);
-  --color-toggle: var(--bg-toggle);
-  --color-line-primary: var(--border-primary);
-  --color-line-subtle: var(--border-subtle);
-  --color-line-strong: var(--border-strong);
-  --color-fg-primary: var(--text-primary);
-  --color-fg-secondary: var(--text-secondary);
-  --color-fg-muted: var(--text-muted);
-  --color-fg-tertiary: var(--text-tertiary);
-  --color-accent-primary: var(--accent-primary);
-  --color-accent-hover: var(--accent-hover);
-  --color-icon-default: var(--icon-default);
-  --color-icon-active: var(--icon-active);
-  --color-tab-active-bg: var(--tab-active-bg);
-  --color-sidebar-bg: var(--sidebar-bg);
-  --color-stale-warning: var(--warning-amber);
-  --color-stale-warning-bg: var(--warning-amber-bg);
+  /* tracking (letter-spacing) */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-widest: 0.16em;     /* UPPERCASE eyebrow labels */
+
+  /* shadow elevation — borders > shadows; shadows only for floats */
+  --shadow-xs: var(--elevation-xs);
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+  --shadow-popover: var(--elevation-popover);
+
+  /* keyframes */
   --animate-shimmer: shimmer 1s ease-in-out infinite;
   @keyframes shimmer {
     0% {
@@ -107,11 +176,16 @@
   }
 }
 
-/* Light theme (cool-tint, clean tech surface hierarchy) */
+/* ============================================================
+   LIGHT THEME — neutral / clean tech surface palette.
+   Header is the only chrome that carries brand purple.
+   Inside the canvas the accent is black, not brand.
+   ============================================================ */
 :root {
+  color-scheme: light;
   --radius: 0.5rem;
 
-  /* shadcn */
+  /* shadcn core */
   --background: #ffffff;
   --foreground: #171717;
   --card: #ffffff;
@@ -127,39 +201,97 @@
   --muted-foreground: #60646c;
   --accent: #e8e9ed;
   --accent-foreground: #171717;
-  --destructive: #e03131;
-  --warning: #dd5b00;
-  --success: #1aae39;
   --border: #e0e1e5;
   --input: #bfc1c7;
-  --ring: #000000;
-  
+  --ring: #5569ff;
+
+  /* brand — PM-specified header purple. Never as body background. */
+  --brand-primary: #5569ff;
+  --brand-primary-hover: #4356e6;
+  --brand-primary-soft: #5569ff1a;    /* 10% — chip/hover surfaces */
+
+  /* header chrome — 95% opacity over backdrop-blur */
+  --header-bg: #5569fff2;
+  --header-fg: #ffffff;
+  --header-fg-muted: #ffffffb3;       /* 70% — inactive nav, meta  */
+  --header-fg-active: #ffffff;
+  --header-divider: #ffffff26;        /* 15% — vertical separators */
+
+  /* canvas / surfaces */
   --bg-primary: #ffffff;
   --bg-secondary: #f5f5f7;
   --bg-surface: #f5f5f7;
   --bg-surface-2: #e8e9ed;
   --bg-surface-3: #dcdee2;
   --bg-input: #f0f0f3;
-  --bg-toggle: #000000;
+
+  /* lines / borders */
   --border-primary: #d4d5d9;
   --border-subtle: #e0e1e5;
   --border-strong: #b0b2b8;
+
+  /* foreground (text) */
   --text-primary: #171717;
   --text-secondary: #4a4c52;
   --text-muted: #60646c;
   --text-tertiary: #999aa0;
+
+  /* in-canvas accent — black/white. Keeps screens from looking
+     like a marketing site; brand purple stays on chrome only. */
   --accent-primary: #000000;
   --accent-hover: #1a1a1a;
   --icon-default: #60646c;
   --icon-active: #171717;
-  --tab-active-bg: #ffffff;
-  --sidebar-bg: #f5f5f7;
-  --warning-amber: #dd5b00;
-  --warning-amber-bg: #fff4e6;
+
+  /* semantic — base / soft / fg trio for badge composition */
+  --success: #1aae39;
+  --success-soft: #1aae391a;
+  --success-fg: #15803d;
+  --warning: #dd5b00;
+  --warning-soft: #fff4e6;
+  --warning-fg: #b45309;
+  --destructive: #e03131;
+  --destructive-soft: #fee2e2;
+  --destructive-fg: #b91c1c;
+  --info: #2563eb;
+  --info-soft: #dbeafe;
+  --info-fg: #1d4ed8;
+
+  /* status palette — pill bg+fg pairs, mapped from constants */
+  --status-amber-bg: #fef3c7;        /* draft, pending           */
+  --status-amber-fg: #b45309;
+  --status-emerald-bg: #d1fae5;      /* published, passed, merged */
+  --status-emerald-fg: #047857;
+  --status-red-bg: #fee2e2;          /* failed, deleted, error   */
+  --status-red-fg: #b91c1c;
+  --status-blue-bg: #dbeafe;         /* Java, running, info      */
+  --status-blue-fg: #1d4ed8;
+  --status-cyan-bg: #cffafe;         /* C/C++                    */
+  --status-cyan-fg: #0e7490;
+  --status-indigo-bg: #e0e7ff;       /* Objective-C/C++          */
+  --status-indigo-fg: #4338ca;
+  --status-orange-bg: #ffedd5;       /* Swift                    */
+  --status-orange-fg: #c2410c;
+  --status-purple-bg: #ede9fe;       /* webOS, Super Admin       */
+  --status-purple-fg: #6d28d9;
+  --status-teal-bg: #ccfbf1;         /* Dart                     */
+  --status-teal-fg: #0f766e;
+
+  /* elevation — soft, short, dark. No colored or inner shadows. */
+  --elevation-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --elevation-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --elevation-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+  --elevation-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.12);
+  --elevation-popover: 0 8px 24px -4px rgba(15, 23, 42, 0.12);
 }
 
-/* Dark theme (neutral dark, clear surface hierarchy) */
+/* ============================================================
+   DARK THEME — near-black neutral stack with deep navy header
+   so brand still reads on chrome.
+   ============================================================ */
 .dark {
+  color-scheme: dark;
+
   --background: #0a0a0a;
   --foreground: #ffffffde;
   --card: #141414;
@@ -174,12 +306,19 @@
   --muted-foreground: #8e8e8e;
   --accent: #2e2e2e;
   --accent-foreground: #ffffffde;
-  --destructive: #e03131;
-  --warning: #dd5b00;
-  --success: #1aae39;
   --border: #2a2a2a;
   --input: #3a3a3a;
-  --ring: #ffffff;
+  --ring: #6f80ff;
+
+  --brand-primary: #6f80ff;
+  --brand-primary-hover: #8492ff;
+  --brand-primary-soft: #5569ff26;
+
+  --header-bg: #141414;               /* unified with sidebar surface */
+  --header-fg: #ffffffde;
+  --header-fg-muted: #ffffff80;
+  --header-fg-active: #ffffff;
+  --header-divider: #ffffff1f;
 
   --bg-primary: #0a0a0a;
   --bg-secondary: #141414;
@@ -187,25 +326,119 @@
   --bg-surface-2: #242424;
   --bg-surface-3: #2e2e2e;
   --bg-input: #1e1e1e;
-  --bg-toggle: #ffffff;
+
   --border-primary: #353535;
   --border-subtle: #2a2a2a;
   --border-strong: #4a4a4a;
+
   --text-primary: #ffffffde;
   --text-secondary: #ffffff9e;
   --text-muted: #8e8e8e;
   --text-tertiary: #8e8e8e70;
+
   --accent-primary: #ffffff;
   --accent-hover: #ffffffcc;
   --icon-default: #8e8e8e;
   --icon-active: #ffffffde;
-  --tab-active-bg: #141414;
-  --sidebar-bg: #141414;
-  --warning-amber: #dd5b00;
-  --warning-amber-bg: #1a1208;
+
+  --success: #34d399;
+  --success-soft: #34d39926;
+  --success-fg: #6ee7b7;
+  --warning: #f59e0b;
+  --warning-soft: #f59e0b26;
+  --warning-fg: #fbbf24;
+  --destructive: #f87171;
+  --destructive-soft: #fca5a526;
+  --destructive-fg: #fca5a5;
+  --info: #60a5fa;
+  --info-soft: #60a5fa26;
+  --info-fg: #93c5fd;
+
+  --status-amber-bg: #78350f33;
+  --status-amber-fg: #fbbf24;
+  --status-emerald-bg: #064e3b33;
+  --status-emerald-fg: #6ee7b7;
+  --status-red-bg: #7f1d1d33;
+  --status-red-fg: #fca5a5;
+  --status-blue-bg: #1e3a8a33;
+  --status-blue-fg: #93c5fd;
+  --status-cyan-bg: #164e6333;
+  --status-cyan-fg: #67e8f9;
+  --status-indigo-bg: #312e8133;
+  --status-indigo-fg: #a5b4fc;
+  --status-orange-bg: #7c2d1233;
+  --status-orange-fg: #fdba74;
+  --status-purple-bg: #4c1d9533;
+  --status-purple-fg: #c4b5fd;
+  --status-teal-bg: #134e4a33;
+  --status-teal-fg: #5eead4;
+
+  --elevation-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  --elevation-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.30);
+  --elevation-md: 0 4px 12px -2px rgba(0, 0, 0, 0.45);
+  --elevation-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
+  --elevation-popover: 0 8px 24px -4px rgba(0, 0, 0, 0.55);
 }
 
-/* Custom scrollbar — native scrollbar hidden, custom thumb on hover */
+/* ============================================================
+   SEMANTIC TYPOGRAPHY CLASSES
+   Apply with className="h1" etc. Mirrors design system spec
+   so plain HTML mocks and React components stay in sync.
+   ============================================================ */
+@layer base {
+  .h1 {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-primary);
+  }
+  .h2 {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-primary);
+  }
+  .h3 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text-primary);
+  }
+  .h4 {
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text-primary);
+  }
+
+  .eyebrow {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    color: var(--brand-primary);
+  }
+
+  .meta {
+    font-size: var(--text-xs);
+    line-height: 1.25;
+    color: var(--text-muted);
+  }
+
+  /* Focus ring — brand soft halo + brand border. Composes with shadcn. */
+  .ring-focus:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--brand-primary-soft);
+    border-color: var(--brand-primary);
+  }
+}
+
+/* ============================================================
+   Custom scrollbar — native hidden, custom thumb on hover.
+   ============================================================ */
 .scrollbar-fade {
   position: relative;
   overflow: hidden;
@@ -229,8 +462,11 @@
   body {
     @apply bg-canvas-primary text-fg-primary;
     font-family:
-      var(--font-inter), var(--font-pretendard), ui-sans-serif, system-ui,
+      var(--font-pretendard), var(--font-inter), ui-sans-serif, system-ui,
+      -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic',
       sans-serif;
+    font-size: var(--text-base);
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;

@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- @dsCard group="Type" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Type scale — body & UI</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { padding: 20px; font-family: var(--font-sans); color: var(--text-primary); }
+    .row { display: flex; align-items: baseline; gap: 16px; padding: 6px 0; }
+    .row + .row { border-top: 1px dashed var(--border-subtle); }
+    .meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); width: 130px; flex-shrink: 0; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; font-weight: 600; }
+</style>
+</head>
+<body>
+    <div class="label">Body · UI · Meta</div>
+    <div class="row">
+        <span class="meta">--text-base · 15/400</span>
+        <span style="font-size:15px;font-weight:400;color:var(--text-secondary)">프로젝트 품질 분석 상태와 핵심 모듈 현황을 모니터링합니다.</span>
+    </div>
+    <div class="row">
+        <span class="meta">--text-sm · 13/500</span>
+        <span style="font-size:13px;font-weight:500">DevAnalysis Pro · UI body, table cells, nav items</span>
+    </div>
+    <div class="row">
+        <span class="meta">--text-sm · 13/400</span>
+        <span style="font-size:13px;font-weight:400;color:var(--text-secondary)">Real-time engagement and operational metrics across the platform.</span>
+    </div>
+    <div class="row">
+        <span class="meta">--text-xs · 11/500</span>
+        <span style="font-size:11px;font-weight:500;color:var(--text-muted)">Last Measured: 2025-05-10 · 124ms · 18m 42s</span>
+    </div>
+</body>
+</html>

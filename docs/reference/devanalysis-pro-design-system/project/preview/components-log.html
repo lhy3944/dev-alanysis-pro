@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- @dsCard group="Components" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alert log entries</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { font-family: var(--font-sans); padding: 20px; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; font-weight: 600; }
+    .log {
+        background: #fff;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .log-head { background: #fff4e6; padding: 8px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border-subtle); font-size: 13px; font-weight: 600; color: #b45309; }
+    .row { display: grid; grid-template-columns: 160px 84px 130px 1fr; gap: 16px; padding: 11px 14px; align-items: center; border-bottom: 1px solid var(--border-subtle); font-size: 12px; }
+    .row:last-child { border-bottom: none; }
+    .ts { font-family: var(--font-mono); color: var(--text-muted); font-size: 11px; }
+    .module { font-family: var(--font-mono); color: var(--text-primary); font-weight: 600; font-size: 11px; }
+    .msg { color: var(--text-secondary); }
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 72px;
+        height: 20px;
+        padding: 0 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        text-align: center;
+    }
+    .pill-crit { background: #b91c1c; color: #fff; }
+    .pill-warn { background: #f59e0b; color: #fff; }
+    .pill-err  { background: #dc2626; color: #fff; }
+    svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+</style>
+</head>
+<body>
+    <div class="label">Log feed · CRITICAL · WARNING · ERROR</div>
+    <div class="log">
+        <div class="log-head"><svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>System Error Log</div>
+        <div class="row"><span class="ts">2023-10-24 12:01:44.201</span><span class="pill pill-crit">CRITICAL</span><span class="module">Cluster-Core-3</span><span class="msg">Unexpected segmentation fault in memory block 0x4F2A. Automatic restart initiated.</span></div>
+        <div class="row"><span class="ts">2023-10-24 11:58:12.055</span><span class="pill pill-warn">WARNING</span><span class="module">API-Gateway</span><span class="msg">High latency detected for endpoint /analyze/v2. Throttling active users.</span></div>
+        <div class="row"><span class="ts">2023-10-24 11:55:01.890</span><span class="pill pill-err">ERROR</span><span class="module">Auth-Service</span><span class="msg">Database connection timeout. Retrying in 500ms... Attempt 3/5.</span></div>
+    </div>
+</body>
+</html>

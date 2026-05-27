@@ -24,7 +24,7 @@ export const ProjectCard = memo(function ProjectCard({
   return (
     <Link
       href={`/projects/${project.project_id}`}
-      className="group border-line-primary bg-canvas-surface hover:border-accent-primary/50 block rounded-lg border p-5 transition-all hover:shadow-md"
+      className="group border-line-subtle bg-canvas-primary hover:border-accent-primary/50 block rounded-lg border p-5 transition-all hover:shadow-md"
     >
       <div className="mb-3 flex items-center gap-2.5">
         <div className="bg-accent-primary/10 flex size-9 shrink-0 items-center justify-center rounded-md">

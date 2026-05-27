@@ -1,5 +1,18 @@
 # 프로젝트 가이드
 
+## 디자인 시스템 (필수 — UI 작업 전 반드시 확인)
+
+새 페이지/컴포넌트를 만들기 전에 **반드시** 다음 순서를 따른다.
+
+1. **규칙 요약** — [docs/guides/design-system.md](docs/guides/design-system.md) 를 본다.
+2. **레퍼런스 화면** — [docs/reference/devanalysis-pro-design-system/project/ui_kits/](docs/reference/devanalysis-pro-design-system/project/ui_kits/) 에서 비슷한 화면(workspace = 프로젝트, admin = 어드민)을 먼저 찾는다. 있으면 시각 출력을 그대로 맞춘다.
+3. **토큰만 사용** — [src/app/globals.css](src/app/globals.css) 에 정의된 토큰 클래스만 사용. 원시 hex(`#5569ff`, `bg-[#…]`)·인라인 스타일 금지.
+4. **상태 뱃지** — [src/components/ui/status-badge.tsx](src/components/ui/status-badge.tsx) (`LifecycleBadge` / `AnalysisTypeBadge` / `RoleBadge` / `StatusBadge`) 를 쓴다.
+5. **브랜드 퍼플 `#5569FF`** — 헤더 chrome 과 랜딩 hero CTA 에만. 캔버스 안에선 금지.
+6. **번들 ↔ globals.css 는 1:1 미러.** 새 토큰이 필요하면 디자인 시스템 번들 CSS 에 먼저 추가하고 globals.css 에 미러링한다.
+
+번들에 없는 시각 패턴을 **발명하지 않는다** — 가장 비슷한 화면을 골라 같은 시각 언어로 작성한다.
+
 ## 기술 스택
 
 - **Framework:** Next.js 16 / React 19

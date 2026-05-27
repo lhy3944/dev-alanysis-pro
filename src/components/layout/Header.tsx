@@ -19,7 +19,7 @@ export function Header({ showLayoutToggle = false }: HeaderProps) {
   return (
     <header
       className={cn(
-        "bg-sidebar-bg border-line-primary sticky top-0 z-50 flex h-15 shrink-0 items-center border-b backdrop-blur-xl",
+        "bg-header-bg text-header-fg border-b border-header-divider sticky top-0 z-50 flex h-[60px] shrink-0 items-center backdrop-blur-xl",
       )}
     >
       <div
@@ -28,16 +28,16 @@ export function Header({ showLayoutToggle = false }: HeaderProps) {
           layoutMaxW(fullWidthMode),
         )}
       >
-        <div className="flex flex-1 items-center">
+        <div className="flex flex-1 items-center gap-2">
           <MobileMenu />
-          <Logo />
+          <Logo variant="inverse" />
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-1">
           <HeaderTabs />
           <Separator
             orientation="vertical"
-            className="mx-3 hidden data-[orientation=vertical]:h-6 md:block"
+            className="mx-3 hidden h-6 bg-header-divider data-[orientation=vertical]:h-6 md:block"
           />
           <HeaderActions showLayoutToggle={showLayoutToggle} />
         </div>

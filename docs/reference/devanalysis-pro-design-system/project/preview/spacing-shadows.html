@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shadows / elevation</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-secondary); }
+    body { padding: 24px; font-family: var(--font-sans); }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .shape {
+        height: 72px;
+        background: #fff;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+    }
+    .row { text-align: center; }
+    .name { font-size: 11px; color: var(--text-primary); font-weight: 600; margin-top: 10px; }
+    .px { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; font-weight: 600; }
+</style>
+</head>
+<body>
+    <div class="label">Elevation · short, dark, used as hover cue</div>
+    <div class="grid">
+        <div class="row"><div class="shape" style="box-shadow:0 1px 2px 0 rgba(0,0,0,0.04);border:1px solid var(--border-subtle)"></div><div class="name">shadow-xs</div><div class="px">input rest</div></div>
+        <div class="row"><div class="shape" style="box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);border:1px solid var(--border-subtle)"></div><div class="name">shadow-sm</div><div class="px">outline btn</div></div>
+        <div class="row"><div class="shape" style="box-shadow:0 4px 12px -2px rgba(0,0,0,0.08)"></div><div class="name">shadow-md</div><div class="px">card hover</div></div>
+        <div class="row"><div class="shape" style="box-shadow:0 12px 32px -8px rgba(0,0,0,0.12)"></div><div class="name">shadow-lg</div><div class="px">modal / popover</div></div>
+    </div>
+</body>
+</html>

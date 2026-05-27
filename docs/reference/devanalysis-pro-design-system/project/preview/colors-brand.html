@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- @dsCard group="Colors" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Brand colors</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { padding: 20px; font-family: var(--font-sans); }
+    .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .swatch {
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-subtle);
+        overflow: hidden;
+        background: var(--bg-surface);
+    }
+    .chip {
+        height: 64px;
+        display: flex; align-items: flex-end; padding: 10px 12px;
+        font-size: 11px; font-weight: 600; color: #fff;
+        letter-spacing: 0.04em;
+    }
+    .meta {
+        padding: 8px 12px;
+        font-size: 11px; color: var(--text-muted);
+        display: flex; justify-content: space-between;
+        background: var(--bg-primary);
+    }
+    .meta b { color: var(--text-primary); font-weight: 600; }
+    .label-row { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+    <div class="label-row">Brand · used on header chrome + primary CTAs</div>
+    <div class="row">
+        <div class="swatch">
+            <div class="chip" style="background:#5569FFF2">Header bg</div>
+            <div class="meta"><b>#5569FF · F2</b><span>--header-bg</span></div>
+        </div>
+        <div class="swatch">
+            <div class="chip" style="background:#5569FF">Pure brand</div>
+            <div class="meta"><b>#5569FF</b><span>--brand-primary</span></div>
+        </div>
+        <div class="swatch">
+            <div class="chip" style="background:#4356E6">On hover</div>
+            <div class="meta"><b>#4356E6</b><span>--brand-primary-hover</span></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -62,5 +62,8 @@ tsconfig.tsbuildinfo
 /reference
 glm.bat
 
+# Design system bundle (large; extracted folder is what we read)
+/devanalysis-pro-design-system.zip
+
 # Docker files (if you want to ignore docker local data)
 # docker-compose.override.yml

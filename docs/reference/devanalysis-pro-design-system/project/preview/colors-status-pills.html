@@ -1,0 +1,45 @@
+<!doctype html>
+<!-- @dsCard group="Colors" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Status pill palette</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { padding: 18px 20px; font-family: var(--font-sans); }
+    .row { display: flex; flex-wrap: wrap; gap: 8px 8px; margin-bottom: 14px; }
+    .pill {
+        display: inline-flex; align-items: center;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        font-size: 11px; font-weight: 600;
+        line-height: 1;
+        font-feature-settings: "tnum";
+    }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 10px; font-weight: 600; }
+</style>
+</head>
+<body>
+    <div class="label">Lifecycle</div>
+    <div class="row">
+        <span class="pill" style="background:#fef3c7;color:#b45309">Draft</span>
+        <span class="pill" style="background:#d1fae5;color:#047857">Published</span>
+        <span class="pill" style="background:#fee2e2;color:#b91c1c">Deleted</span>
+        <span class="pill" style="background:#fef3c7;color:#b45309">Pending</span>
+        <span class="pill" style="background:#d1fae5;color:#047857">Merged</span>
+        <span class="pill" style="background:#fee2e2;color:#b91c1c">Failed Build</span>
+    </div>
+    <div class="label">Analysis type</div>
+    <div class="row">
+        <span class="pill" style="background:#dbeafe;color:#1d4ed8">Java</span>
+        <span class="pill" style="background:#cffafe;color:#0e7490">C/C++</span>
+        <span class="pill" style="background:#e0e7ff;color:#4338ca">Objective-C/C++</span>
+        <span class="pill" style="background:#ffedd5;color:#c2410c">Swift</span>
+        <span class="pill" style="background:#ede9fe;color:#6d28d9">webOS</span>
+        <span class="pill" style="background:#fef9c3;color:#a16207">Python</span>
+        <span class="pill" style="background:#fef3c7;color:#b45309">JavaScript/TypeScript</span>
+        <span class="pill" style="background:#ccfbf1;color:#0f766e">Dart</span>
+    </div>
+</body>
+</html>

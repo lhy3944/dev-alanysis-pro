@@ -1,0 +1,70 @@
+<!doctype html>
+<!-- @dsCard group="Components" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sidebar nav</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { font-family: var(--font-sans); padding: 18px; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; font-weight: 600; }
+    .wrap { display: grid; grid-template-columns: 220px 60px; gap: 20px; }
+    .sidebar {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 8px 0;
+        font-size: 13px;
+    }
+    .project {
+        margin: 4px 8px 8px;
+        padding: 10px 12px;
+        background: var(--bg-surface-2);
+        border-radius: 6px;
+    }
+    .project b { display: block; font-size: 12px; font-weight: 600; color: var(--text-primary); }
+    .project span { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.06em; }
+    nav a {
+        display: flex; align-items: center; gap: 10px;
+        padding: 9px 16px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        position: relative;
+        font-weight: 400;
+    }
+    nav a:hover { background: var(--bg-surface-2); color: var(--text-primary); }
+    nav a.active { background: var(--bg-surface-2); color: var(--text-primary); font-weight: 500; }
+    nav a.active::before { content:""; position: absolute; left: 0; top:0; bottom:0; width: 3px; background: #5569FF; }
+    nav a svg { color: var(--text-muted); flex-shrink: 0; }
+    nav a.active svg { color: #5569FF; }
+    svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .collapsed { display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 12px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; }
+    .iconpad { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 6px; position: relative; }
+    .iconpad.active { background: var(--bg-surface-2); color: var(--text-primary); }
+    .iconpad.active::before { content:""; position: absolute; left: -4px; top:4px; bottom:4px; width: 3px; background: #5569FF; border-radius: 1px; }
+</style>
+</head>
+<body>
+    <div class="label">Sidebar · expanded 220 / collapsed 60</div>
+    <div class="wrap">
+        <div class="sidebar">
+            <div class="project"><span>Main Branch</span><b>Chiller-Turbo-Gen2</b></div>
+            <nav>
+                <a class="active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+                <a><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Code Impact Analysis</a>
+                <a><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Requirement</a>
+                <a><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Unit Test</a>
+                <a><svg viewBox="0 0 24 24"><path d="M10 2v7l-7 7a2 2 0 0 0 0 3l4 4a2 2 0 0 0 3 0l7-7h7"/></svg>System Test</a>
+                <a><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Commit History</a>
+            </nav>
+        </div>
+        <div class="collapsed">
+            <div class="iconpad"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+            <div class="iconpad active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+            <div class="iconpad"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+            <div class="iconpad"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        </div>
+    </div>
+</body>
+</html>

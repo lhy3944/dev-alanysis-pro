@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- @dsCard group="Components" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Icon tiles</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { font-family: var(--font-sans); padding: 20px; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; font-weight: 600; }
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+    .item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+    .tile { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .name { font-size: 11px; font-weight: 500; color: var(--text-primary); }
+    .use { font-size: 10px; color: var(--text-muted); }
+    svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+</style>
+</head>
+<body>
+    <div class="label">Tinted icon tiles · used to label module cards</div>
+    <div class="grid">
+        <div class="item"><div class="tile" style="background:rgba(59,130,246,0.1);color:#3b82f6"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="name">Requirement</div><div class="use">blue</div></div>
+        <div class="item"><div class="tile" style="background:rgba(168,85,247,0.1);color:#a855f7"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="name">Architecture</div><div class="use">purple</div></div>
+        <div class="item"><div class="tile" style="background:rgba(245,158,11,0.1);color:#f59e0b"><svg viewBox="0 0 24 24"><path d="M10 2v7l-3 6a3 3 0 0 0 3 4h4a3 3 0 0 0 3-4l-3-6V2"/><line x1="8" y1="2" x2="16" y2="2"/></svg></div><div class="name">TestCase</div><div class="use">amber</div></div>
+        <div class="item"><div class="tile" style="background:rgba(85,105,255,0.1);color:#5569FF"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div class="name">Project</div><div class="use">brand</div></div>
+        <div class="item"><div class="tile" style="background:rgba(16,185,129,0.1);color:#10b981"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="name">Passed</div><div class="use">emerald</div></div>
+        <div class="item"><div class="tile" style="background:rgba(239,68,68,0.1);color:#ef4444"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><div class="name">Error</div><div class="use">red</div></div>
+    </div>
+</body>
+</html>

@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ANALYSIS_TYPE_LABELS, LIFECYCLE_LABELS } from "@/constants/project";
+import { cn } from "@/lib/utils";
 import type { AnalysisType, ProjectLifecycleStatus } from "@/types/project";
 import { Grid2X2, Search, TextAlignJustify } from "lucide-react";
 
@@ -43,14 +44,14 @@ export function ProjectGroupFilterToolbar({
 }: ProjectGroupFilterToolbarProps) {
   return (
     <div className="flex items-center justify-between gap-3 pb-4">
-      <div className="group/search focus-within:border-accent-primary flex w-60 rounded-xs border transition-colors">
+      <div className="group/search focus-within:border-accent-primary flex w-60 rounded-xs border border-input bg-canvas-primary shadow-xs transition-colors">
         <Input
           placeholder="그룹 내 프로젝트 검색"
           value={searchInput}
           onChange={(e) => onSearchInputChange(e.target.value)}
-          className="border-0 focus-visible:border-0 focus-visible:ring-0"
+          className="border-0 bg-transparent focus-visible:border-0 focus-visible:ring-0"
         />
-        <div className="text-fg-muted flex shrink-0 items-center border-l px-2">
+        <div className="text-fg-muted flex shrink-0 items-center border-l border-input px-2">
           <Search className="size-3.5" />
         </div>
       </div>
@@ -94,15 +95,20 @@ export function ProjectGroupFilterToolbar({
           </SelectContent>
         </Select>
 
-        <div className="flex h-8 items-center rounded-xs border">
+        <div className="flex h-8 items-center rounded-xs border border-input bg-canvas-primary shadow-xs overflow-hidden">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant={viewMode === "card" ? "secondary" : "ghost"}
+                variant="ghost"
                 size="icon-sm"
                 onClick={() => onViewModeChange("card")}
                 aria-label="카드 뷰"
-                className="h-full rounded-l-xs rounded-r-none border-0"
+                className={cn(
+                  "h-full rounded-none border-0 transition-colors",
+                  viewMode === "card"
+                    ? "bg-canvas-surface-2 text-icon-active hover:bg-canvas-surface-2"
+                    : "text-icon-default hover:bg-canvas-surface hover:text-icon-active",
+                )}
               >
                 <Grid2X2 />
               </Button>
@@ -110,14 +116,21 @@ export function ProjectGroupFilterToolbar({
             <TooltipContent>카드 보기</TooltipContent>
           </Tooltip>
 
+          <div className="h-full w-px bg-line-subtle" aria-hidden />
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant={viewMode === "list" ? "secondary" : "ghost"}
+                variant="ghost"
                 size="icon-sm"
                 onClick={() => onViewModeChange("list")}
                 aria-label="리스트 뷰"
-                className="h-full rounded-l-none rounded-r-xs border-0"
+                className={cn(
+                  "h-full rounded-none border-0 transition-colors",
+                  viewMode === "list"
+                    ? "bg-canvas-surface-2 text-icon-active hover:bg-canvas-surface-2"
+                    : "text-icon-default hover:bg-canvas-surface hover:text-icon-active",
+                )}
               >
                 <TextAlignJustify />
               </Button>

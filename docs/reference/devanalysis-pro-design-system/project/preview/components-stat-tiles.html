@@ -1,0 +1,159 @@
+<!doctype html>
+<!-- @dsCard group="Components" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stat tiles</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-secondary); }
+    body { padding: 20px; font-family: var(--font-sans); }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 14px; font-weight: 600; }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    /* Each tile is a 3-row grid so heads, values and feet always sit on the
+       same baseline across the row. */
+    .stat {
+        background: #fff;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 16px 18px;
+        display: grid;
+        grid-template-rows: 28px 30px 22px;
+        align-content: space-between;
+        row-gap: 12px;
+    }
+
+    .head {
+        display: flex; align-items: center; gap: 8px;
+        height: 28px;
+    }
+    .tile {
+        width: 28px; height: 28px;
+        border-radius: 6px;
+        display: inline-flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        background: rgba(85,105,255,0.10);
+        color: #5569FF;
+    }
+    .title {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .value-row {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        height: 30px;
+        line-height: 1;
+    }
+    .value {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        font-feature-settings: "tnum";
+    }
+    .unit {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-muted);
+        line-height: 1;
+    }
+
+    .foot {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 11px;
+        color: var(--text-muted);
+        height: 22px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .delta {
+        display: inline-flex; align-items: center; gap: 3px;
+        padding: 0 7px;
+        height: 18px;
+        border-radius: 9999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+    .delta.pos  { background: rgba(16,185,129,0.12); color: #047857; }
+    .delta.neg  { background: rgba(220,38,38,0.10);  color: #b91c1c; }
+    .delta.flat { background: var(--bg-surface-2);   color: var(--text-muted); }
+
+    svg.di { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    svg.ic { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+    <div class="label">KPI / Stat tiles · 3-row grid for consistent baselines</div>
+    <div class="grid">
+
+        <div class="stat">
+            <div class="head">
+                <span class="tile"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                <span class="title">Total Sessions</span>
+            </div>
+            <div class="value-row"><span class="value">42,891</span></div>
+            <div class="foot">
+                <span class="delta pos"><svg class="di" viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg>12.4%</span>
+                <span>vs last week</span>
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="head">
+                <span class="tile"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+                <span class="title">Avg Duration</span>
+            </div>
+            <div class="value-row"><span class="value">18m 42s</span></div>
+            <div class="foot">
+                <span class="delta neg"><svg class="di" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>2.1%</span>
+                <span>vs last week</span>
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="head">
+                <span class="tile"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+                <span class="title">CPU Usage</span>
+            </div>
+            <div class="value-row"><span class="value">42.8</span><span class="unit">%</span></div>
+            <div class="foot">
+                <span class="delta neg"><svg class="di" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>2.4%</span>
+                <span>vs last hour</span>
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="head">
+                <span class="tile"><svg class="ic" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+                <span class="title">Active Workers</span>
+            </div>
+            <div class="value-row"><span class="value">18</span><span class="unit">/ 24</span></div>
+            <div class="foot">
+                <span class="delta flat">75%</span>
+                <span>capacity utilized</span>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

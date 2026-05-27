@@ -1,0 +1,60 @@
+<!doctype html>
+<!-- @dsCard group="Components" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Form inputs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { padding: 20px; font-family: var(--font-sans); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .field label { display: block; font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+    .field label .req { color: #e03131; margin-left: 2px; }
+    .field input, .field select {
+        font-family: inherit;
+        width: 100%;
+        height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+        border: 1px solid #bfc1c7;
+        background: #fff;
+        border-radius: 6px;
+        outline: none;
+        color: var(--text-primary);
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.04);
+        box-sizing: border-box;
+    }
+    .field input::placeholder { color: var(--text-tertiary); }
+    .field input:focus, .field.focused input {
+        border-color: #5569FF;
+        box-shadow: 0 0 0 3px rgba(85,105,255,0.18);
+    }
+    .field.disabled input { background: var(--bg-input); color: var(--text-muted); cursor: not-allowed; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; font-weight: 600; }
+    .search-wrap { position: relative; }
+    .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+    .search-wrap input { padding-left: 32px; }
+</style>
+</head>
+<body>
+    <div class="label">Form fields · 36 px tall · 6 px radius</div>
+    <div class="grid">
+        <div class="field">
+            <label>Project Name <span class="req">*</span></label>
+            <input type="text" placeholder="e.g. Chiller-Turbo-Gen2-Main" />
+        </div>
+        <div class="field focused">
+            <label>Branch</label>
+            <input type="text" value="feature/auth-refactor" />
+        </div>
+        <div class="field">
+            <label>Search</label>
+            <div class="search-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="커밋 검색..." />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

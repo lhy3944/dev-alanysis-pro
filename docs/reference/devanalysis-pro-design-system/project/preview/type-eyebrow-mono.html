@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- @dsCard group="Type" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Eyebrow & mono</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { padding: 20px; font-family: var(--font-sans); color: var(--text-primary); }
+    .row { display: flex; align-items: baseline; gap: 16px; padding: 8px 0; }
+    .row + .row { border-top: 1px dashed var(--border-subtle); }
+    .meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); width: 130px; flex-shrink: 0; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; font-weight: 600; }
+    .eyebrow { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; color: #5569FF; }
+    .mono { font-family: var(--font-mono); font-size: 13px; }
+    .kbd {
+        font-family: var(--font-mono); font-size: 11px;
+        padding: 2px 6px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 4px;
+        color: var(--text-primary);
+    }
+</style>
+</head>
+<body>
+    <div class="label">Eyebrow · Mono · Inline code</div>
+    <div class="row">
+        <span class="meta">eyebrow · 13/700</span>
+        <span class="eyebrow">Analysis Complete</span>
+    </div>
+    <div class="row">
+        <span class="meta">Geist Mono · 13</span>
+        <span class="mono">9fb6ed7b · feature/auth-refactor · /docs/prd/v2.1_main.pdf</span>
+    </div>
+    <div class="row">
+        <span class="meta">inline code</span>
+        <span><span class="kbd">Ctrl</span> <span class="kbd">K</span> &nbsp; <span class="kbd">esc</span></span>
+    </div>
+</body>
+</html>

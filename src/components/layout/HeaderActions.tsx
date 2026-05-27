@@ -52,7 +52,7 @@ export function HeaderActions({
             <Button
               onClick={() => setSearchOpen(true)}
               variant={"ghost"}
-              className="text-icon-default hover:text-icon-active transition-colors"
+              className="text-header-fg-muted hover:text-header-fg-active hover:bg-header-divider transition-colors"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -69,7 +69,7 @@ export function HeaderActions({
                 toggleNotification();
               }}
               variant={"ghost"}
-              className={`transition-colors ${notificationOpen ? "text-icon-active" : "text-icon-default hover:text-icon-active"}`}
+              className={`transition-colors ${notificationOpen ? "text-header-fg-active bg-header-divider" : "text-header-fg-muted hover:text-header-fg-active hover:bg-header-divider"}`}
             >
               <Bell className="h-5 w-5" />
               <span className="pointer-events-none absolute mb-5 ml-3 h-[8px] w-[7px] rounded-full bg-red-500 px-1 leading-none"></span>
@@ -92,7 +92,7 @@ export function HeaderActions({
                   <Button
                     onClick={toggleFullWidth}
                     variant={"ghost"}
-                    className={`transition-colors ${fullWidthMode ? "text-icon-active" : "text-icon-default hover:text-icon-active"}`}
+                    className={`transition-colors ${fullWidthMode ? "text-header-fg-active bg-header-divider" : "text-header-fg-muted hover:text-header-fg-active hover:bg-header-divider"}`}
                   >
                     <Fullscreen
                       className="h-5 w-5"

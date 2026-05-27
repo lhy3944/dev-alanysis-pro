@@ -1,0 +1,29 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spacing scale</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { padding: 20px; font-family: var(--font-sans); }
+    .row { display: flex; align-items: center; gap: 12px; padding: 6px 0; font-size: 12px; color: var(--text-secondary); }
+    .bar { background: #5569FF; height: 12px; border-radius: 2px; }
+    .meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); width: 60px; }
+    .px { font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); font-weight: 500; width: 32px; }
+    .use { color: var(--text-muted); font-size: 11px; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; font-weight: 600; }
+</style>
+</head>
+<body>
+    <div class="label">Spacing scale · 4 px base</div>
+    <div class="row"><span class="meta">space-1</span><span class="px">4px</span><span class="bar" style="width:4px"></span><span class="use">badge gap</span></div>
+    <div class="row"><span class="meta">space-2</span><span class="px">8px</span><span class="bar" style="width:8px"></span><span class="use">icon → text</span></div>
+    <div class="row"><span class="meta">space-3</span><span class="px">12px</span><span class="bar" style="width:12px"></span><span class="use">card row gap</span></div>
+    <div class="row"><span class="meta">space-4</span><span class="px">16px</span><span class="bar" style="width:16px"></span><span class="use">small card pad</span></div>
+    <div class="row"><span class="meta">space-5</span><span class="px">20px</span><span class="bar" style="width:20px"></span><span class="use">card pad (default)</span></div>
+    <div class="row"><span class="meta">space-6</span><span class="px">24px</span><span class="bar" style="width:24px"></span><span class="use">section pad</span></div>
+    <div class="row"><span class="meta">space-8</span><span class="px">32px</span><span class="bar" style="width:32px"></span><span class="use">page gutter</span></div>
+</body>
+</html>

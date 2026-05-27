@@ -17,14 +17,13 @@ export function HeaderTabs() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              "group rounded-sm p-4 text-sm hover:bg-canvas-surface-2 whitespace-nowrap",
-              isActive && "bg-canvas-surface-2",
+              "group rounded-sm p-4 text-sm whitespace-nowrap transition-colors",
+              isActive
+                ? "text-header-fg-active"
+                : "text-header-fg-muted hover:text-header-fg-active",
             )}
           >
             <div className="flex items-center gap-1 transition-transform duration-150 group-hover:-translate-y-0.5">
-              {/* <tab.icon
-                className={cn("h-4 w-4", isActive && "text-accent-primary")}
-              /> */}
               <span className="font-medium whitespace-nowrap">{tab.label}</span>
             </div>
           </Link>

@@ -111,10 +111,10 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
   return (
     <div
       className={cn(
-        "border-line-primary bg-canvas-surface rounded-lg border transition-all duration-300",
+        "bg-canvas-primary rounded-lg border transition-all duration-300",
         isExpanded
-          ? "shadow-md ring-1 ring-accent-primary/10 border-accent-primary/30"
-          : "hover:border-accent-primary/25 hover:shadow-xs",
+          ? "shadow-md border-accent-primary/30"
+          : "border-line-subtle hover:border-accent-primary/25 hover:shadow-xs",
       )}
     >
       <button
@@ -223,7 +223,7 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
             }}
             className="overflow-hidden"
           >
-            <div className="border-line-primary border-t border-dotted px-6 pb-6 pt-5 bg-canvas-elevated/40 rounded-b-lg">
+            <div className="border-line-subtle border-t bg-canvas-secondary px-6 pb-6 pt-5 rounded-b-lg">
               {sortedProjects.length > 0 ? (
                 <div className="flex flex-col">
                   <ProjectGroupFilterToolbar

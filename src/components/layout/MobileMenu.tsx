@@ -53,7 +53,7 @@ export function MobileMenu() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden text-icon-default hover:text-icon-active hover:bg-canvas-surface"
+            className="md:hidden text-header-fg-muted hover:text-header-fg-active hover:bg-header-divider"
           >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
@@ -66,7 +66,7 @@ export function MobileMenu() {
                 onClick={() => setOpen(false)}
                 className="cursor-pointer inline-block"
               >
-                <Logo showName={true} />
+                <Logo />
               </div>
             </DrawerTitle>
             <DrawerDescription className="hidden" />

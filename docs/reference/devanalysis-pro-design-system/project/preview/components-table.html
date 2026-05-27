@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- @dsCard group="Components" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Table row</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+    html, body { margin: 0; padding: 0; background: var(--bg-primary); }
+    body { font-family: var(--font-sans); padding: 18px; }
+    .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+        text-align: left;
+        padding: 10px 12px;
+        background: var(--bg-secondary);
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    tbody td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        vertical-align: middle;
+    }
+    tbody tr:hover { background: var(--bg-secondary); }
+    .hash { font-family: var(--font-mono); display: inline-flex; align-items: center; gap: 5px; background: rgba(85,105,255,0.10); padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #5569FF; letter-spacing: 0.02em; white-space: nowrap; }
+    .hash svg { width: 11px; height: 11px; }
+    .author { display: inline-flex; align-items: center; gap: 8px; }
+    .av { width: 22px; height: 22px; border-radius: 9999px; background: rgba(59,130,246,0.12); color: #2563eb; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+    .av.l { background: rgba(34,197,94,0.12); color: #16a34a; }
+    .pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 0 10px;
+        height: 22px;
+        line-height: 1;
+        border-radius: 9999px;
+        font-size: 11px; font-weight: 600;
+        white-space: nowrap;
+    }
+    .pill::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: currentColor; opacity: 0.85; }
+    .p-merged { background: #d1fae5; color: #047857; }
+    .p-failed { background: #fee2e2; color: #b91c1c; }
+    .p-pending { background: #fef3c7; color: #b45309; }
+</style>
+</head>
+<body>
+    <div class="label">Table · commit-history pattern</div>
+    <table>
+        <thead><tr>
+            <th>Commit Hash</th><th>Author</th><th>Date</th><th>Message</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+            <tr><td><span class="hash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22.96" y2="12"/></svg>a1b2c3d</span></td><td><span class="author"><span class="av">K</span>Kim Dev</span></td><td>2023-11-20 14:30</td><td>feat: 유저 인증 로직 고도화 및 JWT 만료 처리 추가</td><td><span class="pill p-merged">Merged</span></td></tr>
+            <tr><td><span class="hash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22.96" y2="12"/></svg>f5e4d3c</span></td><td><span class="author"><span class="av l">L</span>Lee Engineer</span></td><td>2023-11-20 11:15</td><td>fix: 대시보드 그래프 렌더링 최적화 (Canvas 기반)</td><td><span class="pill p-failed">Failed Build</span></td></tr>
+            <tr><td><span class="hash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22.96" y2="12"/></svg>9a8b7c6</span></td><td><span class="author"><span class="av">K</span>Kim Dev</span></td><td>2023-11-19 17:45</td><td>docs: README API 엔드포인트 설명 업데이트</td><td><span class="pill p-pending">Pending</span></td></tr>
+        </tbody>
+    </table>
+</body>
+</html>
