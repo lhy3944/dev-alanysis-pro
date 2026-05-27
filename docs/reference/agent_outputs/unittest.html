@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit Test Generator · 결과 리포트</title>
+<style>
+  :root {
+    --bg:#f6f8fa; --card:#fff; --bd:#d0d7de; --tx:#1f2328; --mut:#656d76;
+    --green:#1a7f37; --red:#cf222e; --amber:#9a6700; --blue:#0969da;
+    --orange:#bc4c00; --purple:#8250df; --gray:#57606a;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--tx);
+    font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; }
+  .wrap { max-width:1120px; margin:0 auto; padding:24px 20px 60px; }
+  a { color:var(--blue); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .card { background:var(--card); border:1px solid var(--bd); border-radius:10px; margin:16px 0; }
+  .card > h2 { font-size:15px; margin:0; padding:14px 18px; border-bottom:1px solid var(--bd);
+    display:flex; align-items:center; gap:8px; }
+  .card > h2 .sub { color:var(--mut); font-weight:400; font-size:12px; }
+  .card > h2 .right { margin-left:auto; color:var(--mut); font-weight:400; font-size:12px; }
+  .pad { padding:16px 18px; }
+
+  /* header */
+  .top { display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+  .status-dot { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:700;
+    color:var(--green); }
+  .status-dot .dot { width:9px; height:9px; border-radius:50%; background:var(--green); }
+  h1 { font-size:22px; margin:6px 0 4px; }
+  .meta { color:var(--mut); font-size:13px; }
+  .meta b { color:var(--tx); font-weight:600; }
+  .meta .k { color:var(--mut); }
+  .btns { margin-left:auto; display:flex; gap:8px; }
+  .btn { border:1px solid var(--bd); background:#fff; color:var(--tx); border-radius:7px;
+    padding:8px 14px; font-size:13px; cursor:pointer; }
+  .btn:hover { background:#f3f4f6; }
+  .btn.primary { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .btn.primary:hover { background:#0860ca; }
+
+  /* kpi */
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin:18px 0 4px; }
+  .kpi { background:var(--card); border:1px solid var(--bd); border-radius:10px; padding:14px 16px; }
+  .kpi .l { font-size:11px; letter-spacing:.04em; color:var(--mut); font-weight:600; }
+  .kpi .v { font-size:30px; font-weight:700; margin-top:6px; }
+  .kpi.clickable { cursor:pointer; }
+  .kpi.clickable:hover { border-color:var(--blue); }
+  .kpi.active { outline:2px solid var(--blue); outline-offset:-1px; }
+  @media (max-width:900px){ .kpis{ grid-template-columns:repeat(3,1fr);} }
+
+  /* filters */
+  .toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+  .search { flex:1 1 280px; min-width:200px; border:1px solid var(--bd); border-radius:7px;
+    padding:8px 12px; font-size:13px; }
+  .chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { border:1px solid var(--bd); background:#fff; border-radius:999px; padding:5px 12px;
+    font-size:12px; cursor:pointer; color:var(--tx); }
+  .chip .n { color:var(--mut); margin-left:5px; }
+  .chip.active { background:#ddf4ff; border-color:var(--blue); color:var(--blue); }
+  .chip.active .n { color:var(--blue); }
+
+  /* table */
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:11px 12px; border-bottom:1px solid #eaecef; vertical-align:top; }
+  th { color:var(--mut); font-weight:600; font-size:12px; }
+  td.id { color:var(--mut); white-space:nowrap; }
+  td.reason { color:var(--mut); max-width:340px; }
+  .file-link { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }
+  .tier { display:inline-block; border:1px solid var(--bd); border-radius:5px; padding:1px 7px;
+    font-size:11px; font-weight:600; color:var(--gray); background:#f6f8fa; }
+
+  /* status badges */
+  .badge { display:inline-block; border-radius:999px; padding:3px 10px; font-size:11px; font-weight:700;
+    white-space:nowrap; }
+  .s-pass    { background:#dafbe1; color:var(--green); }
+  .s-defect  { background:#ffebe9; color:var(--red); }
+  .s-fail    { background:#ffebe9; color:var(--red); }
+  .s-nomatch { background:#fff8c5; color:var(--amber); }
+  .s-tier    { background:#eaeef2; color:var(--gray); }
+  .s-gate    { background:#fff1e5; color:var(--orange); }
+  .s-gen     { background:#ffebe9; color:var(--red); }
+  .s-covered { background:#ddf4ff; color:var(--blue); }
+  .s-pending { background:#eaeef2; color:var(--gray); }
+  .s-best    { background:#0969da; color:#fff; }
+
+  /* code viewer */
+  .tabs { display:flex; gap:2px; border-bottom:1px solid var(--bd); padding:0 10px; flex-wrap:wrap; }
+  .tab { padding:8px 12px; font-size:12px; font-family:ui-monospace,monospace; cursor:pointer;
+    border:1px solid transparent; border-bottom:none; border-radius:7px 7px 0 0; color:var(--mut); }
+  .tab.active { background:#fff; border-color:var(--bd); color:var(--tx); margin-bottom:-1px; }
+  .tab .x { color:var(--mut); margin-left:8px; }
+  pre.code { margin:0; padding:14px 16px; overflow:auto; background:#fff; font-size:12px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; line-height:1.6; max-height:420px; }
+  .code .ln { color:#afb8c1; display:inline-block; width:34px; text-align:right; margin-right:14px;
+    user-select:none; }
+  .empty { color:var(--mut); padding:24px 18px; font-size:13px; }
+  /* 검증 항목 상세 표 — 길면 내부 스크롤, 헤더 고정 */
+  .vtablewrap { max-height:560px; overflow:auto; }
+  .vtablewrap thead th { position:sticky; top:0; background:var(--card); z-index:1; box-shadow:0 1px 0 var(--bd); }
+  .row2 { display:flex; gap:16px; align-items:stretch; }   /* 두 패널 같은 높이 */
+  .row2 > .card { flex:1 1 0; min-width:0; margin:16px 0; }
+  #bestofnCard { flex:1.7 1 0; }                            /* Best-of-N : 로그 ≈ 1.7 : 1 */
+  #logCard { display:flex; flex-direction:column; }
+  /* 로그 높이는 Best-of-N 카드 높이에 맞춤 — pre 가 행 높이(=Best-of-N 가 결정)를
+     채우고 넘치면 내부 스크롤. min-height 로 Best-of-N 가 없을 때 최소 높이 보장. */
+  #logCard #testlog { flex:1 1 0; min-height:120px; overflow:auto; }
+  @media (max-width:860px){ .row2 { flex-direction:column; } }
+  /* 좁은 컬럼에서 Best-of-N 표가 가로로 넘쳐 잘리지 않도록 셀 줄바꿈 허용 */
+  .row2 td.reason { max-width:none; white-space:normal; word-break:break-word; }
+  .row2 .file-link { white-space:normal; word-break:break-all; }
+  /* 테스트 로그 — 콘솔(다크) 스타일 + 구문 색상 */
+  #testlog { background:#0d1117; color:#c9d1d9; line-height:1.7; }
+  #testlog .lstep { color:#58a6ff; font-weight:600; }   /* 단계/헤더 */
+  #testlog .lok   { color:#3fb950; }                    /* ✅ / passed */
+  #testlog .lerr  { color:#f85149; }                    /* ❌ / failed */
+  #testlog .lfile { color:#79c0ff; }                    /* 파일명 */
+  .toggle { cursor:pointer; color:var(--blue); font-size:12px; user-select:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="status-dot"><span class="dot"></span> ANALYSIS COMPLETE</div>
+      <h1>Unit Test Generator · 결과 리포트</h1>
+      <div class="meta" id="meta1"></div>
+      <div class="meta" id="meta2"></div>
+    </div>
+    <div class="btns">
+      <button class="btn" id="btnMd">⭳ Export Markdown</button>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card">
+    <h2>✓ 검증 항목 상세 <span class="sub">— 분류 / 설명 / 테스트 파일</span>
+      <span class="right" id="shown"></span></h2>
+    <div class="pad">
+      <div class="toolbar">
+        <input class="search" id="search" placeholder="검색: 번호, 검증 항목, 설명...">
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="vtablewrap">
+      <table>
+        <thead><tr><th>번호</th><th>검증 항목</th><th>분류</th><th>설명</th><th>테스트 파일</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>&lt;/&gt; 테스트 파일 뷰어 <span class="sub">— 테스트 파일을 클릭하면 열립니다</span>
+      <span class="right" id="codeInfo"></span></h2>
+    <div class="tabs" id="tabs"></div>
+    <div id="viewer"><div class="empty">왼쪽 표에서 테스트 파일을 클릭하세요.</div></div>
+  </div>
+
+  <div class="row2">
+    <div class="card" id="bestofnCard" style="display:none">
+      <h2>✓ Best-of-N 채택 결과 <span class="sub" id="bestofnSub"></span>
+        <span class="right" id="bestofnCount"></span></h2>
+      <div class="pad" style="padding:0">
+        <table>
+          <thead><tr><th>VI</th><th>후보 테스트 파일</th><th>라벨</th><th>사유</th></tr></thead>
+          <tbody id="bestofn"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="logCard" style="display:none">
+      <h2>&lt;/&gt; 테스트 로그
+        <span class="right"><span id="autoScrollBtn" class="toggle" onclick="toggleAutoScroll()">자동 스크롤 ON</span></span></h2>
+      <pre class="code" id="testlog"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {"meta": {"project": "38346d48f4be", "repo": "http://val.lge.com/hac/svn/FrontLoaderDev/01.NC_Platform/01.main/trunk", "commit": "r119765", "branch": "", "branch_url": "", "updated": "2026-05-27 05:43:57"}, "total": 19, "groups": [{"key": "PASS", "label": "성공", "codes": ["PASS"], "color": "green", "count": 5}, {"key": "DEFECT", "label": "잠재 결함", "codes": ["DEFECT"], "color": "red", "count": 1}, {"key": "FAILED", "label": "실패", "codes": ["FAIL", "BUILD-FAIL"], "color": "red", "count": 0}, {"key": "UNVERIFIED", "label": "미검증", "codes": ["SKIP-NOMATCH", "SKIP-GEN", "SKIP-GATE", "PENDING"], "color": "amber", "count": 3}, {"key": "NONTARGET", "label": "대상 아님", "codes": ["SKIP-TIER"], "color": "gray", "count": 10}], "vis": [{"id": 1, "code": "PASS", "text": "FCT 초기 진입 시 `sucSubStep`가 항상 0으로 초기화되는지 확인", "reason": "이전 substep=2 후 INIT 재진입 시 온도 저장 경로 재진입을 관찰해 초기화 검증", "slabel": "성공", "scls": "s-pass", "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c"}, {"id": 2, "code": "SKIP-NOMATCH", "text": "FCT 종료 후 재진입 시 이전 시험의 sub-step 상태가 잔존하지 않는지 확인", "reason": "재진입 상태 전이를 목으로 구성해 static 잔존 여부 검증", "slabel": "미검증", "scls": "s-nomatch", "file": null}, {"id": 3, "code": "PASS", "text": "팬 속도 목표 도달 전에는 REF 판정 기준 온도가 저장되지 않는지 확인", "reason": "팬속도 경계 미도달 반복에서 온도 저장 호출 0회를 직접 검증", "slabel": "성공", "scls": "s-pass", "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c"}, {"id": 4, "code": "PASS", "text": "팬 속도 목표 도달 후 90초 경과 시점에만 REF 오류 판정이 수행되는지 확인", "reason": "90초 미경과/경과/반복 방지 모두 확인해 REF 판정 시점을 검증", "slabel": "성공", "scls": "s-pass", "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c"}, {"id": 5, "code": "PASS", "text": "냉각 성능 부족 시 `HP_ERROR_REF`가 정상 설정되는지 확인", "reason": "냉각 부족 조건에서 HP_ERROR_REF와 SET 인자를 직접 확인", "slabel": "성공", "scls": "s-pass", "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c"}, {"id": 6, "code": "SKIP-NOMATCH", "text": "정상 냉각 시 오류가 오검출되지 않는지 확인", "reason": "정상 냉각 입력을 목킹해 오류 미설정 동작 확인 가능", "slabel": "미검증", "scls": "s-nomatch", "file": null}, {"id": 7, "code": "SKIP-TIER", "text": "해당 없음. 제공된 변경 범위 내 외부 파일 형식/업로드 포맷 변경은 확인되지 않음", "reason": "변경 범위와 포맷 영향 없음은 사람의 범위 판단 필요", "slabel": "수동/통합 테스트", "scls": "s-tier", "file": null}, {"id": 8, "code": "DEFECT", "text": "정적 변수 `snStartEva`, `sucSubStep`, 타이머가 시험 중단/재시작 시 의도대로 재초기화되는지 확인", "reason": "FUT 잠재 결함 — 시험 중단 후 재시작 시 FCT_LOAD5_STEP로 재진입하면 정적 sucSubStep, snStartEva 및 타이머가 재초기화되지 않아 팬 재도달 전 REF 타이머 판정과 온도 비교/오류 설정 경로가 실행된다", "slabel": "잠재 결함", "scls": "s-defect", "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c"}, {"id": 9, "code": "SKIP-TIER", "text": "전원 재인가 또는 모드 전환 시 FCT 상태가 비정상적으로 이어지지 않는지 확인", "reason": "전원 재인가·모드 전환은 런타임 초기화 시퀀스 의존", "slabel": "타겟/HIL 테스트", "scls": "s-tier", "file": null}, {"id": 10, "code": "SKIP-TIER", "text": "`MWI_HP_FctModeDryLoadControl` 호출부가 모두 신규 시그니처에 맞게 수정되었는지 빌드 검증", "reason": "신규 시그니처 호출부 일치는 빌드·심볼 정적으로 확인", "slabel": "정적 분석", "scls": "s-tier", "file": null}, {"id": 11, "code": "SKIP-TIER", "text": "`MW_HP_FctModeDryLoadControl` 선언/정의/호출 간 타입 불일치가 없는지 확인", "reason": "선언·정의·호출 타입 일치는 정적/빌드 검증 항목", "slabel": "정적 분석", "scls": "s-tier", "file": null}, {"id": 12, "code": "SKIP-GEN", "text": "전달되는 압축기 주파수, EEV, 팬 RPM 값이 허용 범위 내인지 확인", "reason": "[MW_HP_RunPreventionDew] 해당 FUT에는 압축기 주파수와 EEV 및 팬 RPM 값을 전달하거나 허용 범위로 검증하는 동작을 관찰할 capability가 없습니다.", "slabel": "미검증", "scls": "s-nomatch", "file": null}, {"id": 13, "code": "SKIP-TIER", "text": "`MW_HP_GetReceiveInfo()->FanSpeed` 수신값이 유효하지 않을 때 sub-step 진행이 멈추는지, 또는 예외 처리가 필요한지 확인", "reason": "무효 FanSpeed 예외 필요 여부는 설계 의도 판단 포함", "slabel": "수동/통합 테스트", "scls": "s-tier", "file": null}, {"id": 14, "code": "SKIP-TIER", "text": "`HP_CommData.h` include 추가로 인한 모델별 빌드 영향이 없는지 확인", "reason": "모델별 include 영향은 구성별 조건부 빌드 확인 필요", "slabel": "빌드 테스트", "scls": "s-tier", "file": null}, {"id": 15, "code": "SKIP-TIER", "text": "A 타입 모델에서 FCT 건조 시험 정상/오류 시나리오 수행", "reason": "A 타입 모델 구성에서 시나리오 빌드·동작 확인 필요", "slabel": "빌드 테스트", "scls": "s-tier", "file": null}, {"id": 16, "code": "SKIP-TIER", "text": "B 타입 모델에서 동일 시나리오 수행", "reason": "B 타입 모델 구성에서 동일 시나리오 확인 필요", "slabel": "빌드 테스트", "scls": "s-tier", "file": null}, {"id": 17, "code": "PASS", "text": "팬 속도 미도달 상태가 지속될 때 REF 판정이 조기 수행되지 않는지 확인", "reason": "팬 미도달 지속 반복에서 타이머와 오류 판정 호출이 없음을 직접 검증", "slabel": "성공", "scls": "s-pass", "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c"}, {"id": 18, "code": "SKIP-TIER", "text": "팬 속도 도달 직후 기준 온도 저장 후 90초 뒤 판정되는지 로그로 검증", "reason": "로그 기반 시점 검증은 수동 판독·시나리오 판단 의존", "slabel": "수동/통합 테스트", "scls": "s-tier", "file": null}, {"id": 19, "code": "SKIP-TIER", "text": "기존 고정값 기반 제어와 비교해 시험 시간, 오류율, 운전 안정성이 의도대로 개선되었는지 확인", "reason": "시간·오류율·안정성 개선 평가는 회귀/의도 판단 필요", "slabel": "수동/통합 테스트", "scls": "s-tier", "file": null}], "files": {"test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c": "/*\n * test_vi_1_3_4_5_8_17_run_dry_fct_mode_process.c\n * VI #1: FCT 초기 진입 시 `sucSubStep`가 항상 0으로 초기화되는지 확인\n * VI #3: 팬 속도 목표 도달 전에는 REF 판정 기준 온도가 저장되지 않는지 확인\n * VI #4: 팬 속도 목표 도달 후 90초 경과 시점에만 REF 오류 판정이 수행되는지 확인\n * VI #5: 냉각 성능 부족 시 `HP_ERROR_REF`가 정상 설정되는지 확인\n * VI #8: 정적 변수 `snStartEva`, `sucSubStep`, 타이머가 시험 중단/재시작 시 의도대로 재초기화되는지 확인\n * VI #17: 팬 속도 미도달 상태가 지속될 때 REF 판정이 조기 수행되지 않는지 확인\n * 빌드: gcc -std=c11 -Wall -Werror test_vi_1_3_4_5_8_17_run_dry_fct_mode_process.c -o test_vi_1_3_4_5_8_17_run_dry_fct_mode_process\n */\n#include <stdio.h>\n#include <stdint.h>\n#include <string.h>\n#include <stdlib.h>\n\n/* ========== 1. 타입/매크로 Stub ========== */\ntypedef uint8_t UINT8;  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h:19 (typedef) */\ntypedef uint16_t UINT16;  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h:16 (typedef) */\ntypedef uint32_t UINT32;  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h:13 (typedef) */\ntypedef int16_t INT16;  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h:18 (typedef) */\n\ntypedef struct {\n    UINT32 ulLow;\n} T_Time;  /* CommonSource/6_Driver/Include/typedef.h:182 (typedef) */\n\ntypedef struct {\n    UINT8 dummy;\n} T_KeyInformDef;  /* CommonSource/6_Driver/Include/typedef.h:30 (typedef) */\n\ntypedef struct {\n    UINT16 FanSpeed;\n} T_HP_ReceiveInfo;  /* Heatpump/Include/HP_CommData.h:83 (typedef) */\n\n#define CLEAR 0  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 0 */\n#define DONE 1  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 1 */\n#define DOOR_LOCK 2  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 2 */\n#define DRY_TEST_COMP_HZ ((UINT8) 82)  /* CommonSource/1_Application/Source/App_FCT_TestModeState.C: ((UINT8) 82) */\n#define DRY_TEST_EEV ((UINT16) 95)  /* CommonSource/1_Application/Source/App_FCT_TestModeState.C: ((UINT16) 95) */\n#define DRY_TEST_FAN_RPM ((UINT16) 3000)  /* CommonSource/1_Application/Source/App_FCT_TestModeState.C: ((UINT16) 3000) */\n#define FCT_FINAL_STEP 6  /* CommonSource/1_Application/Include/App_FCT_TestModeState.h: 6 */\n#define FCT_INIT_STEP 0  /* CommonSource/1_Application/Include/App_FCT_TestModeState.h: 0 */\n#define FCT_LOAD5_STEP 5  /* CommonSource/1_Application/Include/App_FCT_TestModeState.h: 5 */\n#define HP_ERROR_REF 83  /* CommonSource/Common_Def/CommonDefinition.h: 83 */\n#define INITIAL 0  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 0 */\n#define MAIN_STATE_END 3  /* CommonSource/Common_Def/CommonDefinition.h: 3 */\n#define MAIN_STATE_ERROR 1  /* CommonSource/Common_Def/CommonDefinition.h: 1 */\n#define MAIN_STATE_TEST_DRY_FCT 31  /* CommonSource/Common_Def/CommonDefinition.h: 31 */\n#define MOTOR_NORMAL_MODE 2  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 2 */\n#define OFF 0  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 0 */\n#define SET 1  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 1 */\n#define WRITE 0  /* Critical_Section/Abov_A34M420/2_Driver/Include/typedef_ClassB.h: 0 */\n#define _DRY_EVA_IN_TEMP_ 3  /* Heatpump/Include/HP_SensorControl.h: 3 */\n\nUINT8 gucFCT_ModeIndex;\nUINT8 mucLogFCTStep;\nUINT8 aucErrorStatus[256];\nstatic T_HP_ReceiveInfo mstHP_ReceiveInfo;\n\n/* ========== 2. Mock 프레임워크 ========== */\ntypedef struct {\n    char name[64];\n    long a1;\n    long a2;\n    long a3;\n    long a4;\n} MockCall;\n\nstatic MockCall g_calls[512];\nstatic int g_call_count;\n\nstatic void record_call(const char *name, long a1, long a2, long a3, long a4)\n{\n    if (g_call_count < 512) {\n        snprintf(g_calls[g_call_count].name, sizeof(g_calls[g_call_count].name), \"%s\", name);\n        g_calls[g_call_count].a1 = a1;\n        g_calls[g_call_count].a2 = a2;\n        g_calls[g_call_count].a3 = a3;\n        g_calls[g_call_count].a4 = a4;\n        g_call_count++;\n    }\n}\n\nstatic int count(const char *name)\n{\n    int n = 0;\n    for (int i = 0; i < g_call_count; i++) {\n        if (strcmp(g_calls[i].name, name) == 0) {\n            n++;\n        }\n    }\n    return n;\n}\n\nstatic MockCall *nth(const char *name, int index)\n{\n    int n = 0;\n    for (int i = 0; i < g_call_count; i++) {\n        if (strcmp(g_calls[i].name, name) == 0) {\n            if (n == index) {\n                return &g_calls[i];\n            }\n            n++;\n        }\n    }\n    return NULL;\n}\n\nstatic int first_index(const char *name)\n{\n    for (int i = 0; i < g_call_count; i++) {\n        if (strcmp(g_calls[i].name, name) == 0) {\n            return i;\n        }\n    }\n    return -1;\n}\n\nstatic int nth_index(const char *name, int index)\n{\n    int n = 0;\n    for (int i = 0; i < g_call_count; i++) {\n        if (strcmp(g_calls[i].name, name) == 0) {\n            if (n == index) {\n                return i;\n            }\n            n++;\n        }\n    }\n    return -1;\n}\n\nstatic UINT8 g_status_seq[64];\nstatic int g_status_len;\nstatic int g_status_idx;\nstatic UINT8 g_concurrent_ret;\nstatic UINT8 g_door_ret;\nstatic UINT32 g_timer_get_value;\nstatic UINT8 g_timer_sec_ret[64];\nstatic int g_timer_sec_len;\nstatic int g_timer_sec_idx;\nstatic INT16 g_temp_ret[64];\nstatic int g_temp_len;\nstatic int g_temp_idx;\n\nstatic void mock_reset(void)\n{\n    memset(g_calls, 0, sizeof(g_calls));\n    g_call_count = 0;\n    memset(g_status_seq, 0, sizeof(g_status_seq));\n    g_status_len = 0;\n    g_status_idx = 0;\n    g_concurrent_ret = CLEAR;\n    g_door_ret = CLEAR;\n    g_timer_get_value = 1000u;\n    memset(g_timer_sec_ret, 0, sizeof(g_timer_sec_ret));\n    g_timer_sec_len = 0;\n    g_timer_sec_idx = 0;\n    memset(g_temp_ret, 0, sizeof(g_temp_ret));\n    g_temp_len = 0;\n    g_temp_idx = 0;\n    mucLogFCTStep = 0;\n    memset(aucErrorStatus, 0, sizeof(aucErrorStatus));\n    memset(&mstHP_ReceiveInfo, 0, sizeof(mstHP_ReceiveInfo));\n}\n\nstatic void configure_status_iterations(int iterations)\n{\n    memset(g_status_seq, 0, sizeof(g_status_seq));\n    for (int i = 0; i < iterations; i++) {\n        g_status_seq[i] = MAIN_STATE_TEST_DRY_FCT;\n    }\n    g_status_seq[iterations] = MAIN_STATE_END;\n    g_status_len = iterations + 1;\n    g_status_idx = 0;\n}\n\nstatic void set_timer_returns(const UINT8 *values, int len)\n{\n    memset(g_timer_sec_ret, 0, sizeof(g_timer_sec_ret));\n    for (int i = 0; i < len; i++) {\n        g_timer_sec_ret[i] = values[i];\n    }\n    g_timer_sec_len = len;\n    g_timer_sec_idx = 0;\n}\n\nstatic void set_temp_returns(const INT16 *values, int len)\n{\n    memset(g_temp_ret, 0, sizeof(g_temp_ret));\n    for (int i = 0; i < len; i++) {\n        g_temp_ret[i] = values[i];\n    }\n    g_temp_len = len;\n    g_temp_idx = 0;\n}\n\n/* ========== 3. 외부 의존성 Mock ========== */\nvoid Comm_SetFCTStep(UINT8 step)\n{\n    record_call(\"Comm_SetFCTStep\", (long)step, 0, 0, 0);\n    mucLogFCTStep = step;\n}\n\nUINT8 ConCurrentFuction(T_KeyInformDef *psKeyInput, UINT8 mode)\n{\n    record_call(\"ConCurrentFuction\", (long)(uintptr_t)psKeyInput, (long)mode, 0, 0);\n    return g_concurrent_ret;\n}\n\nvoid FCTWorkState_EndCheck(UINT8 ret)\n{\n    record_call(\"FCTWorkState_EndCheck\", (long)ret, 0, 0, 0);\n}\n\nvoid Init_FCTTestModeProcess(void)\n{\n    record_call(\"Init_FCTTestModeProcess\", 0, 0, 0, 0);\n}\n\nvoid KeyInputControl_FCTWorkState(UINT8 key)\n{\n    record_call(\"KeyInputControl_FCTWorkState\", (long)key, 0, 0, 0);\n}\n\nINT16 MWI_ADSS_GetDryTemperature(UINT8 thermistorType)\n{\n    INT16 ret = 0;\n    record_call(\"MWI_ADSS_GetDryTemperature\", (long)thermistorType, 0, 0, 0);\n    if (g_temp_idx < g_temp_len) {\n        ret = g_temp_ret[g_temp_idx++];\n    }\n    return ret;\n}\n\nUINT8 MWI_Door_SetDoorControlCMD(UINT8 readWrite, UINT8 doorCtrlReq)\n{\n    record_call(\"MWI_Door_SetDoorControlCMD\", (long)readWrite, (long)doorCtrlReq, 0, 0);\n    return g_door_ret;\n}\n\nvoid MWI_HP_FctModeDryLoadControl(UINT8 compHz, UINT16 eev, UINT16 fanRpm)\n{\n    record_call(\"MWI_HP_FctModeDryLoadControl\", (long)compHz, (long)eev, (long)fanRpm, 0);\n}\n\nvoid MWI_HP_ManualControl(int mode, UINT8 value)\n{\n    record_call(\"MWI_HP_ManualControl\", (long)mode, (long)value, 0, 0);\n}\n\nT_HP_ReceiveInfo *MW_HP_GetReceiveInfo(void)\n{\n    record_call(\"MW_HP_GetReceiveInfo\", 0, 0, 0, 0);\n    return &mstHP_ReceiveInfo;\n}\n\nUINT8 Sys_GetMainStatus(void)\n{\n    UINT8 ret = MAIN_STATE_END;\n    record_call(\"Sys_GetMainStatus\", 0, 0, 0, 0);\n    if (g_status_idx < g_status_len) {\n        ret = g_status_seq[g_status_idx++];\n    }\n    return ret;\n}\n\nvoid Sys_SetErrorStatus(UINT8 error, UINT8 value)\n{\n    record_call(\"Sys_SetErrorStatus\", (long)error, (long)value, 0, 0);\n    aucErrorStatus[error] = value;\n}\n\nvoid Timer_GetTime(T_Time *pstTime)\n{\n    record_call(\"Timer_GetTime\", (long)(uintptr_t)pstTime, 0, 0, 0);\n    pstTime->ulLow = g_timer_get_value;\n}\n\nUINT8 Timer_SecCheckPassTime(T_Time *pstTime, UINT32 time, UINT8 updateOption)\n{\n    UINT8 ret = CLEAR;\n    record_call(\"Timer_SecCheckPassTime\", (long)(uintptr_t)pstTime, (long)time, (long)updateOption, 0);\n    if (g_timer_sec_idx < g_timer_sec_len) {\n        ret = g_timer_sec_ret[g_timer_sec_idx++];\n    }\n    return ret;\n}\n\n/* ========== 4. FUT (원본 출처: CommonSource/1_Application/Source/App_FCT_TestModeState_B.C:159-222) ========== */\nvoid Run_DRY_FCT_ModeProcess(T_KeyInformDef* psKeyInput)\n{\n    UINT8 ucNewKey = 0;\n    UINT8 ucRetVal = CLEAR;\n    static INT16 snStartEva = 0;\n    static UINT8 sucSubStep = 0;\n    static T_Time stRefCheckTimer = {0,};\n\n    Init_FCTTestModeProcess();\n    MWI_Door_SetDoorControlCMD(WRITE, DOOR_LOCK);\n\n    while(Sys_GetMainStatus() == MAIN_STATE_TEST_DRY_FCT)\n    {\n        ucNewKey = ConCurrentFuction(psKeyInput, MOTOR_NORMAL_MODE);\n        KeyInputControl_FCTWorkState(ucNewKey);\n\n        switch(gucFCT_ModeIndex)\n        {\n            case FCT_INIT_STEP:\n                MWI_HP_ManualControl(INITIAL, 0);\n                sucSubStep = 0;\n                Timer_GetTime(&stRefCheckTimer);\n                gucFCT_ModeIndex = FCT_LOAD5_STEP;\n                break;\n\n            case FCT_LOAD5_STEP:\n                MWI_HP_FctModeDryLoadControl(DRY_TEST_COMP_HZ, DRY_TEST_EEV, DRY_TEST_FAN_RPM);\n\n                if(sucSubStep == 0)\n                {\n                    if(MW_HP_GetReceiveInfo()->FanSpeed > (DRY_TEST_FAN_RPM - 100))\n                    {\n                        snStartEva = MWI_ADSS_GetDryTemperature(_DRY_EVA_IN_TEMP_);\n                        sucSubStep = 1;\n                    }\n                }\n                else if(sucSubStep == 1)\n                {\n                    if(Timer_SecCheckPassTime(&stRefCheckTimer, 90, 0) == SET)\n                    {\n                        if(snStartEva - MWI_ADSS_GetDryTemperature(_DRY_EVA_IN_TEMP_) < 2)\n                        {\n                            Sys_SetErrorStatus(HP_ERROR_REF, SET);\n                        }\n                        sucSubStep = 2;\n                    }\n                }\n                else;\n                break;\n\n            case FCT_FINAL_STEP:\n                MWI_HP_ManualControl(INITIAL, 0);\n                ucRetVal = DONE;\n                break;\n\n            default :\n                break;\n        }\n\n        FCTWorkState_EndCheck(ucRetVal);\n        Comm_SetFCTStep(gucFCT_ModeIndex);\n    }\n}\n\n/* ========== 5. 간이 assertion ========== */\nstatic int g_fail = 0;                    /* 누적 실패 어설션 수 */\nstatic int g_tc_total = 0;\nstatic int g_tc_passed = 0;\nstatic int g_tc_failed = 0;\nstatic const char *g_current_tc = \"\";\nstatic int g_fail_at_tc_start = 0;\n\n/* AISE_TC_FILTER 환경변수 검사 — 콤마 구분 tc 이름 목록.\n * 비어 있거나 미설정이면 전체 실행. tc 이름이 목록에 있으면 실행. */\nstatic const char *_g_aise_tc_filter = (const char *)0;\nstatic int _g_aise_filter_inited = 0;\n\nstatic int _aise_should_run(const char *tc_name) {\n    const char *p;\n    size_t nlen;\n    if (!_g_aise_filter_inited) {\n        _g_aise_tc_filter = getenv(\"AISE_TC_FILTER\");\n        _g_aise_filter_inited = 1;\n    }\n    if (!_g_aise_tc_filter || !*_g_aise_tc_filter) return 1;\n    nlen = strlen(tc_name);\n    p = _g_aise_tc_filter;\n    while (*p) {\n        const char *q;\n        while (*p == ',' || *p == ' ') p++;\n        q = p;\n        while (*q && *q != ',') q++;\n        if ((size_t)(q - p) == nlen && strncmp(p, tc_name, nlen) == 0) return 1;\n        p = q;\n    }\n    return 0;\n}\n\n#define EXPECT(cond) do { \\\n    if (!(cond)) { \\\n        printf(\"  FAIL [%s] %s:%d  %s\\n\", g_current_tc, __FILE__, __LINE__, #cond); \\\n        g_fail++; \\\n    } \\\n} while (0)\n\n#define RUN_TC(fn) do { \\\n    if (!_aise_should_run(#fn)) break; \\\n    g_current_tc = #fn; \\\n    g_tc_total++; \\\n    g_fail_at_tc_start = g_fail; \\\n    printf(\"RUN %s\\n\", #fn); \\\n    fn(); \\\n    if (g_fail == g_fail_at_tc_start) { \\\n        g_tc_passed++; \\\n        printf(\"  PASS %s\\n\", #fn); \\\n    } else { \\\n        g_tc_failed++; \\\n        printf(\"  FAIL %s (%d asserts failed)\\n\", #fn, g_fail - g_fail_at_tc_start); \\\n    } \\\n} while (0)\n\n/* 파라미터화된 tc_*(int) 전용 — 인자값까지 라벨에 포함 */\n#define RUN_TC_PARAM(fn, arg) do { \\\n    char _label[128]; \\\n    if (!_aise_should_run(#fn)) break; \\\n    snprintf(_label, sizeof(_label), \"%s(%d)\", #fn, (int)(arg)); \\\n    g_current_tc = _label; \\\n    g_tc_total++; \\\n    g_fail_at_tc_start = g_fail; \\\n    printf(\"RUN %s\\n\", _label); \\\n    fn(arg); \\\n    if (g_fail == g_fail_at_tc_start) { \\\n        g_tc_passed++; \\\n        printf(\"  PASS %s\\n\", _label); \\\n    } else { \\\n        g_tc_failed++; \\\n        printf(\"  FAIL %s (%d asserts failed)\\n\", _label, g_fail - g_fail_at_tc_start); \\\n    } \\\n} while (0)\n\n/* ========== 6. 테스트 케이스 ========== */\n\nstatic void run_fut_iterations(int iterations)\n{\n    T_KeyInformDef key;\n    memset(&key, 0, sizeof(key));\n    configure_status_iterations(iterations);\n    Run_DRY_FCT_ModeProcess(&key);\n}\n\nstatic void force_init_to_load_step(void)\n{\n    mock_reset();\n    gucFCT_ModeIndex = FCT_INIT_STEP;\n    run_fut_iterations(1);\n}\n\nstatic void force_substep_one_with_start_temp(INT16 startTemp)\n{\n    INT16 temps[1];\n\n    force_init_to_load_step();\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    mstHP_ReceiveInfo.FanSpeed = DRY_TEST_FAN_RPM;\n    temps[0] = startTemp;\n    set_temp_returns(temps, 1);\n    run_fut_iterations(1);\n}\n\nstatic void force_substep_two(void)\n{\n    UINT8 timerRets[1];\n    INT16 temps[2];\n\n    force_init_to_load_step();\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    mstHP_ReceiveInfo.FanSpeed = DRY_TEST_FAN_RPM;\n    timerRets[0] = SET;\n    temps[0] = 40;\n    temps[1] = 39;\n    set_timer_returns(timerRets, 1);\n    set_temp_returns(temps, 2);\n    run_fut_iterations(2);\n}\n\n/* VI #4: 정상 부하 진행 — 90초 타이머 이후 REF 판정 순서 검증 */\nstatic void tc_happy_full_sequence(void)\n{\n    UINT8 timerRets[1];\n    INT16 temps[2];\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_INIT_STEP;\n    mstHP_ReceiveInfo.FanSpeed = DRY_TEST_FAN_RPM;\n    timerRets[0] = SET;\n    temps[0] = 50;\n    temps[1] = 45;\n    set_timer_returns(timerRets, 1);\n    set_temp_returns(temps, 2);\n\n    run_fut_iterations(3);\n\n    EXPECT(count(\"Init_FCTTestModeProcess\") == 1);\n    EXPECT(count(\"MWI_Door_SetDoorControlCMD\") == 1);\n    EXPECT(count(\"MWI_HP_ManualControl\") == 1);\n    EXPECT(count(\"MWI_HP_FctModeDryLoadControl\") == 2);\n    EXPECT(count(\"Comm_SetFCTStep\") == 3);\n\n    /* [ORACLE: VI] REF 판정은 팬 목표 도달로 기준 온도를 저장한 뒤 90초 타이머 확인 이후 비교 온도 읽기로 수행되어야 한다 */\n    EXPECT(count(\"MWI_ADSS_GetDryTemperature\") == 2);\n    EXPECT(count(\"Timer_SecCheckPassTime\") == 1);\n    EXPECT(nth(\"Timer_SecCheckPassTime\", 0)->a2 == 90);\n    EXPECT(nth_index(\"MWI_ADSS_GetDryTemperature\", 0) < first_index(\"Timer_SecCheckPassTime\"));\n    EXPECT(first_index(\"Timer_SecCheckPassTime\") < nth_index(\"MWI_ADSS_GetDryTemperature\", 1));\n\n    EXPECT(count(\"Sys_SetErrorStatus\") == 0);\n}\n\n/* VI #1: 초기 진입 재설정 — 이전 정적 단계와 무관하게 기준 온도 저장 경로 재진입 */\nstatic void tc_initial_entry_resets_substep(void)\n{\n    INT16 temps[1];\n\n    force_substep_two();\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_INIT_STEP;\n    mstHP_ReceiveInfo.FanSpeed = DRY_TEST_FAN_RPM;\n    temps[0] = 42;\n    set_temp_returns(temps, 1);\n\n    run_fut_iterations(2);\n\n    /* [ORACLE: VI] FCT 초기 진입은 이전 sucSubStep 값이 2였더라도 0으로 초기화하여 팬 도달 시 기준 온도를 새로 저장해야 한다 */\n    EXPECT(count(\"Timer_GetTime\") == 1);\n    EXPECT(count(\"MW_HP_GetReceiveInfo\") == 1);\n    EXPECT(count(\"MWI_ADSS_GetDryTemperature\") == 1);\n}\n\n/* VI #3, #17: 팬 목표 미도달 지속 — 기준 온도 저장 및 REF 판정 조기 수행 금지 */\nstatic void tc_fan_not_reached_no_ref_temp_saved(void)\n{\n    force_init_to_load_step();\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    mstHP_ReceiveInfo.FanSpeed = (UINT16)(DRY_TEST_FAN_RPM - 100);\n\n    run_fut_iterations(3);\n\n    EXPECT(count(\"MWI_HP_FctModeDryLoadControl\") == 3);\n    EXPECT(count(\"MW_HP_GetReceiveInfo\") == 3);\n\n    /* [ORACLE: VI] 팬 속도가 목표 미만 또는 경계값이면 REF 판정 기준 온도를 저장하지 않아야 한다 */\n    EXPECT(count(\"MWI_ADSS_GetDryTemperature\") == 0);\n\n    /* [ORACLE: VI] 팬 속도 미도달 상태가 지속되어도 90초 판정 타이머와 REF 오류 설정이 조기 수행되지 않아야 한다 */\n    EXPECT(count(\"Timer_SecCheckPassTime\") == 0);\n    EXPECT(count(\"Sys_SetErrorStatus\") == 0);\n}\n\n/* VI #4: 90초 미경과 — REF 비교 및 오류 판정 미수행 */\nstatic void tc_timer_not_elapsed_no_ref_check(void)\n{\n    UINT8 timerRets[1];\n\n    force_substep_one_with_start_temp(50);\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    timerRets[0] = CLEAR;\n    set_timer_returns(timerRets, 1);\n\n    run_fut_iterations(1);\n\n    EXPECT(count(\"Timer_SecCheckPassTime\") == 1);\n    EXPECT(nth(\"Timer_SecCheckPassTime\", 0)->a2 == 90);\n\n    /* [ORACLE: VI] 팬 목표 도달 후에도 90초가 경과하지 않으면 REF 비교 온도 읽기와 오류 설정이 수행되지 않아야 한다 */\n    EXPECT(count(\"MWI_ADSS_GetDryTemperature\") == 0);\n    EXPECT(count(\"Sys_SetErrorStatus\") == 0);\n}\n\n/* VI #4: 90초 경과 — REF 판정 1회 수행 및 이후 반복 금지 */\nstatic void tc_timer_elapsed_ref_check_once(void)\n{\n    UINT8 timerRets[1];\n    INT16 temps[1];\n\n    force_substep_one_with_start_temp(50);\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    timerRets[0] = SET;\n    temps[0] = 45;\n    set_timer_returns(timerRets, 1);\n    set_temp_returns(temps, 1);\n\n    run_fut_iterations(1);\n\n    /* [ORACLE: VI] 90초 경과 시점에는 REF 비교 온도 읽기를 통해 판정이 수행되어야 한다 */\n    EXPECT(count(\"Timer_SecCheckPassTime\") == 1);\n    EXPECT(nth(\"Timer_SecCheckPassTime\", 0)->a2 == 90);\n    EXPECT(count(\"MWI_ADSS_GetDryTemperature\") == 1);\n    EXPECT(first_index(\"Timer_SecCheckPassTime\") < first_index(\"MWI_ADSS_GetDryTemperature\"));\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    run_fut_iterations(1);\n\n    /* [ORACLE: VI] REF 판정 완료 후에는 동일 단계에서 판정이 반복 수행되지 않아야 한다 */\n    EXPECT(count(\"Timer_SecCheckPassTime\") == 0);\n    EXPECT(count(\"MWI_ADSS_GetDryTemperature\") == 0);\n}\n\n/* VI #5: 냉각 성능 부족 — HP_ERROR_REF 설정 */\nstatic void tc_cooling_insufficient_sets_hp_error_ref(void)\n{\n    UINT8 timerRets[1];\n    INT16 temps[1];\n    MockCall *err;\n\n    force_substep_one_with_start_temp(50);\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    timerRets[0] = SET;\n    temps[0] = 49;\n    set_timer_returns(timerRets, 1);\n    set_temp_returns(temps, 1);\n\n    run_fut_iterations(1);\n\n    err = nth(\"Sys_SetErrorStatus\", 0);\n\n    /* [ORACLE: VI] 시작 EVA 대비 냉각 저하량이 2 미만이면 HP_ERROR_REF가 SET으로 설정되어야 한다 */\n    EXPECT(count(\"Sys_SetErrorStatus\") == 1);\n    EXPECT(err != NULL && err->a1 == HP_ERROR_REF && err->a2 == SET);\n    EXPECT(aucErrorStatus[HP_ERROR_REF] == SET);\n}\n\n/* VI #8: 중단 후 재시작 — 정적 단계와 타이머의 재초기화 기대 */\nstatic void tc_restart_reinitializes_static_state(void)\n{\n    UINT8 timerRets[1];\n    INT16 temps[1];\n\n    force_substep_one_with_start_temp(50);\n\n    mock_reset();\n    gucFCT_ModeIndex = FCT_LOAD5_STEP;\n    mstHP_ReceiveInfo.FanSpeed = (UINT16)(DRY_TEST_FAN_RPM - 200);\n    timerRets[0] = SET;\n    temps[0] = 50;\n    set_timer_returns(timerRets, 1);\n    set_temp_returns(temps, 1);\n\n    run_fut_iterations(1);\n\n    /* [ORACLE: VI] 시험 중단 후 재시작 시 sucSubStep과 타이머가 초기화되어 팬 재도달 전 REF 타이머 판정이 수행되지 않아야 한다 */\n    EXPECT(count(\"Timer_SecCheckPassTime\") == 0);\n    EXPECT(count(\"MWI_ADSS_GetDryTemperature\") == 0);\n    EXPECT(count(\"Sys_SetErrorStatus\") == 0);\n}\n\n/* ========== 7. main ========== */\nint main(void)\n{\n    RUN_TC(tc_happy_full_sequence);\n    RUN_TC(tc_initial_entry_resets_substep);\n    RUN_TC(tc_fan_not_reached_no_ref_temp_saved);\n    RUN_TC(tc_timer_not_elapsed_no_ref_check);\n    RUN_TC(tc_timer_elapsed_ref_check_once);\n    RUN_TC(tc_cooling_insufficient_sets_hp_error_ref);\n    RUN_TC(tc_restart_reinitializes_static_state);\n\n    printf(\"\\nSUMMARY: %d cases, %d passed, %d failed (%d asserts failed)\\n\",\n           g_tc_total, g_tc_passed, g_tc_failed, g_fail);\n    return g_tc_failed == 0 ? 0 : 1;\n}"}, "bestofn": [{"id": 1, "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c", "label": "BEST_BEHAVIORAL", "reason": "이전 substep=2 후 INIT 재진입 시 온도 저장 경로 재진입을 관찰해 초기화 검증"}, {"id": 3, "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c", "label": "BEST_BEHAVIORAL", "reason": "팬속도 경계 미도달 반복에서 온도 저장 호출 0회를 직접 검증"}, {"id": 4, "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c", "label": "BEST_BEHAVIORAL", "reason": "90초 미경과/경과/반복 방지 모두 확인해 REF 판정 시점을 검증"}, {"id": 5, "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c", "label": "BEST_BEHAVIORAL", "reason": "냉각 부족 조건에서 HP_ERROR_REF와 SET 인자를 직접 확인"}, {"id": 8, "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c", "label": "BEST_BEHAVIORAL", "reason": "재호출 후 팬 미도달 시 타이머·온도·오류 미수행으로 정적 상태 초기화 기대 검증"}, {"id": 17, "file": "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c", "label": "BEST_BEHAVIORAL", "reason": "팬 미도달 지속 반복에서 타이머와 오류 판정 호출이 없음을 직접 검증"}], "test_log": "# AISE test execution log\n\n- total: 6\n- passed: 5\n- failed: 1\n- build-fail: 0\n\n---\n\n## VI #1 [PASSED] test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c\n- runs: 3/3 passed\n- duration: 0.005s\n- testcases: 1 total, 1 passed, 0 failed\n\n### Passed cases\n- tc_initial_entry_resets_substep\n\n## VI #3 [PASSED] test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c\n- runs: 3/3 passed\n- duration: 0.003s\n- testcases: 1 total, 1 passed, 0 failed\n\n### Passed cases\n- tc_fan_not_reached_no_ref_temp_saved\n\n## VI #4 [PASSED] test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c\n- runs: 3/3 passed\n- duration: 0.002s\n- testcases: 3 total, 3 passed, 0 failed\n\n### Passed cases\n- tc_happy_full_sequence\n- tc_timer_not_elapsed_no_ref_check\n- tc_timer_elapsed_ref_check_once\n\n## VI #5 [PASSED] test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c\n- runs: 3/3 passed\n- duration: 0.003s\n- testcases: 1 total, 1 passed, 0 failed\n\n### Passed cases\n- tc_cooling_insufficient_sets_hp_error_ref\n\n## VI #8 [FAILED] test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c\n- runs: 0/3 passed\n- duration: 0.003s\n- testcases: 1 total, 0 passed, 1 failed\n\n### Failed cases\n- tc_restart_reinitializes_static_state\n  - test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c:652  count(\"Timer_SecCheckPassTime\") == 0\n  - test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c:653  count(\"MWI_ADSS_GetDryTemperature\") == 0\n  - test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c:654  count(\"Sys_SetErrorStatus\") == 0\n\n## VI #17 [PASSED] test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c\n- runs: 3/3 passed\n- duration: 0.003s\n- testcases: 1 total, 1 passed, 0 failed\n\n### Passed cases\n- tc_fan_not_reached_no_ref_temp_saved\n", "test_log_name": "test_report_r119765.log", "markdown": "# 검증 리포트 — 38346d48f4be @ r119765\n\n> 생성일시: 2026-05-27 05:43:57\n> 범례: ✅ PASS · 🐞 DEFECT(잠재 결함·사람 확인) · ❌ RUN FAIL(Oracle 재검토) · 🔴 BUILD FAIL · 🔁 COVERED(기존 테스트) · ⏭ SKIP(NOMATCH/TIER/GATE)\n\n## 요약\n\n| 전체 | 성공 | 잠재 결함 | 실패 | 미검증 | 대상 아님 | Git commits |\n|---:|---:|---:|---:|---:|---:|---:|\n| 19 | 5 | 1 | 0 | 3 | 10 | 0 |\n\n## 검증 항목\n\n| VI | Tier | 검증 항목 | 분류 | 사유 | 테스트 / FUT |\n|---:|:--:|------|:--:|------|------|\n| #8 | T4 | 정적 변수 `snStartEva`, `sucSubStep`, 타이머가 시험 중단/재시작 시 의도대로 재초기화되는지 확인 | 🐞 잠재 결함 | FUT 잠재 결함 — 시험 중단 후 재시작 시 FCT_LOAD5_STEP로 재진입하면 정적 sucSubStep, snStartEva 및 타이머가 재초기화되지 않아 팬 재도달 전 REF 타이머 판정과 온도 비교/오류 설정 경로가 실행된다 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` |\n| #1 | T4 | FCT 초기 진입 시 `sucSubStep`가 항상 0으로 초기화되는지 확인 | ✅ 성공 | 이전 substep=2 후 INIT 재진입 시 온도 저장 경로 재진입을 관찰해 초기화 검증 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` |\n| #3 | T4 | 팬 속도 목표 도달 전에는 REF 판정 기준 온도가 저장되지 않는지 확인 | ✅ 성공 | 팬속도 경계 미도달 반복에서 온도 저장 호출 0회를 직접 검증 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` |\n| #4 | T4 | 팬 속도 목표 도달 후 90초 경과 시점에만 REF 오류 판정이 수행되는지 확인 | ✅ 성공 | 90초 미경과/경과/반복 방지 모두 확인해 REF 판정 시점을 검증 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` |\n| #5 | T4 | 냉각 성능 부족 시 `HP_ERROR_REF`가 정상 설정되는지 확인 | ✅ 성공 | 냉각 부족 조건에서 HP_ERROR_REF와 SET 인자를 직접 확인 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` |\n| #17 | T4 | 팬 속도 미도달 상태가 지속될 때 REF 판정이 조기 수행되지 않는지 확인 | ✅ 성공 | 팬 미도달 지속 반복에서 타이머와 오류 판정 호출이 없음을 직접 검증 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` |\n| #2 | T4 | FCT 종료 후 재진입 시 이전 시험의 sub-step 상태가 잔존하지 않는지 확인 | ⏭ 미검증 | 재진입 상태 전이를 목으로 구성해 static 잔존 여부 검증 | — |\n| #6 | T4 | 정상 냉각 시 오류가 오검출되지 않는지 확인 | ⏭ 미검증 | 정상 냉각 입력을 목킹해 오류 미설정 동작 확인 가능 | — |\n| #7 | T6 | 해당 없음. 제공된 변경 범위 내 외부 파일 형식/업로드 포맷 변경은 확인되지 않음 | ⏭ 수동/통합 테스트 | 변경 범위와 포맷 영향 없음은 사람의 범위 판단 필요 | — |\n| #9 | T5 | 전원 재인가 또는 모드 전환 시 FCT 상태가 비정상적으로 이어지지 않는지 확인 | ⏭ 타겟/HIL 테스트 | 전원 재인가·모드 전환은 런타임 초기화 시퀀스 의존 | — |\n| #10 | T2 | `MWI_HP_FctModeDryLoadControl` 호출부가 모두 신규 시그니처에 맞게 수정되었는지 빌드 검증 | ⏭ 정적 분석 | 신규 시그니처 호출부 일치는 빌드·심볼 정적으로 확인 | `MWI_HP_FctModeDryLoadControl` |\n| #11 | T2 | `MW_HP_FctModeDryLoadControl` 선언/정의/호출 간 타입 불일치가 없는지 확인 | ⏭ 정적 분석 | 선언·정의·호출 타입 일치는 정적/빌드 검증 항목 | `MW_HP_FctModeDryLoadControl` |\n| #12 | T4 | 전달되는 압축기 주파수, EEV, 팬 RPM 값이 허용 범위 내인지 확인 | ⏭ 미검증 | [MW_HP_RunPreventionDew] 해당 FUT에는 압축기 주파수와 EEV 및 팬 RPM 값을 전달하거나 허용 범위로 검증하는 동작을 관찰할 capability가 없습니다. | `MW_HP_RunPreventionDew` |\n| #13 | T6 | `MW_HP_GetReceiveInfo()->FanSpeed` 수신값이 유효하지 않을 때 sub-step 진행이 멈추는지, 또는 예외 처리가 … | ⏭ 수동/통합 테스트 | 무효 FanSpeed 예외 필요 여부는 설계 의도 판단 포함 | `Run_DRY_FCT_ModeProcess` |\n| #14 | T3 | `HP_CommData.h` include 추가로 인한 모델별 빌드 영향이 없는지 확인 | ⏭ 빌드 테스트 | 모델별 include 영향은 구성별 조건부 빌드 확인 필요 | — |\n| #15 | T3 | A 타입 모델에서 FCT 건조 시험 정상/오류 시나리오 수행 | ⏭ 빌드 테스트 | A 타입 모델 구성에서 시나리오 빌드·동작 확인 필요 | — |\n| #16 | T3 | B 타입 모델에서 동일 시나리오 수행 | ⏭ 빌드 테스트 | B 타입 모델 구성에서 동일 시나리오 확인 필요 | — |\n| #18 | T6 | 팬 속도 도달 직후 기준 온도 저장 후 90초 뒤 판정되는지 로그로 검증 | ⏭ 수동/통합 테스트 | 로그 기반 시점 검증은 수동 판독·시나리오 판단 의존 | — |\n| #19 | T6 | 기존 고정값 기반 제어와 비교해 시험 시간, 오류율, 운전 안정성이 의도대로 개선되었는지 확인 | ⏭ 수동/통합 테스트 | 시간·오류율·안정성 개선 평가는 회귀/의도 판단 필요 | — |\n\n## Best-of-N 채택 결과\n\n| VI | 후보 테스트 파일 | 라벨 | 사유 |\n|---:|------|:--:|------|\n| #1 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` | BEST_BEHAVIORAL | 이전 substep=2 후 INIT 재진입 시 온도 저장 경로 재진입을 관찰해 초기화 검증 |\n| #3 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` | BEST_BEHAVIORAL | 팬속도 경계 미도달 반복에서 온도 저장 호출 0회를 직접 검증 |\n| #4 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` | BEST_BEHAVIORAL | 90초 미경과/경과/반복 방지 모두 확인해 REF 판정 시점을 검증 |\n| #5 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` | BEST_BEHAVIORAL | 냉각 부족 조건에서 HP_ERROR_REF와 SET 인자를 직접 확인 |\n| #8 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` | BEST_BEHAVIORAL | 재호출 후 팬 미도달 시 타이머·온도·오류 미수행으로 정적 상태 초기화 기대 검증 |\n| #17 | `test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c` | BEST_BEHAVIORAL | 팬 미도달 지속 반복에서 타이머와 오류 판정 호출이 없음을 직접 검증 |\n"};
+
+const GROUP_COLOR = {green:'var(--green)', red:'var(--red)', amber:'var(--amber)',
+  gray:'var(--gray)', blue:'var(--blue)'};
+function groupByKey(key){ return (DATA.groups||[]).find(g => g.key === key) || null; }
+
+let activeFilter = null;   // KPI 그룹 key (또는 null = 전체)
+let query = '';
+
+function esc(s){ return (s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function $(id){ return document.getElementById(id); }
+
+function renderMeta(){
+  const m = DATA.meta || {};
+  const SEP = '&nbsp;&nbsp;&nbsp;';
+  let parts = [];
+  if (m.repo) parts.push(`<span class="k">Repo</span> <b>${esc(m.repo)}</b>`);
+  if (m.commit) parts.push(`<span class="k">Commit</span> <b>${esc(m.commit)}</b>`);
+  if (m.branch) parts.push(`<span class="k">Branch</span> <b>${m.branch_url?`<a href="${esc(m.branch_url)}">${esc(m.branch)}</a>`:esc(m.branch)}</b>`);
+  if (m.updated) parts.push(`<span class="k">Updated</span> ${esc(m.updated)}${m.duration?' · '+esc(m.duration):''}`);
+  $('meta1').innerHTML = parts.join(SEP);   // Repo · Commit · Branch · Updated 한 줄
+  $('meta2').innerHTML = '';
+}
+
+function renderKPI(){
+  // 전체 카드 + 그룹 카드 (전체=필터 해제). 그룹: T1/T4 결과 묶음 + 대상 아님.
+  let cards = `<div class="kpi clickable${activeFilter===null?' active':''}" data-key="">`
+    + `<div class="l">전체</div><div class="v">${DATA.total||0}</div></div>`;
+  cards += (DATA.groups||[]).map(g => {
+    const cls = (g.count>0 ? ' clickable':'') + (activeFilter===g.key ? ' active':'');
+    return `<div class="kpi${cls}" data-key="${g.key}"><div class="l">${esc(g.label)}</div>`
+      + `<div class="v" style="color:${GROUP_COLOR[g.color]||'var(--tx)'}">${g.count}</div></div>`;
+  }).join('');
+  $('kpis').innerHTML = cards;
+  $('kpis').querySelectorAll('.kpi[data-key]').forEach(el => {
+    const k = el.dataset.key;
+    if (k === '' || (groupByKey(k) && groupByKey(k).count > 0))
+      el.onclick = () => setFilter(k || null);
+  });
+}
+
+function setFilter(key){
+  activeFilter = (activeFilter === key) ? null : (key || null);
+  renderKPI(); renderChips(); renderRows();
+}
+
+function renderChips(){
+  let html = `<span class="chip ${activeFilter===null?'active':''}" data-key="">전체 <span class="n">${DATA.total||0}</span></span>`;
+  (DATA.groups||[]).forEach(g => {
+    if (g.count <= 0) return;
+    html += `<span class="chip ${activeFilter===g.key?'active':''}" data-key="${g.key}">${esc(g.label)} <span class="n">${g.count}</span></span>`;
+  });
+  $('chips').innerHTML = html;
+  $('chips').querySelectorAll('.chip').forEach(el => el.onclick = () => setFilter(el.dataset.key || null));
+}
+
+function renderRows(){
+  const q = query.toLowerCase();
+  const g = activeFilter ? groupByKey(activeFilter) : null;
+  const codes = g ? g.codes : null;
+  const vis = (DATA.vis||[]).filter(v => {
+    if (codes && !codes.includes(v.code)) return false;
+    if (!q) return true;
+    return (('#'+v.id) + ' ' + (v.text||'') + ' ' + (v.reason||'') + ' ' + (v.file||'')).toLowerCase().includes(q);
+  });
+  $('shown').textContent = `표시 ${vis.length} / ${(DATA.vis||[]).length}`;
+  $('rows').innerHTML = vis.map(v => {
+    let target = '—';
+    if (v.file) target = `<a class="file-link" href="#" onclick="openFile('${esc(v.file)}');return false;">${esc(v.file)}</a>`;
+    return `<tr>
+      <td class="id">#${v.id}</td>
+      <td>${esc(v.text)}</td>
+      <td><span class="badge ${esc(v.scls)}">${esc(v.slabel)}</span></td>
+      <td class="reason">${esc(v.reason)}</td>
+      <td>${target}</td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="5" class="empty">조건에 맞는 항목이 없습니다.</td></tr>`;
+}
+
+const openTabs = [];
+let activeTab = null;
+function openFile(name){
+  if (!(name in (DATA.files||{}))) return;
+  if (!openTabs.includes(name)) openTabs.push(name);
+  activeTab = name;
+  renderViewer();
+}
+function closeTab(name, ev){
+  ev.stopPropagation();
+  const i = openTabs.indexOf(name); if (i>=0) openTabs.splice(i,1);
+  if (activeTab === name) activeTab = openTabs[openTabs.length-1] || null;
+  renderViewer();
+}
+function renderViewer(){
+  $('tabs').innerHTML = openTabs.map(n =>
+    `<div class="tab ${n===activeTab?'active':''}" onclick="activeTab='${esc(n)}';renderViewer()">${esc(n)}
+       <span class="x" onclick="closeTab('${esc(n)}',event)">✕</span></div>`).join('');
+  if (!activeTab){ $('viewer').innerHTML = '<div class="empty">왼쪽 표에서 테스트 파일을 클릭하세요.</div>'; $('codeInfo').textContent=''; return; }
+  const code = DATA.files[activeTab] || '';
+  const lines = code.split('\n');
+  $('codeInfo').innerHTML = `${lines.length} lines &nbsp; <button class="btn" style="padding:3px 9px" onclick="copyCode()">⧉ 코드 복사</button>`;
+  $('viewer').innerHTML = '<pre class="code">' +
+    lines.map((ln,i)=>`<span class="ln">${i+1}</span>${esc(ln)}`).join('\n') + '</pre>';
+}
+function copyCode(){ if(activeTab) navigator.clipboard && navigator.clipboard.writeText(DATA.files[activeTab]||''); }
+
+function renderBestofn(){
+  const rows = DATA.bestofn || [];
+  if (!rows.length) return;
+  $('bestofnCard').style.display = '';
+  $('bestofnSub').textContent = '· BEST_BEHAVIORAL';
+  $('bestofnCount').textContent = `채택 ${rows.length} 건`;
+  $('bestofn').innerHTML = rows.map(r => {
+    const isBest = (r.label||'').includes('BEST') || r.label==='SELECTED';
+    return `<tr>
+      <td class="id">#${r.id}</td>
+      <td><a class="file-link" href="#" onclick="openFile('${esc(r.file)}');return false;">${esc(r.file)}</a></td>
+      <td><span class="badge ${isBest?'s-best':'s-tier'}">${esc(r.label)}</span></td>
+      <td class="reason">${esc(r.reason)}</td>
+    </tr>`;
+  }).join('');
+}
+
+let autoScroll = true;
+function renderTestLog(){
+  const log = DATA.test_log || '';
+  if (!log.trim()) return;
+  $('logCard').style.display = '';
+  $('testlog').innerHTML = log.split('\n').map(raw => {
+    let cls = '';
+    if (/\[FAILED\]/.test(raw) || raw.includes('❌') || raw.includes('🔴') || /(failed|build-fail):\s*[1-9]/.test(raw)) cls = 'lerr';
+    else if (/\[PASSED\]/.test(raw) || raw.includes('✅') || /passed:\s*[1-9]/.test(raw)) cls = 'lok';
+    else if (/^\s*(#|▶|\[Stage)/.test(raw)) cls = 'lstep';
+    const html = esc(raw).replace(/([\w./-]+\.c(?:pp)?)\b/g, '<span class="lfile">$1</span>');
+    return `<span class="${cls}">${html}</span>`;
+  }).join('\n');
+  if (autoScroll) $('testlog').scrollTop = $('testlog').scrollHeight;
+}
+function toggleAutoScroll(){
+  autoScroll = !autoScroll;
+  $('autoScrollBtn').textContent = '자동 스크롤 ' + (autoScroll ? 'ON' : 'OFF');
+  if (autoScroll) $('testlog').scrollTop = $('testlog').scrollHeight;
+}
+function exportMarkdown(){
+  const blob = new Blob([DATA.markdown||''], {type:'text/markdown;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'verification_report.md';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+renderMeta(); renderKPI(); renderChips(); renderRows(); renderBestofn(); renderTestLog();
+$('search').addEventListener('input', e => { query = e.target.value; renderRows(); });
+$('btnMd').addEventListener('click', exportMarkdown);
+</script>
+</body>
+</html>
