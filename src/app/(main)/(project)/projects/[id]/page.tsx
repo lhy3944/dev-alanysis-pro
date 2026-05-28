@@ -1,280 +1,268 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  ANALYSIS_TYPE_COLORS,
-  ANALYSIS_TYPE_LABELS,
-  LIFECYCLE_COLORS,
-  LIFECYCLE_LABELS,
-} from "@/constants/project";
-import { useProjectStore } from "@/stores/project-store";
-import {
-  Activity,
-  Box,
-  CheckCircle2,
-  FileText,
-  FlaskConical,
-  LayoutDashboard,
-  Users,
-  GitPullRequest,
-  Clock,
-} from "lucide-react";
-import Link from "next/link";
-import { usePanelStore } from "@/stores/panel-store";
+import { Download, Share2 } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { layoutMaxW } from "@/config/layout";
+import { usePanelStore } from "@/stores/panel-store";
+import { cn } from "@/lib/utils";
+import { CURRENT_USER } from "@/constants/review";
+import { ModuleTopologyCard } from "@/components/code-impact/ModuleTopologyCard";
+import { FindingsCard } from "@/components/code-impact/FindingsCard";
+import { AgentSummaryCard } from "@/components/dashboard/AgentSummaryCard";
+import { CommitSelector } from "@/components/dashboard/CommitSelector";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { PageToolbar } from "@/components/shared/PageToolbar";
+import { AssociatedRequirementsCard } from "@/components/requirement/AssociatedRequirementsCard";
+import { SystemTestListCard } from "@/components/system-test/SystemTestListCard";
+import { UnitTestListCard } from "@/components/unit-test/UnitTestListCard";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { codeImpactService } from "@/services/code-impact-service";
+import { commitService } from "@/services/commit-service";
+import { requirementService } from "@/services/requirement-service";
+import { systemTestService } from "@/services/system-test-service";
+import { unitTestService } from "@/services/unit-test-service";
+import type { CommitOption } from "@/types/commit";
+import type { CodeImpactReport } from "@/types/code-impact-report";
+import type { RequirementReport } from "@/types/requirement-report";
+import type { ReviewStatus } from "@/types/review";
+import type { SystemTestReport } from "@/types/system-test-report";
+import type { UnitTestReport } from "@/types/unit-test-report";
 
-export default function ProjectWorkspaceDashboard() {
-  const { currentProject, isLoading, error } = useProjectStore();
+export default function ProjectDashboardPage() {
+  const { id } = useParams<{ id: string }>();
   const fullWidthMode = usePanelStore((s) => s.fullWidthMode);
-  const leftSidebarOpen = usePanelStore((s) => s.leftSidebarOpen);
 
-  if (isLoading) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center p-8 text-center animate-pulse">
-        <LayoutDashboard className="text-fg-muted mb-4 size-10 animate-bounce" />
-        <h3 className="text-fg-primary text-md font-semibold">
-          워크스페이스 정보를 불러오는 중입니다...
-        </h3>
-      </div>
-    );
-  }
+  const [commits, setCommits] = useState<CommitOption[]>([]);
+  const [commitId, setCommitId] = useState<string>();
+  const [codeImpact, setCodeImpact] = useState<CodeImpactReport>();
+  const [requirement, setRequirement] = useState<RequirementReport>();
+  const [unitTest, setUnitTest] = useState<UnitTestReport>();
+  const [systemTest, setSystemTest] = useState<SystemTestReport>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>();
 
-  if (error || !currentProject) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-        <div className="bg-canvas-surface mb-4 flex size-16 items-center justify-center rounded-full border border-dashed border-red-500/50">
-          <Box className="size-6 text-red-500" />
-        </div>
-        <h2 className="text-fg-primary text-lg font-medium">
-          워크스페이스 정보를 불러올 수 없습니다
-        </h2>
-        <p className="text-fg-secondary mt-1 text-sm max-w-md">
-          {error || "선택된 프로젝트가 존재하지 않거나 올바르지 않은 식별자입니다."}
-        </p>
-        <Button variant="outline" className="mt-4" asChild>
-          <Link href="/my-projects">프로젝트 목록으로 이동</Link>
-        </Button>
-      </div>
-    );
-  }
+  // 1) 커밋 목록 로딩 + 첫 커밋 자동 선택
+  useEffect(() => {
+    let cancelled = false;
+    commitService
+      .list(id)
+      .then((list) => {
+        if (cancelled) return;
+        setCommits(list);
+        if (list.length > 0) {
+          setCommitId((prev) => prev ?? list[0].commit_id);
+        } else {
+          setIsLoading(false);
+        }
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : "커밋 목록 로딩 실패");
+        setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
-  const contentHalfWidth = fullWidthMode ? "1080px" : "576px";
+  // 2) commit 변경시 4개 에이전트 결과 병렬 로딩
+  useEffect(() => {
+    if (!commitId) return;
+    let cancelled = false;
+    Promise.all([
+      codeImpactService.get(id, commitId),
+      requirementService.get(id, commitId),
+      unitTestService.get(id, commitId),
+      systemTestService.get(id, commitId),
+    ])
+      .then(([ci, rq, ut, st]) => {
+        if (cancelled) return;
+        setCodeImpact(ci);
+        setRequirement(rq);
+        setUnitTest(ut);
+        setSystemTest(st);
+      })
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : "분석 결과 로딩 실패");
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, commitId]);
+
+  const handleCommitChange = useCallback((next: string) => {
+    setCommitId((prev) => {
+      if (prev === next) return prev;
+      setIsLoading(true);
+      return next;
+    });
+  }, []);
+
+  const handleReviewChange = useCallback(
+    async (findingId: string, next: ReviewStatus) => {
+      if (!commitId) return;
+      // optimistic update
+      setCodeImpact((prev) =>
+        prev
+          ? {
+              ...prev,
+              findings: prev.findings.map((f) =>
+                f.id === findingId
+                  ? {
+                      ...f,
+                      review: {
+                        status: next,
+                        reviewer: next === "pending" ? null : CURRENT_USER,
+                        reviewed_at:
+                          next === "pending" ? null : new Date().toISOString(),
+                      },
+                    }
+                  : f,
+              ),
+            }
+          : prev,
+      );
+      try {
+        await codeImpactService.updateReview(id, commitId, findingId, next);
+      } catch {
+        // 실패시 서버 상태로 재동기화
+        const fresh = await codeImpactService.get(id, commitId);
+        setCodeImpact(fresh);
+      }
+    },
+    [id, commitId],
+  );
+
+  const currentCommit = commits.find((c) => c.commit_id === commitId);
 
   return (
     <div className="h-full overflow-y-auto">
+      <PageToolbar
+        maxWidthClassName={layoutMaxW(fullWidthMode)}
+        left={
+          <CommitSelector
+            value={commitId}
+            options={commits}
+            onChange={handleCommitChange}
+          />
+        }
+        right={
+          <>
+            <Button variant="outline" size="sm">
+              <Download className="size-4" />
+              Export Markdown
+            </Button>
+            <Button size="sm">
+              <Share2 className="size-4" />
+              Share Report
+            </Button>
+          </>
+        }
+      />
       <div
         className={cn(
-          "transition-[max-width,margin] duration-300 ease-in-out px-6 py-6",
+          "mx-auto px-6 pb-6 transition-[max-width] duration-300 ease-in-out",
           layoutMaxW(fullWidthMode),
         )}
-        style={{
-          "--sidebar-width": leftSidebarOpen ? "220px" : "60px",
-          marginLeft: `max(0px, calc(50vw - ${contentHalfWidth} - var(--sidebar-width)))`,
-          marginRight: "auto",
-        } as React.CSSProperties}
       >
-        {/* Welcome Header */}
-        <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center border-b border-line-primary pb-6">
-          <div>
-            <span className="text-accent-primary text-sm font-bold uppercase tracking-wider">
-              Project Workspace Dashboard
-            </span>
-            <h1 className="text-fg-primary text-2xl font-bold mt-1">
-              {currentProject.name}
-            </h1>
-            <p className="text-fg-secondary text-sm mt-1">
-              프로젝트 품질 분석 상태와 핵심 모듈 현황을 한눈에 모니터링합니다.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="ghost"
-              className={cn(
-                LIFECYCLE_COLORS[currentProject.lifecycle_status],
-                "px-3 py-1 text-sm",
-              )}
-            >
-              {LIFECYCLE_LABELS[currentProject.lifecycle_status]}
-            </Badge>
-            <Badge
-              variant="ghost"
-              className={cn(
-                ANALYSIS_TYPE_COLORS[currentProject.analysis_type],
-                "px-3 py-1 text-sm",
-              )}
-            >
-              {ANALYSIS_TYPE_LABELS[currentProject.analysis_type]}
-            </Badge>
-          </div>
-        </div>
+        <DashboardHeader
+          status={codeImpact ? "complete" : "running"}
+          analyzedAtLabel={
+            currentCommit ? formatDateTime(currentCommit.created_at) : "—"
+          }
+          branch={currentCommit?.branch ?? "—"}
+        />
 
-        {/* Description & Overview Grid */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* Main description */}
-          <div className="md:col-span-2 border-line-primary bg-canvas-surface rounded-lg border p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-fg-primary font-semibold text-sm mb-2.5">프로젝트 소개</h3>
-              <p className="text-fg-secondary text-sm leading-relaxed whitespace-pre-line">
-                {currentProject.description || "이 프로젝트에 대한 세부 설명이 아직 등록되지 않았습니다."}
-              </p>
-            </div>
-            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-dotted border-line-primary pt-5 text-sm text-fg-muted">
-              <span className="flex items-center gap-1.5">
-                <Clock className="size-4" />
-                업데이트: {new Date(currentProject.updated_at).toLocaleString()}
-              </span>
-              <span className="flex items-center gap-1.5 justify-end">
-                <Users className="size-4" />
-                참여 멤버: {currentProject.member_count}명
-              </span>
-            </div>
+        {error && (
+          <div className="border-destructive/40 bg-destructive-soft text-destructive-fg mb-4 rounded-lg border px-4 py-3 text-sm">
+            {error}
           </div>
+        )}
 
-          {/* Info card */}
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-6">
-            <h3 className="text-fg-primary font-semibold text-sm mb-4">프로젝트 정보 요약</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between py-1 border-b border-line-subtle">
-                <span className="text-fg-muted text-sm">Domain</span>
-                <span className="text-fg-primary font-medium">{currentProject.domain || "N/A"}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-line-subtle">
-                <span className="text-fg-muted text-sm">Product Type</span>
-                <span className="text-fg-primary font-medium">{currentProject.product_type || "N/A"}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-line-subtle">
-                <span className="text-fg-muted text-sm">Analysis Target</span>
-                <span className="text-fg-primary font-medium">{currentProject.analysis_type}</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-fg-muted text-sm">Status</span>
-                <span className="text-fg-primary font-medium capitalize">{currentProject.status}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {isLoading ||
+        !codeImpact ||
+        !requirement ||
+        !unitTest ||
+        !systemTest ? (
+          <LoadingGrid />
+        ) : (
+          <div className="grid grid-cols-12 items-start gap-4">
+            <ModuleTopologyCard
+              className="col-span-12 lg:col-span-7"
+              topology={codeImpact.topology}
+              projectId={id}
+              commitId={commitId}
+            />
+            <FindingsCard
+              className="col-span-12 lg:col-span-5"
+              findings={codeImpact.findings}
+              projectId={id}
+              commitId={commitId}
+              onChangeStatus={handleReviewChange}
+            />
 
-        {/* Module Overview Section */}
-        <h2 className="text-fg-primary text-base font-semibold mt-8 mb-4">활성화된 품질 분석 모듈</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {/* Module: Requirement */}
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-5 flex flex-col justify-between hover:border-accent-primary/40 transition-colors">
-            <div>
-              <div className="flex items-center gap-2.5 mb-3.5">
-                <div className="bg-blue-500/10 text-blue-500 size-8 rounded-md flex items-center justify-center">
-                  <FileText className="size-4" />
-                </div>
-                <h3 className="text-fg-primary font-semibold text-sm">요구사항 분석</h3>
-              </div>
-              <p className="text-fg-muted text-sm mb-4 leading-relaxed">
-                업로드된 명세서로부터 요구사항 문장을 정밀 분석 및 정제하여 정적 자산화합니다.
-              </p>
-            </div>
-            <div className="flex items-center justify-between border-t border-line-subtle pt-4 mt-auto">
-              {currentProject.modules.includes("requirements") ? (
-                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 border-none text-[10px]">
-                  <CheckCircle2 className="size-3 mr-1" /> 활성화됨
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="text-fg-muted text-[10px]">
-                  비활성화
-                </Badge>
-              )}
-              <Button variant="ghost" size="sm" className="text-sm text-accent-primary hover:text-accent-primary/80" asChild>
-                <Link href={`/projects/${currentProject.project_id}/requirement`}>이동</Link>
-              </Button>
-            </div>
-          </div>
+            <AssociatedRequirementsCard
+              className="col-span-12"
+              data={requirement}
+              projectId={id}
+              commitId={commitId}
+            />
 
-          {/* Module: Design */}
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-5 flex flex-col justify-between hover:border-accent-primary/40 transition-colors">
-            <div>
-              <div className="flex items-center gap-2.5 mb-3.5">
-                <div className="bg-purple-500/10 text-purple-500 size-8 rounded-md flex items-center justify-center">
-                  <Activity className="size-4" />
-                </div>
-                <h3 className="text-fg-primary font-semibold text-sm">아키텍처 설계</h3>
-              </div>
-              <p className="text-fg-muted text-sm mb-4 leading-relaxed">
-                정제된 요구사항 모델을 기반으로 시스템 상세 아키텍처 및 관계 다이어그램을 추적 설계합니다.
-              </p>
-            </div>
-            <div className="flex items-center justify-between border-t border-line-subtle pt-4 mt-auto">
-              {currentProject.modules.includes("design") ? (
-                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 border-none text-[10px]">
-                  <CheckCircle2 className="size-3 mr-1" /> 활성화됨
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="text-fg-muted text-[10px]">
-                  비활성화
-                </Badge>
-              )}
-              <Button variant="ghost" size="sm" className="text-sm text-accent-primary hover:text-accent-primary/80" asChild>
-                <Link href={`/projects/${currentProject.project_id}/code-impact`}>이동</Link>
-              </Button>
-            </div>
-          </div>
+            <AgentSummaryCard
+              className="col-span-12"
+              metrics={[
+                codeImpact.score,
+                requirement.score,
+                systemTest.score,
+                unitTest.score,
+              ]}
+              advisory={codeImpact.advisory}
+            />
 
-          {/* Module: Testcase */}
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-5 flex flex-col justify-between hover:border-accent-primary/40 transition-colors">
-            <div>
-              <div className="flex items-center gap-2.5 mb-3.5">
-                <div className="bg-amber-500/10 text-amber-500 size-8 rounded-md flex items-center justify-center">
-                  <FlaskConical className="size-4" />
-                </div>
-                <h3 className="text-fg-primary font-semibold text-sm">자동 테스트 생성</h3>
-              </div>
-              <p className="text-fg-muted text-sm mb-4 leading-relaxed">
-                설계 데이터와 코드 라인 분석 결과를 통합하여 정밀 단위 테스트 및 시나리오 테스트를 생성합니다.
-              </p>
-            </div>
-            <div className="flex items-center justify-between border-t border-line-subtle pt-4 mt-auto">
-              {currentProject.modules.includes("testcase") ? (
-                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 border-none text-[10px]">
-                  <CheckCircle2 className="size-3 mr-1" /> 활성화됨
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="text-fg-muted text-[10px]">
-                  비활성화
-                </Badge>
-              )}
-              <Button variant="ghost" size="sm" className="text-sm text-accent-primary hover:text-accent-primary/80" asChild>
-                <Link href={`/projects/${currentProject.project_id}/unit-test`}>이동</Link>
-              </Button>
-            </div>
+            <UnitTestListCard
+              className="col-span-12 lg:col-span-6"
+              data={unitTest}
+              projectId={id}
+              commitId={commitId}
+            />
+            <SystemTestListCard
+              className="col-span-12 lg:col-span-6"
+              data={systemTest}
+              projectId={id}
+              commitId={commitId}
+            />
           </div>
-        </div>
-
-        {/* Mock Analytics Section */}
-        <h2 className="text-fg-primary text-base font-semibold mt-8 mb-4">프로젝트 분석 통계 (Mock)</h2>
-        <div className="grid gap-4 sm:grid-cols-4">
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-4 text-center">
-            <span className="text-fg-muted text-sm font-medium">분석된 파일 개수</span>
-            <div className="text-fg-primary text-xl font-bold mt-1">124개</div>
-          </div>
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-4 text-center">
-            <span className="text-fg-muted text-sm font-medium">정제 완료 요구사항</span>
-            <div className="text-fg-primary text-xl font-bold mt-1">42개</div>
-          </div>
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-4 text-center">
-            <span className="text-fg-muted text-sm font-medium">생성된 테스트 커버리지</span>
-            <div className="text-fg-primary text-xl font-bold mt-1">84.2%</div>
-          </div>
-          <div className="border-line-primary bg-canvas-surface rounded-lg border p-4 text-center">
-            <span className="text-fg-muted text-sm font-medium">열린 PR 코드 영향도</span>
-            <div className="text-fg-primary text-xl font-bold mt-1 flex items-center justify-center gap-1">
-              <GitPullRequest className="size-4 text-accent-primary" />
-              3건
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
-// Inline helper for classnames
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(" ");
+function LoadingGrid() {
+  return (
+    <div className="grid grid-cols-12 gap-4">
+      <Skeleton className="col-span-12 h-[380px] lg:col-span-7" />
+      <Skeleton className="col-span-12 h-[380px] lg:col-span-5" />
+      <Skeleton className="col-span-12 h-[180px]" />
+      <Skeleton className="col-span-12 h-[140px]" />
+      <Skeleton className="col-span-12 h-[320px] lg:col-span-6" />
+      <Skeleton className="col-span-12 h-[320px] lg:col-span-6" />
+    </div>
+  );
+}
+
+function formatDateTime(iso: string): string {
+  const d = new Date(iso);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${yyyy}.${mm}.${dd} ${hh}:${mi}`;
 }

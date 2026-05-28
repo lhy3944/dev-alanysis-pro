@@ -21,7 +21,7 @@ export default function AdminLayout({
     <div className="flex flex-1 overflow-hidden">
       <div
         className={cn(
-          "shrink-0 overflow-hidden border-r border-line-primary bg-canvas-secondary transition-[width] duration-300 ease-in-out",
+          "shrink-0 overflow-hidden border-r border-line-primary bg-canvas-surface transition-[width] duration-300 ease-in-out",
           leftSidebarOpen ? "w-[220px]" : "w-[60px]",
         )}
       >

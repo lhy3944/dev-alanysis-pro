@@ -46,7 +46,7 @@ export function ProjectWorkspaceLeftPanel() {
     const checkTruncation = () => {
       if (textRef.current) {
         setIsTruncated(
-          textRef.current.scrollWidth > textRef.current.clientWidth
+          textRef.current.scrollWidth > textRef.current.clientWidth,
         );
       }
     };
@@ -119,7 +119,7 @@ export function ProjectWorkspaceLeftPanel() {
               {/* Project info wrapped in a border box */}
               {currentProject && (
                 <div className="px-3 py-2">
-                  <div className="border border-line-subtle rounded-lg p-3 bg-canvas-surface-2/20 flex flex-col gap-2.5">
+                  <div className="border border-line-subtle rounded-lg p-3 bg-canvas-primary flex flex-col gap-2.5">
                     {/* Row 1: Box icon + Project Name */}
                     <div className="flex items-center gap-2">
                       <Box className="size-4 text-icon-default shrink-0" />
@@ -133,7 +133,10 @@ export function ProjectWorkspaceLeftPanel() {
                               {currentProject.name}
                             </h2>
                           </TooltipTrigger>
-                          <TooltipContent side="top" className="max-w-[200px] break-all">
+                          <TooltipContent
+                            side="top"
+                            className="max-w-[200px] break-all"
+                          >
                             {currentProject.name}
                           </TooltipContent>
                         </Tooltip>
@@ -173,12 +176,12 @@ export function ProjectWorkspaceLeftPanel() {
                       className={cn(
                         "group relative flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-normal transition-colors rounded-none",
                         active
-                          ? "bg-canvas-surface-2 text-fg-primary"
-                          : "text-fg-secondary hover:bg-canvas-surface-2 hover:text-fg-primary",
+                          ? "bg-canvas-surface-3 text-fg-primary"
+                          : "text-fg-secondary hover:bg-canvas-surface-3 hover:text-fg-primary",
                       )}
                     >
                       {active && (
-                        <div className="absolute top-0 left-0 h-full w-[3px] bg-white" />
+                        <div className="absolute top-0 left-0 h-full w-[3px] bg-brand-primary-hover dark:bg-fg-primary" />
                       )}
                       <Icon
                         className={cn(
@@ -279,13 +282,13 @@ export function ProjectWorkspaceLeftPanel() {
                           className={cn(
                             "group relative flex w-full items-center justify-center py-2.5 transition-colors rounded-none",
                             active
-                              ? "bg-canvas-surface-2 text-fg-primary"
-                              : "text-fg-secondary hover:bg-canvas-surface-2 hover:text-fg-primary",
+                              ? "bg-canvas-surface-3 text-fg-primary"
+                              : "text-fg-secondary hover:bg-canvas-surface-3 hover:text-fg-primary",
                           )}
                           aria-label={item.label}
                         >
                           {active && (
-                            <div className="absolute top-0 left-0 h-full w-[3px] bg-white" />
+                            <div className="absolute top-0 left-0 h-full w-[3px] bg-brand-primary-hover dark:bg-fg-primary" />
                           )}
                           <Icon
                             className={cn(

@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { AppsDropdown } from '@/components/overlay/AppsDropdown';
-import { LabsDialog, LabsTrigger } from '@/components/overlay/LabsDialog';
-import { Logo } from '@/components/shared/Logo';
-import { ThemeToggle } from '@/components/shared/ThemeToggle';
-import { SettingsDialog } from '@/components/overlay/SettingsDialog';
-import { Button } from '@/components/ui/button';
+import { AppsDropdown } from "@/components/overlay/AppsDropdown";
+import { LabsDialog, LabsTrigger } from "@/components/overlay/LabsDialog";
+import { Logo } from "@/components/shared/Logo";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { SettingsDialog } from "@/components/overlay/SettingsDialog";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 import {
   Drawer,
   DrawerContent,
@@ -18,14 +18,14 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer';
-import { headerTabsConfig, SIDEBAR_ACTIONS } from '@/config/navigation';
-import { cn } from '@/lib/utils';
-import { Menu } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+} from "@/components/ui/drawer";
+import { headerTabsConfig, SIDEBAR_ACTIONS } from "@/config/navigation";
+import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export function MobileMenu() {
   const pathname = usePathname();
@@ -39,12 +39,12 @@ export function MobileMenu() {
     settings: () => setSettingsOpen(true),
   };
 
-  const BOTTOM_ICONS = SIDEBAR_ACTIONS
-    .filter((action) => action.id !== 'project')
-    .map((action) => ({
-      ...action,
-      onClick: actionHandlers[action.id] ?? (() => {}),
-    }));
+  const BOTTOM_ICONS = SIDEBAR_ACTIONS.filter(
+    (action) => action.id !== "project",
+  ).map((action) => ({
+    ...action,
+    onClick: actionHandlers[action.id] ?? (() => {}),
+  }));
 
   return (
     <>
@@ -81,14 +81,14 @@ export function MobileMenu() {
                   href={tab.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'flex items-center gap-3 px-6 py-4 text-sm font-medium transition-colors hover:bg-canvas-secondary hover:text-fg-primary',
+                    "flex items-center gap-3 px-6 py-4 text-sm font-medium transition-colors hover:bg-canvas-secondary hover:text-fg-primary",
                     isActive
-                      ? 'bg-canvas-surface text-accent-primary border-r-4 border-accent-primary'
-                      : 'text-fg-secondary',
+                      ? "bg-canvas-surface text-accent-primary border-r-4 border-brand-primary-hover dark:border-fg-primary"
+                      : "text-fg-secondary",
                   )}
                 >
                   <tab.icon
-                    className={cn('h-5 w-5', isActive && 'text-accent-primary')}
+                    className={cn("h-5 w-5", isActive && "text-accent-primary")}
                   />
                   {tab.label}
                 </Link>
@@ -117,9 +117,9 @@ export function MobileMenu() {
               <AppsDropdown contentClassName="fixed bottom-20 left-4 right-4 !w-auto origin-bottom" />
               <LabsTrigger onClick={() => setLabsOpen(true)} />
               <ThemeToggle
-                checked={resolvedTheme === 'dark'}
+                checked={resolvedTheme === "dark"}
                 onCheckedChange={() =>
-                  setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+                  setTheme(resolvedTheme === "dark" ? "light" : "dark")
                 }
               />
             </div>

@@ -1,7 +1,5 @@
 "use client";
 
-import { LogOut, Settings, User } from "lucide-react";
-import { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -11,6 +9,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LogOut, Settings, User } from "lucide-react";
+import { useState } from "react";
 
 interface ProfileDropdownProps {
   onSettingsOpen: () => void;
@@ -27,7 +27,7 @@ export function ProfileDropdown({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button>
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 rounded-none">
             <AvatarFallback className="bg-canvas-surface-2 text-fg-primary text-sm font-medium">
               A
             </AvatarFallback>
@@ -36,7 +36,7 @@ export function ProfileDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[280px]" align="end" sideOffset={8}>
         <DropdownMenuLabel className="flex items-center gap-3 p-3">
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-10 w-10 rounded-none">
             <AvatarFallback className="bg-canvas-surface-2 text-fg-primary font-medium">
               A
             </AvatarFallback>
