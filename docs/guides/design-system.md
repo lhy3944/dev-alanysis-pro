@@ -27,6 +27,9 @@
 5. **상태 뱃지는 항상 pill (`rounded-full`)** + 색조 soft bg + 600-weight fg. → [StatusBadge](../../src/components/ui/status-badge.tsx) 사용.
 6. **한국어 우선, 영문은 기술 레이어.** 본문은 `-한다 / -할 수 있다` 평서체, 버튼/명사는 영문 그대로 (`Export Logs`, `+ Add Admin`), 섹션 헤더는 종종 양국어 병기 (`영향받는 모듈 관계도 (Module Topology)`).
 7. **아이콘은 lucide 스트로크.** 채움 변형(`fill="currentColor"`)은 알림 닷·layout-toggle active 두 군데만.
+8. **색은 강조 채널이지 라벨 채널이 아니다.** (정체성 (역할, 언어, 카테고리) → 색 (palette: amber/emerald/red/blue/cyan/indigo/orange/purple/teal) 상태 (완료, 진행, 실패) → 최대 2색 + neutral (emerald = 완료, red = 실패, 나머지는 무채색) 액션 강조 (선택됨, 호버) → black/white (canvas accent — 룰 #2)) 
+카드 한 개당 색 신호 ≤ 2개. 같은 정보를 두 채널(bar + badge)로 색 코딩하지 않는다.
+
 
 ## 토큰 사용
 

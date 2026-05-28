@@ -37,14 +37,12 @@ export function PageToolbar({
     >
       <div
         className={cn(
-          "mx-auto flex flex-wrap items-end justify-between gap-3 px-6 py-3 transition-[max-width] duration-300 ease-in-out",
+          "mx-auto flex flex-nowrap items-end justify-between gap-3 px-6 py-3 transition-[max-width] duration-300 ease-in-out",
           maxWidthClassName,
         )}
       >
-        <div className="flex flex-wrap items-end gap-2">{left}</div>
-        <div className="flex flex-wrap items-center gap-2 self-end">
-          {right}
-        </div>
+        <div className="flex min-w-0 flex-1 items-end gap-2">{left}</div>
+        <div className="flex shrink-0 items-center gap-2 self-end">{right}</div>
       </div>
     </div>
   );

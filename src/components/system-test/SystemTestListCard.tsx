@@ -90,7 +90,7 @@ function SystemTestRow({ testCase }: { testCase: SystemTestCase }) {
           {testCase.sub}
         </p>
       </div>
-      <Icon className={cn("size-4 shrink-0", className)} />
+      <Icon className={cn("size-6 shrink-0", className)} aria-hidden />
     </li>
   );
 }

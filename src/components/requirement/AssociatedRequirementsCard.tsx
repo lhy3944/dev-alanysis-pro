@@ -74,8 +74,12 @@ export function AssociatedRequirementsCard({
 
 function LinkRow({ link }: { link: RequirementLink }) {
   return (
-    <div className="bg-canvas-surface-2 border-line-subtle flex flex-col gap-0.5 rounded-md border px-2.5 py-2">
-      <span className="text-fg-primary font-mono text-[11px] font-semibold">
+    <div
+      className="bg-canvas-surface-2 border-line-subtle hover:border-line-strong hover:bg-canvas-surface-3 group flex cursor-pointer flex-col gap-0.5 rounded-md border px-2.5 py-2 transition-colors"
+      role="link"
+      tabIndex={0}
+    >
+      <span className="text-fg-primary group-hover:text-fg-primary text-[11px] font-semibold">
         {link.code}
       </span>
       <span className="text-fg-secondary text-[12px] leading-snug">

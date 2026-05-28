@@ -5,7 +5,7 @@ const MOCK_COMMITS: CommitOption[] = [
   {
     commit_id: "9f6ed7b",
     revision_id: "rev-9f6ed7b",
-    label: "9f6ed7b - Merge branch 'filtering-vali...'",
+    label: "9f6ed7b - Merge branch 'filtering-vali...",
     branch: "feature/auth-refactor",
     author: "Kim Dev",
     created_at: "2023-11-24T14:30:00Z",

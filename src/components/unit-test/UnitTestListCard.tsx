@@ -27,12 +27,6 @@ const STATUS_LABEL: Record<TestCaseStatus, string> = {
   skipped: "SKIPPED",
 };
 
-const STATUS_DOT: Record<TestCaseStatus, string> = {
-  passed: "bg-status-emerald-fg",
-  failed: "bg-status-red-fg",
-  skipped: "bg-fg-muted",
-};
-
 const STATUS_TEXT: Record<TestCaseStatus, string> = {
   passed: "text-status-emerald-fg",
   failed: "text-status-red-fg",
@@ -49,11 +43,9 @@ export function UnitTestListCard({
     () => [
       {
         accessorKey: "name",
-        header: "TEST CASE NAME",
+        header: "TEST CASE",
         cell: ({ getValue }) => (
-          <span className="text-fg-primary font-mono">
-            {getValue<string>()}
-          </span>
+          <span className="text-fg-primary">{getValue<string>()}</span>
         ),
       },
       {
@@ -62,19 +54,8 @@ export function UnitTestListCard({
         cell: ({ getValue }) => {
           const s = getValue<TestCaseStatus>();
           return (
-            <span className="inline-flex items-center gap-1.5">
-              <span
-                className={cn("h-1.5 w-1.5 rounded-full", STATUS_DOT[s])}
-                aria-hidden
-              />
-              <span
-                className={cn(
-                  "text-[11px] font-semibold",
-                  STATUS_TEXT[s],
-                )}
-              >
-                {STATUS_LABEL[s]}
-              </span>
+            <span className={cn("text-[11px] font-semibold", STATUS_TEXT[s])}>
+              {STATUS_LABEL[s]}
             </span>
           );
         },
@@ -85,7 +66,7 @@ export function UnitTestListCard({
         cell: ({ getValue }) => {
           const v = getValue<number | null>();
           return (
-            <div className="text-fg-secondary text-right font-mono">
+            <div className="text-fg-secondary text-right tabular-nums">
               {v != null ? `${v}ms` : "—"}
             </div>
           );

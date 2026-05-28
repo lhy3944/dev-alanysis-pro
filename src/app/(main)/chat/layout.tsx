@@ -1,11 +1,12 @@
 "use client";
 
 import { LeftSidebar } from "@/components/layout/LeftSidebar";
-import { MobileBottomDrawer } from "@/components/layout/MobileBottomDrawer";
+import { MobileLeftPanelTrigger } from "@/components/layout/MobileLeftPanelTrigger";
 import { MobileRightDrawer } from "@/components/layout/MobileRightDrawer";
 import { NotificationPanel } from "@/components/layout/NotificationPanel";
 import { PanelToggleBar } from "@/components/layout/PanelToggleBar";
 import { ResizeHandle } from "@/components/layout/ResizeHandle";
+import { ResponsiveLeftPanelHost } from "@/components/layout/ResponsiveLeftPanelHost";
 import { RightPanel } from "@/components/layout/RightPanel";
 import { useResponsivePanel } from "@/hooks/useMediaQuery";
 import { useResize } from "@/hooks/useResize";
@@ -20,58 +21,31 @@ export default function ChatLayout({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const { onPointerDown, isResizing } = useResize(
-    containerRef,
-    panelRef,
-    sidebarRef,
-  );
+  const { onPointerDown, isResizing } = useResize(containerRef, panelRef);
 
-  const leftSidebarOpen = usePanelStore((s) => s.leftSidebarOpen);
   const rightPanelOpen = usePanelStore((s) => s.rightPanelOpen);
   const rightPanelWidth = usePanelStore((s) => s.rightPanelWidth);
-  const isMobile = usePanelStore((s) => s.isMobile);
 
   useResponsivePanel();
 
-  const showLeftPanel = !isMobile;
-  const showSidebar = leftSidebarOpen && !isMobile;
   const showRightPanel = rightPanelOpen;
 
   return (
     <div className="flex flex-1 flex-col">
-      <div ref={containerRef} className="flex flex-1 overflow-hidden">
-        {/* Mobile sidebar buttons */}
-        {isMobile && (
-          <div className="absolute top-[calc(var(--spacing)*15+1px)] left-2 z-40">
-            <MobileBottomDrawer />
-          </div>
-        )}
-
-        {/* LeftSidebar */}
-        <div
-          ref={sidebarRef}
-          className={cn(
-            "shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out",
-            "max-md:w-0!",
-            !showLeftPanel ? "w-0" : showSidebar ? "w-[220px]" : "w-15",
-          )}
-          aria-hidden={!showLeftPanel}
-        >
-          <LeftSidebar />
-        </div>
-
-        {/* Sidebar divider */}
-        <div
-          className={cn(
-            "h-full w-px shrink-0 bg-line-primary transition-opacity duration-300",
-            showSidebar ? "opacity-100" : "opacity-0",
-          )}
+      <div
+        ref={containerRef}
+        className="relative flex flex-1 overflow-hidden"
+      >
+        <ResponsiveLeftPanelHost
+          label="대화 목록"
+          render={(state) => <LeftSidebar state={state} />}
+          className="border-r-0"
         />
 
         {/* Content area */}
         <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
           <div className="flex shrink-0 items-center justify-end px-2 py-1.5 sm:px-4">
+            <MobileLeftPanelTrigger className="mr-auto" />
             <div className="flex items-center gap-1">
               <PanelToggleBar />
               <MobileRightDrawer />

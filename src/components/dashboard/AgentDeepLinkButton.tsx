@@ -36,7 +36,7 @@ export function AgentDeepLinkButton({
       variant="ghost"
       size="xs"
       className={cn(
-        "text-fg-muted hover:text-fg-primary -mr-1.5 px-1.5",
+        "text-fg-muted hover:text-fg-primary hover:bg-transparent dark:hover:bg-transparent -mr-1.5 px-1.5 font-medium transition-colors",
         className,
       )}
     >

@@ -25,7 +25,9 @@ type StatusTone =
   | "teal"
   | "neutral";
 
-const TONE_CLASSES: Record<StatusTone, string> = {
+type StatusVariant = "soft" | "outline";
+
+const SOFT_TONE_CLASSES: Record<StatusTone, string> = {
   amber: "bg-status-amber-bg text-status-amber-fg",
   emerald: "bg-status-emerald-bg text-status-emerald-fg",
   red: "bg-status-red-bg text-status-red-fg",
@@ -38,8 +40,26 @@ const TONE_CLASSES: Record<StatusTone, string> = {
   neutral: "bg-canvas-surface-2 text-fg-secondary",
 };
 
+const OUTLINE_TONE_CLASSES: Record<StatusTone, string> = {
+  amber: "border border-status-amber-fg/50 text-status-amber-fg",
+  emerald: "border border-status-emerald-fg/50 text-status-emerald-fg",
+  red: "border border-status-red-fg/50 text-status-red-fg",
+  blue: "border border-status-blue-fg/50 text-status-blue-fg",
+  cyan: "border border-status-cyan-fg/50 text-status-cyan-fg",
+  indigo: "border border-status-indigo-fg/50 text-status-indigo-fg",
+  orange: "border border-status-orange-fg/50 text-status-orange-fg",
+  purple: "border border-status-purple-fg/50 text-status-purple-fg",
+  teal: "border border-status-teal-fg/50 text-status-teal-fg",
+  neutral: "border border-line-strong text-fg-secondary",
+};
+
 interface StatusBadgeProps extends React.ComponentProps<"span"> {
   tone?: StatusTone;
+  /**
+   * - `soft` (default): 색조 soft bg + fg
+   * - `outline`: 투명 bg + 색조 border + fg — 화면이 색조 카드와 경쟁할 때
+   */
+  variant?: StatusVariant;
   /** Show a 6px leading dot in the fg color. */
   dot?: boolean;
   label: React.ReactNode;
@@ -47,16 +67,21 @@ interface StatusBadgeProps extends React.ComponentProps<"span"> {
 
 export function StatusBadge({
   tone = "neutral",
+  variant = "soft",
   dot = false,
   label,
   className,
   ...rest
 }: StatusBadgeProps) {
+  const toneClass =
+    variant === "outline"
+      ? OUTLINE_TONE_CLASSES[tone]
+      : SOFT_TONE_CLASSES[tone];
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold leading-none whitespace-nowrap",
-        TONE_CLASSES[tone],
+        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none whitespace-nowrap",
+        toneClass,
         className,
       )}
       {...rest}

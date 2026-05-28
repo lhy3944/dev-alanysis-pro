@@ -40,7 +40,10 @@ export function ModuleTopologyCard({
       bodyClassName="p-3"
     >
       <div className="min-h-0 w-full flex-1">
-        <PanZoomViewer ariaLabel="영향받는 모듈 관계도">
+        <PanZoomViewer
+          ariaLabel="영향받는 모듈 관계도"
+          expandedTitle="영향받는 모듈 관계도 (Module Topology)"
+        >
           {topology.asset_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

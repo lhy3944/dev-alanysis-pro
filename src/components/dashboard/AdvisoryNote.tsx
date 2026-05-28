@@ -10,11 +10,11 @@ export function AdvisoryNote({ children, className }: AdvisoryNoteProps) {
   return (
     <aside
       className={cn(
-        "bg-info-soft border-info/30 flex items-start gap-3 rounded-lg border px-4 py-3",
+        "bg-canvas-surface border-line-subtle flex items-start gap-3 rounded-lg border px-4 py-3",
         className,
       )}
     >
-      <Lightbulb className="text-info mt-0.5 size-4 shrink-0" />
+      <Lightbulb className="text-fg-muted mt-0.5 size-4 shrink-0" aria-hidden />
       <p className="text-fg-secondary text-[13px] leading-relaxed">
         {children}
       </p>

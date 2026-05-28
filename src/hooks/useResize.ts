@@ -141,7 +141,6 @@ function enforceMinChat(
 export function useResize(
   containerRef: React.RefObject<HTMLElement | null>,
   panelRef: React.RefObject<HTMLElement | null>,
-  sidebarRef: React.RefObject<HTMLElement | null>,
 ) {
   const [isResizing, setIsResizing] = useState(false);
   const isDragging = useRef(false);
@@ -149,11 +148,20 @@ export function useResize(
   const dragStartX = useRef(0);
   const prevSnapMode = useRef<LayoutMode>(LayoutMode.CUSTOM);
 
-  /** 사이드바 실제 폭 — DOM 직접 측정 */
-  const getSidebarPx = useCallback(
-    () => sidebarRef.current?.getBoundingClientRect().width ?? 0,
-    [sidebarRef],
-  );
+  /**
+   * 사이드바 폭 — store 의 viewport/sidebar 상태 기반으로 결정.
+   * (이전엔 DOM ref 로 측정했지만 host 가 모드에 따라 다른 위치에 렌더해 측정이
+   * 불안정해서 store 기반으로 통일.)
+   * - mobile: 0 (sheet drawer, flex 영역 비점유)
+   * - tablet: 60 (레일 inline 고정, 펼침은 overlay 라 본문 폭 보존)
+   * - desktop: leftSidebarOpen 따라 220 or 60
+   */
+  const getSidebarPx = useCallback(() => {
+    const { leftSidebarOpen, isMobile, isTablet } = usePanelStore.getState();
+    if (isMobile) return 0;
+    if (isTablet) return SIDEBAR_COLLAPSED;
+    return leftSidebarOpen ? SIDEBAR_EXPANDED : SIDEBAR_COLLAPSED;
+  }, []);
 
   // stale closure 방지
   const storeRef = useRef(usePanelStore.getState());

@@ -1,7 +1,9 @@
 "use client";
 
 import { ProjectWorkspaceLeftPanel } from "@/components/projects/ProjectWorkspaceLeftPanel";
+import { ResponsiveLeftPanelHost } from "@/components/layout/ResponsiveLeftPanelHost";
 import { RightPanel } from "@/components/layout/RightPanel";
+import { useResponsivePanel } from "@/hooks/useMediaQuery";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { projectService } from "@/services/project-service";
@@ -20,10 +22,11 @@ export default function ProjectWorkspaceLayout({
   const currentProject = useProjectStore((s) => s.currentProject);
   const setLoading = useProjectStore((s) => s.setLoading);
   const setError = useProjectStore((s) => s.setError);
-  const leftSidebarOpen = usePanelStore((s) => s.leftSidebarOpen);
   const rightPanelOpen = usePanelStore((s) => s.rightPanelOpen);
   const rightPanelWidth = usePanelStore((s) => s.rightPanelWidth);
   const fetchStartedRef = useRef(false);
+
+  useResponsivePanel();
 
   const fetchProject = useCallback(async () => {
     if (fetchStartedRef.current) return;
@@ -52,15 +55,11 @@ export default function ProjectWorkspaceLayout({
   }, [fetchProject]);
 
   return (
-    <div className="flex flex-1 overflow-hidden">
-      <div
-        className={cn(
-          "shrink-0 overflow-hidden border-r border-line-primary bg-canvas-surface transition-[width] duration-300 ease-in-out",
-          leftSidebarOpen ? "w-[220px]" : "w-[60px]",
-        )}
-      >
-        <ProjectWorkspaceLeftPanel />
-      </div>
+    <div className="relative flex flex-1 overflow-hidden">
+      <ResponsiveLeftPanelHost
+        label="프로젝트 워크스페이스 메뉴"
+        render={(state) => <ProjectWorkspaceLeftPanel state={state} />}
+      />
       <main className="min-w-0 flex-1 flex-col overflow-hidden">
         {children}
       </main>

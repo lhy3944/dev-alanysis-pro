@@ -12,6 +12,7 @@ import { FindingsCard } from "@/components/code-impact/FindingsCard";
 import { AgentSummaryCard } from "@/components/dashboard/AgentSummaryCard";
 import { CommitSelector } from "@/components/dashboard/CommitSelector";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { MobileLeftPanelTrigger } from "@/components/layout/MobileLeftPanelTrigger";
 import { PageToolbar } from "@/components/shared/PageToolbar";
 import { AssociatedRequirementsCard } from "@/components/requirement/AssociatedRequirementsCard";
 import { SystemTestListCard } from "@/components/system-test/SystemTestListCard";
@@ -146,21 +147,33 @@ export default function ProjectDashboardPage() {
       <PageToolbar
         maxWidthClassName={layoutMaxW(fullWidthMode)}
         left={
-          <CommitSelector
-            value={commitId}
-            options={commits}
-            onChange={handleCommitChange}
-          />
+          <>
+            <MobileLeftPanelTrigger />
+            <CommitSelector
+              value={commitId}
+              options={commits}
+              onChange={handleCommitChange}
+            />
+          </>
         }
         right={
           <>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              aria-label="Export Markdown"
+              className="max-md:size-8 max-md:!px-0"
+            >
               <Download className="size-4" />
-              Export Markdown
+              <span className="max-md:hidden">Export Markdown</span>
             </Button>
-            <Button size="sm">
+            <Button
+              size="sm"
+              aria-label="Share Report"
+              className="max-md:size-8 max-md:!px-0"
+            >
               <Share2 className="size-4" />
-              Share Report
+              <span className="max-md:hidden">Share Report</span>
             </Button>
           </>
         }

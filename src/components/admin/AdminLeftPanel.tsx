@@ -23,8 +23,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-export function AdminLeftPanel() {
-  const leftSidebarOpen = usePanelStore((s) => s.leftSidebarOpen);
+interface AdminLeftPanelProps {
+  /**
+   * 외부에서 강제로 렌더 상태를 지정. ResponsiveLeftPanelHost 가 태블릿/모바일에서 사용.
+   * - "expanded": 220 펼침 강제
+   * - "rail": 60 레일 강제
+   * - undefined: store 의 leftSidebarOpen 따라 자체 결정 (데스크탑 기본)
+   */
+  state?: "expanded" | "rail";
+}
+
+export function AdminLeftPanel({ state }: AdminLeftPanelProps = {}) {
+  const storeOpen = usePanelStore((s) => s.leftSidebarOpen);
+  const leftSidebarOpen =
+    state === undefined ? storeOpen : state === "expanded";
   const toggleLeftSidebar = usePanelStore((s) => s.toggleLeftSidebar);
   const pathname = usePathname();
   const [settingsOpen, setSettingsOpen] = useState(false);

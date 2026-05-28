@@ -1,6 +1,7 @@
 "use client";
 
 import { useStoreHydration } from "@/hooks/useStoreHydration";
+import { cn } from "@/lib/utils";
 import { usePanelStore } from "@/stores/panel-store";
 
 function LoadingScreen() {
@@ -11,8 +12,15 @@ function LoadingScreen() {
           <span className="text-3xl font-bold text-fg-primary">
             DevAnalysis
           </span>
-          <span className="absolute -right-4 -top-1.5 text-xl font-bold text-fg-primary">
-            +
+          <span className="ml-2 text-xl font-bold">
+            <span
+              className={cn(
+                "font-medium transition duration-300 ease-out",
+                "text-fg-muted group-hover:text-fg-primary"
+              )}
+            >
+              Pro
+            </span>
           </span>
         </div>
         <div className="h-1 w-24 overflow-hidden rounded-full bg-line-primary">

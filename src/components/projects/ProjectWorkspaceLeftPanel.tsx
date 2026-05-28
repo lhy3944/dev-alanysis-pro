@@ -29,8 +29,22 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SettingsDialog } from "@/components/overlay/SettingsDialog";
 
-export function ProjectWorkspaceLeftPanel() {
-  const leftSidebarOpen = usePanelStore((s) => s.leftSidebarOpen);
+interface ProjectWorkspaceLeftPanelProps {
+  /**
+   * 외부에서 강제로 렌더 상태를 지정. ResponsiveLeftPanelHost 가 태블릿/모바일에서 사용.
+   * - "expanded": 220 펼침 강제
+   * - "rail": 60 레일 강제
+   * - undefined: store 의 leftSidebarOpen 따라 자체 결정 (데스크탑 기본)
+   */
+  state?: "expanded" | "rail";
+}
+
+export function ProjectWorkspaceLeftPanel({
+  state,
+}: ProjectWorkspaceLeftPanelProps = {}) {
+  const storeOpen = usePanelStore((s) => s.leftSidebarOpen);
+  const leftSidebarOpen =
+    state === undefined ? storeOpen : state === "expanded";
   const toggleLeftSidebar = usePanelStore((s) => s.toggleLeftSidebar);
   const currentProject = useProjectStore((s) => s.currentProject);
   const pathname = usePathname();

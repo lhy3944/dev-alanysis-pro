@@ -2,9 +2,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { ProjectGroupFilterToolbar } from "@/components/projects/ProjectGroupFilterToolbar";
 import { ProjectGroupPagination } from "@/components/projects/ProjectGroupPagination";
 import { ProjectListItem } from "@/components/projects/ProjectListItem";
+import { ProjectToolbar } from "@/components/projects/ProjectToolbar";
 import { formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { AnalysisType, ProjectGroup, ProjectLifecycleStatus } from "@/types/project";
@@ -226,7 +226,9 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
             <div className="border-line-subtle border-t bg-canvas-secondary px-6 pb-6 pt-5 rounded-b-lg">
               {sortedProjects.length > 0 ? (
                 <div className="flex flex-col">
-                  <ProjectGroupFilterToolbar
+                  <ProjectToolbar
+                    size="sm"
+                    searchPlaceholder="그룹 내 프로젝트 검색"
                     searchInput={searchKeyword}
                     onSearchInputChange={(v) =>
                       handleFilterChange(setSearchKeyword, v)

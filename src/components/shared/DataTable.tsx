@@ -48,16 +48,16 @@ export function DataTable<TData, TValue>({
 
   return (
     <table className={cn("w-full text-left text-[12px]", className)}>
-      <thead>
+      <thead className="bg-canvas-surface">
         {table.getHeaderGroups().map((hg) => (
           <tr
             key={hg.id}
-            className="text-fg-muted border-line-subtle border-b text-[10px] font-bold uppercase"
+            className="text-fg-muted border-line-subtle border-b text-[10px] font-bold tracking-wide uppercase"
           >
             {hg.headers.map((h) => (
               <th
                 key={h.id}
-                className="px-4 py-2 font-bold"
+                className="px-4 py-2.5 font-bold"
                 style={
                   h.column.columnDef.size != null
                     ? { width: h.column.columnDef.size }

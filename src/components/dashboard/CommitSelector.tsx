@@ -31,7 +31,13 @@ export function CommitSelector({
       <SelectTrigger
         aria-label="분석 결과 선택 (commit ID)"
         className={cn(
-          "bg-canvas-primary min-w-[260px] max-w-[360px] gap-2",
+          // SelectTrigger 베이스라인이 `w-fit + justify-between` 이라 콘텐츠가
+          // 짧으면 가운데로 몰린다. SelectValue 를 flex-1 로 확장해서 좌측
+          // 정렬 + chevron 우측 고정.
+          // 너비는 부모 컨테이너를 채우되 min/max 로 가독성 범위 안에 둔다.
+          // 좁은 화면에서는 줄어들고, 넓은 화면에서는 520px 에 멈춘다.
+          "bg-canvas-primary gap-1.5 !w-full min-w-[200px] max-w-[520px]",
+          "*:data-[slot=select-value]:flex-1",
           className,
         )}
       >
@@ -39,7 +45,7 @@ export function CommitSelector({
         <SelectValue placeholder="커밋을 선택하세요">
           {current && (
             <span className="flex min-w-0 items-center gap-2">
-              <span className="font-mono text-[12px] font-semibold">
+              <span className="text-[12px] font-semibold">
                 {current.commit_id}
               </span>
               <span className="text-fg-muted truncate text-[12px]">
@@ -54,12 +60,12 @@ export function CommitSelector({
         side="bottom"
         align="start"
         sideOffset={4}
-        className="min-w-[var(--radix-select-trigger-width)] max-w-[460px]"
+        className="min-w-[var(--radix-select-trigger-width)] max-w-[800px]"
       >
         {options.map((c) => (
           <SelectItem key={c.commit_id} value={c.commit_id}>
-            <div className="flex min-w-0 max-w-[400px] flex-col gap-0.5">
-              <span className="truncate font-mono text-[12px] font-semibold">
+            <div className="flex min-w-0 max-w-[760px] flex-col gap-0.5">
+              <span className="truncate text-[12px] font-semibold">
                 {c.label}
               </span>
               <span className="text-fg-muted truncate text-[11px]">

@@ -1,7 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Maximize2, Minus, Plus, RotateCcw } from "lucide-react";
 import { useState, type ReactNode } from "react";
@@ -18,7 +23,10 @@ interface PanZoomViewerProps {
   showToolbar?: boolean;
   /** Maximize 버튼 클릭 시 모달로 큰 사이즈 열기. 기본 true */
   expandable?: boolean;
-  /** 확대 모달의 타이틀 (a11y). 기본 "확대 보기" */
+  /**
+   * 확대 모달의 타이틀. 모달 헤더에 표시되며 a11y 에도 사용된다.
+   * 기본 "확대 보기"
+   */
   expandedTitle?: string;
   className?: string;
   ariaLabel?: string;
@@ -26,8 +34,11 @@ interface PanZoomViewerProps {
 
 /**
  * 이미지/SVG 를 자식으로 받아 휠·드래그·툴바로 zoom/pan 하는 공유 뷰어.
- * `react-zoom-pan-pinch` 를 캡슐화. wheel 은 작은 step 으로 부드럽게 동작.
- * 우하단 툴바의 ⛶ 버튼은 같은 콘텐츠를 큰 모달로 열어준다.
+ * `react-zoom-pan-pinch` 를 캡슐화.
+ *
+ * - 인라인(카드 안) 사용 시: 페이지 스크롤이 막히지 않도록 휠 줌은 비활성.
+ *   border 도 두르지 않아 카드 chrome 과 중첩되지 않는다.
+ * - 확대 모달 안: 페이지 스크롤이 없으므로 휠 줌 활성. 모달 헤더에 타이틀 표시.
  */
 export function PanZoomViewer({
   children,
@@ -48,6 +59,7 @@ export function PanZoomViewer({
         maxScale={maxScale}
         showToolbar={showToolbar}
         onExpand={expandable ? () => setOpen(true) : undefined}
+        wheelDisabled
         className={className}
         ariaLabel={ariaLabel}
       >
@@ -56,13 +68,17 @@ export function PanZoomViewer({
       {expandable && (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="!max-w-[min(1280px,calc(100vw-48px))] gap-0 overflow-hidden p-0">
-            <DialogTitle className="sr-only">{expandedTitle}</DialogTitle>
+            <DialogHeader className="border-line-subtle border-b px-5 py-3">
+              <DialogTitle className="text-fg-primary text-[15px] font-semibold">
+                {expandedTitle}
+              </DialogTitle>
+            </DialogHeader>
             <PanZoomCore
               minScale={minScale}
               maxScale={maxScale}
               showToolbar
               ariaLabel={expandedTitle}
-              className="h-[min(80vh,720px)] rounded-lg border-0"
+              className="h-[min(80vh,720px)]"
             >
               {children}
             </PanZoomCore>
@@ -79,6 +95,8 @@ interface PanZoomCoreProps {
   maxScale: number;
   showToolbar: boolean;
   onExpand?: () => void;
+  /** true 면 휠 줌을 막아 페이지 스크롤을 보존한다. 모달 안에서는 false. */
+  wheelDisabled?: boolean;
   className?: string;
   ariaLabel?: string;
 }
@@ -89,13 +107,14 @@ function PanZoomCore({
   maxScale,
   showToolbar,
   onExpand,
+  wheelDisabled = false,
   className,
   ariaLabel,
 }: PanZoomCoreProps) {
   return (
     <div
       className={cn(
-        "bg-canvas-primary border-line-subtle relative h-full w-full overflow-hidden rounded-md border",
+        "bg-canvas-primary relative h-full w-full overflow-hidden rounded-md",
         className,
       )}
       aria-label={ariaLabel}
@@ -105,7 +124,7 @@ function PanZoomCore({
         maxScale={maxScale}
         initialScale={1}
         centerOnInit
-        wheel={{ step: 0.01, wheelDisabled: true }}
+        wheel={{ step: 0.005, wheelDisabled }}
         doubleClick={{ mode: "reset" }}
       >
         <TransformComponent

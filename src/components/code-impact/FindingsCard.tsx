@@ -80,8 +80,9 @@ export function FindingsCard({
           total={findings.length}
         />
       }
+      subHeaderClassName="py-0"
       className={cn("h-[500px]", className)}
-      bodyClassName="px-0 py-0"
+      bodyClassName="px-0 pt-2 pb-5"
     >
       <ScrollArea className="min-h-0 flex-1">
         {filtered.length === 0 ? (
@@ -89,7 +90,7 @@ export function FindingsCard({
             표시할 항목이 없습니다
           </p>
         ) : (
-          <div className="flex flex-col px-4 pb-3">
+          <div className="flex flex-col px-4">
             {filtered.map((f) => (
               <FindingItem
                 key={f.id}

@@ -58,8 +58,12 @@ export function FindingItem({
             {finding.description}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <StatusBadge tone={p.tone} label={p.label} />
-            <StatusBadge tone="neutral" label={finding.category} />
+            <StatusBadge variant="outline" tone={p.tone} label={p.label} />
+            <StatusBadge
+              variant="outline"
+              tone="neutral"
+              label={finding.category}
+            />
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1.5">

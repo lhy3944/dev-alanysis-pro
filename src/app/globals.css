@@ -111,28 +111,37 @@
   --radius-4xl: calc(var(--radius) + 16px);
 
   /* compact density type scale (px values from design system) */
-  --text-xs: 0.6875rem;          /* 11px — meta, micro-badges       */
+  --text-xs: 0.6875rem;
+  /* 11px — meta, micro-badges       */
   --text-xs--line-height: 0.9375rem;
-  --text-sm: 0.8125rem;          /* 13px — body small, table cells  */
+  --text-sm: 0.8125rem;
+  /* 13px — body small, table cells  */
   --text-sm--line-height: 1.125rem;
-  --text-base: 0.9375rem;        /* 15px — body                     */
+  --text-base: 0.9375rem;
+  /* 15px — body                     */
   --text-base--line-height: 1.375rem;
-  --text-lg: 1.0625rem;          /* 17px — card title               */
+  --text-lg: 1.0625rem;
+  /* 17px — card title               */
   --text-lg--line-height: 1.5625rem;
-  --text-xl: 1.1875rem;          /* 19px — section header           */
+  --text-xl: 1.1875rem;
+  /* 19px — section header           */
   --text-xl--line-height: 1.6875rem;
-  --text-2xl: 1.375rem;          /* 22px — page H2                  */
+  --text-2xl: 1.375rem;
+  /* 22px — page H2                  */
   --text-2xl--line-height: 1.875rem;
-  --text-3xl: 1.75rem;           /* 28px — page H1                  */
+  --text-3xl: 1.75rem;
+  /* 28px — page H1                  */
   --text-3xl--line-height: 2.125rem;
-  --text-display: 3.5rem;        /* 56px — hero (AuroraText) only   */
+  --text-display: 3.5rem;
+  /* 56px — hero (AuroraText) only   */
   --text-display--line-height: 3.75rem;
 
   /* tracking (letter-spacing) */
   --tracking-tight: -0.01em;
   --tracking-normal: 0;
   --tracking-wide: 0.04em;
-  --tracking-widest: 0.16em;     /* UPPERCASE eyebrow labels */
+  --tracking-widest: 0.16em;
+  /* UPPERCASE eyebrow labels */
 
   /* shadow elevation — borders > shadows; shadows only for floats */
   --shadow-xs: var(--elevation-xs);
@@ -143,32 +152,40 @@
 
   /* keyframes */
   --animate-shimmer: shimmer 1s ease-in-out infinite;
+
   @keyframes shimmer {
     0% {
       transform: translateX(-100%);
     }
+
     100% {
       transform: translateX(200%);
     }
   }
+
   --animate-aurora: aurora 8s ease-in-out infinite alternate;
+
   @keyframes aurora {
     0% {
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
     }
+
     25% {
       background-position: 50% 100%;
       transform: rotate(5deg) scale(1.1);
     }
+
     50% {
       background-position: 100% 50%;
       transform: rotate(-3deg) scale(0.95);
     }
+
     75% {
       background-position: 50% 0%;
       transform: rotate(3deg) scale(1.05);
     }
+
     100% {
       background-position: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
@@ -201,21 +218,24 @@
   --muted-foreground: #60646c;
   --accent: #e8e9ed;
   --accent-foreground: #171717;
-  --border: #e0e1e5;
+  --border: #e2e3e7;
   --input: #bfc1c7;
   --ring: #5569ff;
 
   /* brand — PM-specified header purple. Never as body background. */
   --brand-primary: #5569ff;
   --brand-primary-hover: #4356e6;
-  --brand-primary-soft: #5569ff1a;    /* 10% — chip/hover surfaces */
+  --brand-primary-soft: #5569ff1a;
+  /* 10% — chip/hover surfaces */
 
   /* header chrome — 95% opacity over backdrop-blur */
   --header-bg: #5569fff2;
   --header-fg: #ffffff;
-  --header-fg-muted: #ffffffb3;       /* 70% — inactive nav, meta  */
+  --header-fg-muted: #ffffffb3;
+  /* 70% — inactive nav, meta  */
   --header-fg-active: #ffffff;
-  --header-divider: #ffffff26;        /* 15% — vertical separators */
+  --header-divider: #ffffff26;
+  /* 15% — vertical separators */
 
   /* canvas / surfaces */
   --bg-primary: #ffffff;
@@ -226,21 +246,21 @@
   --bg-input: #f0f0f3;
 
   /* lines / borders */
-  --border-primary: #d4d5d9;
-  --border-subtle: #e0e1e5;
+  --border-primary: #c8cad0;
+  --border-subtle: #e2e3e7;
   --border-strong: #b0b2b8;
 
   /* foreground (text) */
   --text-primary: #171717;
-  --text-secondary: #4a4c52;
-  --text-muted: #60646c;
+  --text-secondary: #2d2f33;
+  --text-muted: #54575c;
   --text-tertiary: #999aa0;
 
   /* in-canvas accent — black/white. Keeps screens from looking
      like a marketing site; brand purple stays on chrome only. */
   --accent-primary: #000000;
   --accent-hover: #1a1a1a;
-  --icon-default: #60646c;
+  --icon-default: #54575c;
   --icon-active: #171717;
 
   /* semantic — base / soft / fg trio for badge composition */
@@ -258,23 +278,32 @@
   --info-fg: #1d4ed8;
 
   /* status palette — pill bg+fg pairs, mapped from constants */
-  --status-amber-bg: #fef3c7;        /* draft, pending           */
+  --status-amber-bg: #fef3c7;
+  /* draft, pending           */
   --status-amber-fg: #b45309;
-  --status-emerald-bg: #d1fae5;      /* published, passed, merged */
+  --status-emerald-bg: #d1fae5;
+  /* published, passed, merged */
   --status-emerald-fg: #047857;
-  --status-red-bg: #fee2e2;          /* failed, deleted, error   */
+  --status-red-bg: #fee2e2;
+  /* failed, deleted, error   */
   --status-red-fg: #b91c1c;
-  --status-blue-bg: #dbeafe;         /* Java, running, info      */
+  --status-blue-bg: #dbeafe;
+  /* Java, running, info      */
   --status-blue-fg: #1d4ed8;
-  --status-cyan-bg: #cffafe;         /* C/C++                    */
+  --status-cyan-bg: #cffafe;
+  /* C/C++                    */
   --status-cyan-fg: #0e7490;
-  --status-indigo-bg: #e0e7ff;       /* Objective-C/C++          */
+  --status-indigo-bg: #e0e7ff;
+  /* Objective-C/C++          */
   --status-indigo-fg: #4338ca;
-  --status-orange-bg: #ffedd5;       /* Swift                    */
+  --status-orange-bg: #ffedd5;
+  /* Swift                    */
   --status-orange-fg: #c2410c;
-  --status-purple-bg: #ede9fe;       /* webOS, Super Admin       */
+  --status-purple-bg: #ede9fe;
+  /* webOS, Super Admin       */
   --status-purple-fg: #6d28d9;
-  --status-teal-bg: #ccfbf1;         /* Dart                     */
+  --status-teal-bg: #ccfbf1;
+  /* Dart                     */
   --status-teal-fg: #0f766e;
 
   /* elevation — soft, short, dark. No colored or inner shadows. */
@@ -303,7 +332,7 @@
   --secondary: #1e1e1e;
   --secondary-foreground: #ffffffde;
   --muted: #1e1e1e;
-  --muted-foreground: #8e8e8e;
+  --muted-foreground: #b3b5ba;
   --accent: #2e2e2e;
   --accent-foreground: #ffffffde;
   --border: #2a2a2a;
@@ -314,7 +343,8 @@
   --brand-primary-hover: #8492ff;
   --brand-primary-soft: #5569ff26;
 
-  --header-bg: #141414;               /* unified with sidebar surface */
+  --header-bg: #141414;
+  /* unified with sidebar surface */
   --header-fg: #ffffffde;
   --header-fg-muted: #ffffff80;
   --header-fg-active: #ffffff;
@@ -327,18 +357,18 @@
   --bg-surface-3: #2e2e2e;
   --bg-input: #1e1e1e;
 
-  --border-primary: #353535;
+  --border-primary: #3f3f3f;
   --border-subtle: #2a2a2a;
   --border-strong: #4a4a4a;
 
   --text-primary: #ffffffde;
-  --text-secondary: #ffffff9e;
-  --text-muted: #8e8e8e;
+  --text-secondary: #ffffffcc;
+  --text-muted: #b3b5ba;
   --text-tertiary: #8e8e8e70;
 
   --accent-primary: #ffffff;
   --accent-hover: #ffffffcc;
-  --icon-default: #8e8e8e;
+  --icon-default: #b3b5ba;
   --icon-active: #ffffffde;
 
   --success: #34d399;
@@ -393,6 +423,7 @@
     letter-spacing: var(--tracking-tight);
     color: var(--text-primary);
   }
+
   .h2 {
     font-size: var(--text-2xl);
     font-weight: 700;
@@ -400,12 +431,14 @@
     letter-spacing: var(--tracking-tight);
     color: var(--text-primary);
   }
+
   .h3 {
     font-size: var(--text-xl);
     font-weight: 600;
     line-height: 1.35;
     color: var(--text-primary);
   }
+
   .h4 {
     font-size: var(--text-base);
     font-weight: 600;
@@ -443,6 +476,7 @@
   position: relative;
   overflow: hidden;
 }
+
 .scrollbar-fade-inner {
   height: 100%;
   overflow-y: scroll;
@@ -451,6 +485,7 @@
   padding-right: 10px;
   scrollbar-width: none;
 }
+
 .scrollbar-fade-inner::-webkit-scrollbar {
   display: none;
 }
@@ -459,6 +494,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-canvas-primary text-fg-primary;
     font-family:
@@ -471,6 +507,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+
   button:not(:disabled),
   [role='button']:not(:disabled) {
     cursor: pointer;

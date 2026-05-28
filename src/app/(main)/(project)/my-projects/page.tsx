@@ -5,6 +5,7 @@ import { ProjectListError } from "@/components/projects/ProjectListError";
 import { ProjectListItem } from "@/components/projects/ProjectListItem";
 import { ProjectListSkeleton } from "@/components/projects/ProjectListSkeleton";
 import { ProjectToolbar } from "@/components/projects/ProjectToolbar";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { layoutMaxW } from "@/config/layout";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -105,29 +106,17 @@ export default function MyProjectsPage() {
           <ProjectListError message={error} onRetry={fetchProjects} />
         ) : filteredProjects.length === 0 ? (
           search ? (
-            <div className="animate-in fade-in flex min-h-[calc(100vh-14rem)] flex-col items-center justify-center text-center duration-300">
-              <div className="bg-canvas-surface mb-4 flex size-16 items-center justify-center rounded-full">
-                <Search className="text-fg-muted size-6" />
-              </div>
-              <h2 className="text-fg-primary text-base font-medium">
-                검색 결과가 없습니다
-              </h2>
-              <p className="text-fg-secondary text-sm">
-                다른 검색어로 시도해 보세요.
-              </p>
-            </div>
+            <EmptyState
+              icon={Search}
+              title="검색 결과가 없습니다"
+              description="다른 검색어로 시도해 보세요."
+            />
           ) : (
-            <div className="animate-in fade-in flex min-h-[calc(100vh-14rem)] flex-col items-center justify-center text-center duration-300">
-              <div className="bg-canvas-surface mb-4 flex size-16 items-center justify-center rounded-full">
-                <Box className="text-fg-muted size-6" />
-              </div>
-              <h2 className="text-fg-primary text-base font-medium">
-                프로젝트가 없습니다
-              </h2>
-              <p className="text-fg-secondary text-sm">
-                아직 등록된 프로젝트가 없습니다.
-              </p>
-            </div>
+            <EmptyState
+              icon={Box}
+              title="프로젝트가 없습니다"
+              description="아직 등록된 프로젝트가 없습니다."
+            />
           )
         ) : viewMode === "card" ? (
           <div
