@@ -81,6 +81,10 @@ export function ProjectWorkspaceLeftPanel({
     return pathname.startsWith(`${basePath}${href}`);
   };
 
+  // Forced state: 부모(Sheet/overlay) 가 폭을 결정하므로 motion.div 의 width 도 100% 로 따라간다.
+  const expandedWidth = state === undefined ? 220 : "100%";
+  const collapsedWidth = state === undefined ? 60 : "100%";
+
   return (
     <>
       <AnimatePresence mode="popLayout">
@@ -89,7 +93,7 @@ export function ProjectWorkspaceLeftPanel({
             key="expanded"
             initial={{ width: 0, opacity: 0 }}
             animate={{
-              width: 220,
+              width: expandedWidth,
               opacity: 1,
               transition: { type: "spring", stiffness: 400, damping: 30 },
             }}
@@ -100,7 +104,7 @@ export function ProjectWorkspaceLeftPanel({
             }}
             className="h-full shrink-0 overflow-hidden"
           >
-            <div className="flex h-full w-[220px] flex-col">
+            <div className="flex h-full w-full flex-col">
               {/* Header: back link + collapse button */}
               <div className="flex items-center justify-between px-3 py-2.5">
                 <Button
@@ -238,7 +242,7 @@ export function ProjectWorkspaceLeftPanel({
             key="collapsed"
             initial={{ width: 0, opacity: 0 }}
             animate={{
-              width: 60,
+              width: collapsedWidth,
               opacity: 1,
               transition: { type: "spring", stiffness: 400, damping: 30 },
             }}
@@ -249,7 +253,7 @@ export function ProjectWorkspaceLeftPanel({
             }}
             className="h-full shrink-0 overflow-hidden"
           >
-            <div className="flex h-full w-[60px] flex-col items-center gap-2 py-3">
+            <div className="flex h-full w-full flex-col items-center gap-2 py-3">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button

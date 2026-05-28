@@ -55,7 +55,7 @@ export function ResponsiveLeftPanelHost({
         <SheetContent
           side="left"
           showCloseButton={false}
-          className="!w-screen !max-w-none gap-0 overflow-hidden border-line-primary bg-canvas-primary p-0"
+          className="w-[280px] max-w-[85vw] gap-0 overflow-hidden border-line-primary bg-canvas-primary p-0 sm:max-w-[320px]"
         >
           <SheetTitle className="sr-only">{label}</SheetTitle>
           <div className="flex h-full w-full flex-col overflow-hidden">
