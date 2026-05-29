@@ -11,7 +11,9 @@ export function HeaderTabs() {
   return (
     <div className="hidden md:flex items-center space-x-1 flex-nowrap">
       {headerTabsConfig.map((tab) => {
-        const isActive = pathname.startsWith(tab.href);
+        const isActive =
+          pathname.startsWith(tab.href) ||
+          (tab.matchAlso?.some((p) => pathname.startsWith(p)) ?? false);
         return (
           <Link
             key={tab.href}

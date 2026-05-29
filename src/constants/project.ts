@@ -33,3 +33,15 @@ export const ANALYSIS_TYPE_COLORS: Record<AnalysisType, string> = {
   javascript_typescript: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
   dart: 'bg-teal-500/10 text-teal-600 dark:text-teal-400',
 };
+
+/** 배경 없는 text-only 변형. 분석 타입을 텍스트만으로 표시할 때 사용. */
+export const ANALYSIS_TYPE_TEXT_COLORS: Record<AnalysisType, string> = {
+  java: 'text-blue-600 dark:text-blue-400',
+  c_cpp: 'text-cyan-600 dark:text-cyan-400',
+  objective_c_cpp: 'text-indigo-600 dark:text-indigo-400',
+  swift: 'text-orange-600 dark:text-orange-400',
+  webos: 'text-purple-600 dark:text-purple-400',
+  python: 'text-yellow-700 dark:text-yellow-300',
+  javascript_typescript: 'text-amber-600 dark:text-amber-400',
+  dart: 'text-teal-600 dark:text-teal-400',
+};

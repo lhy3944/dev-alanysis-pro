@@ -209,7 +209,7 @@
   --card-foreground: #171717;
   --popover: #ffffff;
   --popover-foreground: #171717;
-  --primary: #5569ff;
+  --primary: #3e6ae1;
   --primary-hover: #1a1a1a;
   --primary-foreground: #ffffff;
   --secondary: #f5f5f7;
@@ -220,16 +220,16 @@
   --accent-foreground: #171717;
   --border: #e2e3e7;
   --input: #bfc1c7;
-  --ring: #5569ff;
+  --ring: #3e6ae1;
 
-  /* brand — PM-specified header purple. Never as body background. */
-  --brand-primary: #5569ff;
-  --brand-primary-hover: #4356e6;
-  --brand-primary-soft: #5569ff1a;
+  /* brand — PM-specified header brand. Never as body background. */
+  --brand-primary: #3e6ae1;
+  --brand-primary-hover: #345bc5;
+  --brand-primary-soft: #3e6ae11a;
   /* 10% — chip/hover surfaces */
 
-  /* header chrome — 95% opacity over backdrop-blur */
-  --header-bg: #5569fff2;
+  /* header chrome — solid brand color */
+  --header-bg: #3e6ae1;
   --header-fg: #ffffff;
   --header-fg-muted: #ffffffb3;
   /* 70% — inactive nav, meta  */

@@ -1,35 +1,35 @@
 "use client";
 
-import { Download, Share2 } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { layoutMaxW } from "@/config/layout";
-import { usePanelStore } from "@/stores/panel-store";
-import { cn } from "@/lib/utils";
-import { CURRENT_USER } from "@/constants/review";
-import { ModuleTopologyCard } from "@/components/code-impact/ModuleTopologyCard";
 import { FindingsCard } from "@/components/code-impact/FindingsCard";
+import { ModuleTopologyCard } from "@/components/code-impact/ModuleTopologyCard";
 import { AgentSummaryCard } from "@/components/dashboard/AgentSummaryCard";
 import { CommitSelector } from "@/components/dashboard/CommitSelector";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { MobileLeftPanelTrigger } from "@/components/layout/MobileLeftPanelTrigger";
-import { PageToolbar } from "@/components/shared/PageToolbar";
 import { AssociatedRequirementsCard } from "@/components/requirement/AssociatedRequirementsCard";
+import { PageToolbar } from "@/components/shared/PageToolbar";
 import { SystemTestListCard } from "@/components/system-test/SystemTestListCard";
-import { UnitTestListCard } from "@/components/unit-test/UnitTestListCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { UnitTestListCard } from "@/components/unit-test/UnitTestListCard";
+import { layoutMaxW } from "@/config/layout";
+import { CURRENT_USER } from "@/constants/review";
+import { cn } from "@/lib/utils";
 import { codeImpactService } from "@/services/code-impact-service";
 import { commitService } from "@/services/commit-service";
 import { requirementService } from "@/services/requirement-service";
 import { systemTestService } from "@/services/system-test-service";
 import { unitTestService } from "@/services/unit-test-service";
-import type { CommitOption } from "@/types/commit";
+import { usePanelStore } from "@/stores/panel-store";
 import type { CodeImpactReport } from "@/types/code-impact-report";
+import type { CommitOption } from "@/types/commit";
 import type { RequirementReport } from "@/types/requirement-report";
 import type { ReviewStatus } from "@/types/review";
 import type { SystemTestReport } from "@/types/system-test-report";
-import type { UnitTestReport } from "@/types/unit-test-report";
+import type { UnitTestReport } from "@/types/unit-test";
+import { Download, Share2 } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 export default function ProjectDashboardPage() {
   const { id } = useParams<{ id: string }>();
@@ -161,19 +161,20 @@ export default function ProjectDashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              aria-label="Export Markdown"
+              aria-label="Export"
               className="max-md:size-8 max-md:!px-0"
             >
               <Download className="size-4" />
-              <span className="max-md:hidden">Export Markdown</span>
+              <span className="max-md:hidden">Export</span>
             </Button>
             <Button
+              variant="default"
               size="sm"
-              aria-label="Share Report"
+              aria-label="Share"
               className="max-md:size-8 max-md:!px-0"
             >
               <Share2 className="size-4" />
-              <span className="max-md:hidden">Share Report</span>
+              <span className="max-md:hidden">Share</span>
             </Button>
           </>
         }

@@ -27,8 +27,8 @@ export const ProjectCard = memo(function ProjectCard({
       className="group border-line-subtle bg-canvas-primary hover:border-accent-primary/50 block rounded-lg border p-5 transition-all hover:shadow-md"
     >
       <div className="mb-3 flex items-center gap-2.5">
-        <div className="bg-accent-primary/10 flex size-9 shrink-0 items-center justify-center rounded-md">
-          <Box className="text-accent-primary size-4" />
+        <div className="bg-brand-primary-soft flex size-9 shrink-0 items-center justify-center rounded-md">
+          <Box className="text-brand-primary size-4" />
         </div>
         <div className="min-w-0">
           <h3 className="text-fg-primary truncate text-sm font-semibold">

@@ -55,6 +55,17 @@ src/
 - Provider 컴포넌트는 `components/providers/`
 - 특정 도메인에서만 쓰이면 해당 도메인 폴더, 여러 곳에서 쓰이면 `shared/`
 
+### 도메인 파일 규칙 (필수)
+
+> **하나의 도메인 = 하나의 타입 파일.**
+> 같은 도메인의 모든 인터페이스는 한 파일에 `// --- Section ---` 구분선으로 모은다.
+
+- **타입**: `src/types/{domain}.ts` 하나. 신규 타입이 필요해도 새 파일을 만들지 말고 같은 파일에 새 섹션을 추가한다. 예: `src/types/project.ts`, `src/types/unit-test.ts`.
+- **서비스**: 도메인당 `src/services/{domain}-service.ts` 하나.
+- **대용량 mock 데이터**: 같은 폴더에 `{domain}-service.mock.ts` 로 co-locate. 소스코드 dump, 로그, markdown 같은 raw 문자열만 분리하고 구조 데이터는 service inline 유지.
+
+목적: 도메인의 전체 인터페이스를 한 파일에서 일별 가능. 파일 양산 방지.
+
 ## 페이지 컴포넌트 패턴
 
 `page.tsx`는 **자식 컴포넌트를 조립하는 레이어**로만 사용한다. 디테일한 UI 구현(검색창, 필터, 툴바 등)은 도메인 컴포넌트로 분리하고, 페이지는 상태 관리와 컴포넌트 배치만 담당한다.

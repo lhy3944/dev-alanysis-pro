@@ -22,7 +22,7 @@ import { AnimatePresence, motion } from "motion/react";
 interface LeftSidebarProps {
   /**
    * 외부에서 강제로 렌더 상태를 지정. ResponsiveLeftPanelHost 가 태블릿/모바일에서 사용.
-   * - "expanded": 220 펼침 강제 (콘텐츠는 부모 컨테이너 폭을 채움)
+   * - "expanded": 260 펼침 강제 (콘텐츠는 부모 컨테이너 폭을 채움)
    * - "rail": 60 레일 강제 (콘텐츠는 부모 컨테이너 폭을 채움)
    * - undefined: store 의 leftSidebarOpen 따라 자체 결정 + 애니메이션 (데스크탑 기본)
    */
@@ -154,7 +154,7 @@ export function LeftSidebar({ state }: LeftSidebarProps = {}) {
             key="expanded"
             initial={{ width: 0, opacity: 0 }}
             animate={{
-              width: 220,
+              width: 260,
               opacity: 1,
               transition: { type: "spring", stiffness: 400, damping: 30 },
             }}

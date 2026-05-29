@@ -38,6 +38,7 @@ export interface Project {
   status: ProjectStatus;
   lifecycle_status: ProjectLifecycleStatus;
   analysis_type: AnalysisType;
+  branch: string;
   readiness: ProjectReadiness | null;
   created_at: string;
   updated_at: string;

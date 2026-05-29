@@ -12,7 +12,7 @@ import type {
   TestCaseStatus,
   UnitTestCase,
   UnitTestReport,
-} from "@/types/unit-test-report";
+} from "@/types/unit-test";
 
 interface UnitTestListCardProps {
   data: UnitTestReport;

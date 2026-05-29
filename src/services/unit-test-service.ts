@@ -1,5 +1,14 @@
 import { delayed } from "@/lib/mock-utils";
-import type { UnitTestReport } from "@/types/unit-test-report";
+import type {
+  UnitTestAgentReport,
+  UnitTestReport,
+} from "@/types/unit-test";
+import {
+  UNIT_TEST_AGENT_MOCK_FILES,
+  UNIT_TEST_AGENT_MOCK_MARKDOWN,
+  UNIT_TEST_AGENT_MOCK_TEST_LOG,
+  UNIT_TEST_AGENT_MOCK_TEST_LOG_NAME,
+} from "./unit-test-service.mock";
 
 function buildReport(projectId: string, commitId: string): UnitTestReport {
   return {
@@ -28,7 +37,261 @@ function buildReport(projectId: string, commitId: string): UnitTestReport {
   };
 }
 
+function buildAgentReport(
+  projectId: string,
+  commitId: string,
+): UnitTestAgentReport {
+  void projectId;
+  return {
+    meta: {
+      project: "38346d48f4be",
+      repo: "http://val.lge.com/hac/svn/FrontLoaderDev/01.NC_Platform/01.main/trunk",
+      commit: commitId,
+      branch: "",
+      branch_url: "",
+      updated: "2026-05-27 05:43:57",
+    },
+    total: 19,
+    groups: [
+      { key: "PASS", label: "성공", codes: ["PASS"], color: "green", count: 5 },
+      { key: "DEFECT", label: "잠재 결함", codes: ["DEFECT"], color: "red", count: 1 },
+      { key: "FAILED", label: "실패", codes: ["FAIL", "BUILD-FAIL"], color: "red", count: 0 },
+      {
+        key: "UNVERIFIED",
+        label: "미검증",
+        codes: ["SKIP-NOMATCH", "SKIP-GEN", "SKIP-GATE", "PENDING"],
+        color: "amber",
+        count: 3,
+      },
+      { key: "NONTARGET", label: "대상 아님", codes: ["SKIP-TIER"], color: "gray", count: 10 },
+    ],
+    vis: [
+      {
+        id: 1,
+        code: "PASS",
+        text: "FCT 초기 진입 시 `sucSubStep`가 항상 0으로 초기화되는지 확인",
+        reason: "이전 substep=2 후 INIT 재진입 시 온도 저장 경로 재진입을 관찰해 초기화 검증",
+        slabel: "성공",
+        scls: "s-pass",
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+      },
+      {
+        id: 2,
+        code: "SKIP-NOMATCH",
+        text: "FCT 종료 후 재진입 시 이전 시험의 sub-step 상태가 잔존하지 않는지 확인",
+        reason: "재진입 상태 전이를 목으로 구성해 static 잔존 여부 검증",
+        slabel: "미검증",
+        scls: "s-nomatch",
+        file: null,
+      },
+      {
+        id: 3,
+        code: "PASS",
+        text: "팬 속도 목표 도달 전에는 REF 판정 기준 온도가 저장되지 않는지 확인",
+        reason: "팬속도 경계 미도달 반복에서 온도 저장 호출 0회를 직접 검증",
+        slabel: "성공",
+        scls: "s-pass",
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+      },
+      {
+        id: 4,
+        code: "PASS",
+        text: "팬 속도 목표 도달 후 90초 경과 시점에만 REF 오류 판정이 수행되는지 확인",
+        reason: "90초 미경과/경과/반복 방지 모두 확인해 REF 판정 시점을 검증",
+        slabel: "성공",
+        scls: "s-pass",
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+      },
+      {
+        id: 5,
+        code: "PASS",
+        text: "냉각 성능 부족 시 `HP_ERROR_REF`가 정상 설정되는지 확인",
+        reason: "냉각 부족 조건에서 HP_ERROR_REF와 SET 인자를 직접 확인",
+        slabel: "성공",
+        scls: "s-pass",
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+      },
+      {
+        id: 6,
+        code: "SKIP-NOMATCH",
+        text: "정상 냉각 시 오류가 오검출되지 않는지 확인",
+        reason: "정상 냉각 입력을 목킹해 오류 미설정 동작 확인 가능",
+        slabel: "미검증",
+        scls: "s-nomatch",
+        file: null,
+      },
+      {
+        id: 7,
+        code: "SKIP-TIER",
+        text: "해당 없음. 제공된 변경 범위 내 외부 파일 형식/업로드 포맷 변경은 확인되지 않음",
+        reason: "변경 범위와 포맷 영향 없음은 사람의 범위 판단 필요",
+        slabel: "수동/통합 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 8,
+        code: "DEFECT",
+        text: "정적 변수 `snStartEva`, `sucSubStep`, 타이머가 시험 중단/재시작 시 의도대로 재초기화되는지 확인",
+        reason:
+          "FUT 잠재 결함 — 시험 중단 후 재시작 시 FCT_LOAD5_STEP로 재진입하면 정적 sucSubStep, snStartEva 및 타이머가 재초기화되지 않아 팬 재도달 전 REF 타이머 판정과 온도 비교/오류 설정 경로가 실행된다",
+        slabel: "잠재 결함",
+        scls: "s-defect",
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+      },
+      {
+        id: 9,
+        code: "SKIP-TIER",
+        text: "전원 재인가 또는 모드 전환 시 FCT 상태가 비정상적으로 이어지지 않는지 확인",
+        reason: "전원 재인가·모드 전환은 런타임 초기화 시퀀스 의존",
+        slabel: "타겟/HIL 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 10,
+        code: "SKIP-TIER",
+        text: "`MWI_HP_FctModeDryLoadControl` 호출부가 모두 신규 시그니처에 맞게 수정되었는지 빌드 검증",
+        reason: "신규 시그니처 호출부 일치는 빌드·심볼 정적으로 확인",
+        slabel: "정적 분석",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 11,
+        code: "SKIP-TIER",
+        text: "`MW_HP_FctModeDryLoadControl` 선언/정의/호출 간 타입 불일치가 없는지 확인",
+        reason: "선언·정의·호출 타입 일치는 정적/빌드 검증 항목",
+        slabel: "정적 분석",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 12,
+        code: "SKIP-GEN",
+        text: "전달되는 압축기 주파수, EEV, 팬 RPM 값이 허용 범위 내인지 확인",
+        reason:
+          "[MW_HP_RunPreventionDew] 해당 FUT에는 압축기 주파수와 EEV 및 팬 RPM 값을 전달하거나 허용 범위로 검증하는 동작을 관찰할 capability가 없습니다.",
+        slabel: "미검증",
+        scls: "s-nomatch",
+        file: null,
+      },
+      {
+        id: 13,
+        code: "SKIP-TIER",
+        text: "`MW_HP_GetReceiveInfo()->FanSpeed` 수신값이 유효하지 않을 때 sub-step 진행이 멈추는지, 또는 예외 처리가 필요한지 확인",
+        reason: "무효 FanSpeed 예외 필요 여부는 설계 의도 판단 포함",
+        slabel: "수동/통합 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 14,
+        code: "SKIP-TIER",
+        text: "`HP_CommData.h` include 추가로 인한 모델별 빌드 영향이 없는지 확인",
+        reason: "모델별 include 영향은 구성별 조건부 빌드 확인 필요",
+        slabel: "빌드 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 15,
+        code: "SKIP-TIER",
+        text: "A 타입 모델에서 FCT 건조 시험 정상/오류 시나리오 수행",
+        reason: "A 타입 모델 구성에서 시나리오 빌드·동작 확인 필요",
+        slabel: "빌드 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 16,
+        code: "SKIP-TIER",
+        text: "B 타입 모델에서 동일 시나리오 수행",
+        reason: "B 타입 모델 구성에서 동일 시나리오 확인 필요",
+        slabel: "빌드 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 17,
+        code: "PASS",
+        text: "팬 속도 미도달 상태가 지속될 때 REF 판정이 조기 수행되지 않는지 확인",
+        reason: "팬 미도달 지속 반복에서 타이머와 오류 판정 호출이 없음을 직접 검증",
+        slabel: "성공",
+        scls: "s-pass",
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+      },
+      {
+        id: 18,
+        code: "SKIP-TIER",
+        text: "팬 속도 도달 직후 기준 온도 저장 후 90초 뒤 판정되는지 로그로 검증",
+        reason: "로그 기반 시점 검증은 수동 판독·시나리오 판단 의존",
+        slabel: "수동/통합 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+      {
+        id: 19,
+        code: "SKIP-TIER",
+        text: "기존 고정값 기반 제어와 비교해 시험 시간, 오류율, 운전 안정성이 의도대로 개선되었는지 확인",
+        reason: "시간·오류율·안정성 개선 평가는 회귀/의도 판단 필요",
+        slabel: "수동/통합 테스트",
+        scls: "s-tier",
+        file: null,
+      },
+    ],
+    bestofn: [
+      {
+        id: 1,
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+        label: "BEST_BEHAVIORAL",
+        reason: "이전 substep=2 후 INIT 재진입 시 온도 저장 경로 재진입을 관찰해 초기화 검증",
+      },
+      {
+        id: 3,
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+        label: "BEST_BEHAVIORAL",
+        reason: "팬속도 경계 미도달 반복에서 온도 저장 호출 0회를 직접 검증",
+      },
+      {
+        id: 4,
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+        label: "BEST_BEHAVIORAL",
+        reason: "90초 미경과/경과/반복 방지 모두 확인해 REF 판정 시점을 검증",
+      },
+      {
+        id: 5,
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+        label: "BEST_BEHAVIORAL",
+        reason: "냉각 부족 조건에서 HP_ERROR_REF와 SET 인자를 직접 확인",
+      },
+      {
+        id: 8,
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+        label: "BEST_BEHAVIORAL",
+        reason: "재호출 후 팬 미도달 시 타이머·온도·오류 미수행으로 정적 상태 초기화 기대 검증",
+      },
+      {
+        id: 17,
+        file: "test_vi_1_3_4_5_8_17_Run_DRY_FCT_ModeProcess.c",
+        label: "BEST_BEHAVIORAL",
+        reason: "팬 미도달 지속 반복에서 타이머와 오류 판정 호출이 없음을 직접 검증",
+      },
+    ],
+    files: UNIT_TEST_AGENT_MOCK_FILES,
+    test_log: UNIT_TEST_AGENT_MOCK_TEST_LOG,
+    test_log_name: UNIT_TEST_AGENT_MOCK_TEST_LOG_NAME,
+    markdown: UNIT_TEST_AGENT_MOCK_MARKDOWN,
+  };
+}
+
 export const unitTestService = {
   get: (projectId: string, commitId: string): Promise<UnitTestReport> =>
     delayed(buildReport(projectId, commitId)),
+
+  getAgentReport: (
+    projectId: string,
+    commitId: string,
+  ): Promise<UnitTestAgentReport> =>
+    delayed(buildAgentReport(projectId, commitId)),
 };

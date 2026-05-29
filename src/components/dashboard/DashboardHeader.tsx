@@ -7,6 +7,8 @@ interface DashboardHeaderProps {
   /** "2023.11.24 14:30" 같이 이미 포맷된 문자열 */
   analyzedAtLabel: string;
   branch: string;
+  /** 헤더 타이틀. 미지정 시 "변경 영향 분석 결과" (대시보드 기본값). */
+  title?: string;
   className?: string;
 }
 
@@ -35,12 +37,13 @@ export function DashboardHeader({
   status,
   analyzedAtLabel,
   branch,
+  title = "변경 영향 분석 결과",
   className,
 }: DashboardHeaderProps) {
   const s = STATUS_STYLE[status];
   return (
     <header className={cn("mb-5 flex flex-col gap-1", className)}>
-      <h1 className="h1">변경 영향 분석 결과</h1>
+      <h1 className="h1">{title}</h1>
       <div className="flex items-center gap-2">
         <span
           className={cn("size-1.5 shrink-0 rounded-full", s.dot)}

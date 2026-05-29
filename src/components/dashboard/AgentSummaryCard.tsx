@@ -1,4 +1,4 @@
-import { Activity } from "lucide-react";
+import { Activity, Bot, Brain } from "lucide-react";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { cn } from "@/lib/utils";
 import type { AgentScore, AgentScoreTone } from "@/types/agent";
@@ -42,7 +42,7 @@ export function AgentSummaryCard({
   return (
     <SectionCard
       title="AI 코드 리뷰 결과 요약"
-      icon={Activity}
+      icon={Bot}
       headerRight={
         modelName ? (
           <span className="text-fg-muted text-[12px]">
@@ -73,7 +73,7 @@ function MetricCell({ metric }: { metric: AgentScore }) {
       </span>
       <span
         className={cn(
-          "text-2xl leading-none font-bold tracking-tight",
+          "text-2xl leading-none font-semibold tracking-tight",
           TONE_VALUE_TEXT[metric.tone],
         )}
       >
@@ -81,7 +81,10 @@ function MetricCell({ metric }: { metric: AgentScore }) {
       </span>
       <div className="bg-canvas-surface-2 h-[3px] w-full overflow-hidden rounded-full">
         <div
-          className={cn("h-full rounded-full transition-all", TONE_FILL[metric.tone])}
+          className={cn(
+            "h-full rounded-full transition-all",
+            TONE_FILL[metric.tone],
+          )}
           style={{ width: `${Math.max(0, Math.min(metric.percent, 100))}%` }}
         />
       </div>

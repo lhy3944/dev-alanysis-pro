@@ -1,4 +1,3 @@
-import { CheckCircle2, ServerCog, XCircle, MinusCircle } from "lucide-react";
 import { AgentDeepLinkButton } from "@/components/dashboard/AgentDeepLinkButton";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -7,7 +6,8 @@ import type {
   SystemTestCase,
   SystemTestReport,
 } from "@/types/system-test-report";
-import type { TestCaseStatus } from "@/types/unit-test-report";
+import type { TestCaseStatus } from "@/types/unit-test";
+import { Check, CheckCircle2, FileSliders, Minus, X } from "lucide-react";
 
 interface SystemTestListCardProps {
   data: SystemTestReport;
@@ -17,9 +17,9 @@ interface SystemTestListCardProps {
 }
 
 const STATUS_ICON = {
-  passed: { Icon: CheckCircle2, className: "text-status-emerald-fg" },
-  failed: { Icon: XCircle, className: "text-status-red-fg" },
-  skipped: { Icon: MinusCircle, className: "text-fg-muted" },
+  passed: { Icon: Check, className: "text-status-emerald-fg" },
+  failed: { Icon: X, className: "text-status-red-fg" },
+  skipped: { Icon: Minus, className: "text-fg-muted" },
 } satisfies Record<
   TestCaseStatus,
   { Icon: typeof CheckCircle2; className: string }
@@ -34,7 +34,7 @@ export function SystemTestListCard({
   return (
     <SectionCard
       title={`System Test Case 목록 (${data.cases.length}건)`}
-      icon={ServerCog}
+      icon={FileSliders}
       headerRight={
         <>
           <StatusBadge tone="neutral" label={`${data.success_rate_pct}%`} />
@@ -90,7 +90,7 @@ function SystemTestRow({ testCase }: { testCase: SystemTestCase }) {
           {testCase.sub}
         </p>
       </div>
-      <Icon className={cn("size-6 shrink-0", className)} aria-hidden />
+      <Icon className={cn("size-4 shrink-0", className)} aria-hidden />
     </li>
   );
 }

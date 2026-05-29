@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Maximize2, Minus, Plus, RotateCcw } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import {
+  MiniMap,
   TransformComponent,
   TransformWrapper,
   useControls,
@@ -58,6 +59,7 @@ export function PanZoomViewer({
         minScale={minScale}
         maxScale={maxScale}
         showToolbar={showToolbar}
+        showMiniMap={false}
         onExpand={expandable ? () => setOpen(true) : undefined}
         wheelDisabled
         className={className}
@@ -77,6 +79,7 @@ export function PanZoomViewer({
               minScale={minScale}
               maxScale={maxScale}
               showToolbar
+              showMiniMap
               ariaLabel={expandedTitle}
               className="h-[min(80vh,720px)]"
             >
@@ -94,6 +97,7 @@ interface PanZoomCoreProps {
   minScale: number;
   maxScale: number;
   showToolbar: boolean;
+  showMiniMap?: boolean;
   onExpand?: () => void;
   /** true 면 휠 줌을 막아 페이지 스크롤을 보존한다. 모달 안에서는 false. */
   wheelDisabled?: boolean;
@@ -106,6 +110,7 @@ function PanZoomCore({
   minScale,
   maxScale,
   showToolbar,
+  showMiniMap = true,
   onExpand,
   wheelDisabled = false,
   className,
@@ -133,6 +138,18 @@ function PanZoomCore({
         >
           {children}
         </TransformComponent>
+        {showMiniMap && (
+          <div className="pointer-events-auto absolute right-3 top-3 z-10 overflow-hidden rounded-sm shadow-md">
+            <MiniMap
+              width={160}
+              height={100}
+              borderColor="var(--color-fg-primary)"
+              previewStyle={{ borderWidth: 1, borderRadius: 4 }}
+            >
+              {children}
+            </MiniMap>
+          </div>
+        )}
         {showToolbar && <PanZoomToolbar onExpand={onExpand} />}
       </TransformWrapper>
     </div>

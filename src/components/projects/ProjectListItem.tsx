@@ -23,8 +23,8 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
       href={`/projects/${project.project_id}`}
       className='group border-line-subtle bg-canvas-primary hover:border-accent-primary/50 flex items-center gap-4 rounded-lg border px-5 py-3.5 transition-all hover:shadow-md'
     >
-      <div className='bg-accent-primary/10 flex size-9 shrink-0 items-center justify-center rounded-md'>
-        <Box className='text-accent-primary size-4' />
+      <div className='bg-brand-primary-soft flex size-9 shrink-0 items-center justify-center rounded-md'>
+        <Box className='text-brand-primary size-4' />
       </div>
 
       <div className='min-w-0 flex-1'>
@@ -80,13 +80,15 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
       </div>
 
       <div className='text-fg-muted hidden shrink-0 items-center gap-4 text-sm lg:flex'>
-        <span className='flex items-center gap-1'>
-          <Clock className='size-4' />
-          {formatRelativeTime(project.updated_at)}
+        <span className='flex min-w-[72px] items-center gap-1'>
+          <Clock className='size-4 shrink-0' />
+          <span className='tabular-nums'>
+            {formatRelativeTime(project.updated_at)}
+          </span>
         </span>
-        <span className='flex items-center gap-1'>
-          <Users className='size-4' />
-          {project.member_count}
+        <span className='flex min-w-[40px] items-center gap-1'>
+          <Users className='size-4 shrink-0' />
+          <span className='tabular-nums'>{project.member_count}</span>
         </span>
       </div>
     </Link>

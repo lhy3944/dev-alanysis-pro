@@ -19,7 +19,7 @@ export function Header({ showLayoutToggle = false }: HeaderProps) {
   return (
     <header
       className={cn(
-        "bg-header-bg text-header-fg border-b border-header-divider sticky top-0 z-50 flex h-[60px] shrink-0 items-center backdrop-blur-xl",
+        "bg-header-bg text-header-fg border-b border-header-divider sticky top-0 z-50 flex h-[60px] shrink-0 items-center",
       )}
     >
       <div

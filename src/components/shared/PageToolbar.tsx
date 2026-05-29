@@ -31,7 +31,7 @@ export function PageToolbar({
   return (
     <div
       className={cn(
-        "bg-canvas-primary/90 border-line-subtle sticky top-0 z-10 mb-4 w-full backdrop-blur",
+        "bg-canvas-primary/85 sticky top-0 z-10 mb-4 w-full backdrop-blur-md backdrop-saturate-150",
         className,
       )}
     >
@@ -44,6 +44,11 @@ export function PageToolbar({
         <div className="flex min-w-0 flex-1 items-end gap-2">{left}</div>
         <div className="flex shrink-0 items-center gap-2 self-end">{right}</div>
       </div>
+      {/* 헤더 하단 fade — 본문이 헤더 뒤로 스크롤될 때 자연스러운 경계를 만든다. */}
+      <div
+        aria-hidden
+        className="from-canvas-primary/60 pointer-events-none absolute inset-x-0 top-full h-4 bg-linear-to-b to-transparent"
+      />
     </div>
   );
 }

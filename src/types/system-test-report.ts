@@ -1,6 +1,6 @@
 import type { AgentScore } from "./agent";
 import type { CommitRef } from "./commit";
-import type { TestCaseStatus } from "./unit-test-report";
+import type { TestCaseStatus } from "./unit-test";
 
 export interface SystemTestCase {
   id: string;

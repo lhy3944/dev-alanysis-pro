@@ -80,9 +80,9 @@ const STYLES: Record<
     searchWrap:
       "group/search focus-within:border-accent-primary flex w-60 rounded-xs border border-input bg-canvas-primary shadow-xs transition-colors",
     searchInput:
-      "border-0 bg-transparent focus-visible:border-0 focus-visible:ring-0",
-    selectTrigger: "h-8 w-[140px] rounded-xs text-xs",
-    lifecycleSelectTrigger: "h-8 w-[120px] rounded-xs text-xs",
+      "border-0 bg-transparent text-sm focus-visible:border-0 focus-visible:ring-0",
+    selectTrigger: "h-8 w-[140px] rounded-xs text-sm",
+    lifecycleSelectTrigger: "h-8 w-[120px] rounded-xs text-sm",
     viewModeBox:
       "flex h-8 items-center rounded-xs border border-input bg-canvas-primary shadow-xs overflow-hidden",
     viewModeActive:

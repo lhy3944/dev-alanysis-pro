@@ -26,7 +26,7 @@ import { useState } from "react";
 interface AdminLeftPanelProps {
   /**
    * 외부에서 강제로 렌더 상태를 지정. ResponsiveLeftPanelHost 가 태블릿/모바일에서 사용.
-   * - "expanded": 220 펼침 강제
+   * - "expanded": 260 펼침 강제
    * - "rail": 60 레일 강제
    * - undefined: store 의 leftSidebarOpen 따라 자체 결정 (데스크탑 기본)
    */
@@ -47,7 +47,7 @@ export function AdminLeftPanel({ state }: AdminLeftPanelProps = {}) {
   };
 
   // Forced state: 부모(Sheet/overlay) 가 폭을 결정하므로 motion.div 의 width 도 100% 로 따라간다.
-  const expandedWidth = state === undefined ? 220 : "100%";
+  const expandedWidth = state === undefined ? 260 : "100%";
   const collapsedWidth = state === undefined ? 60 : "100%";
 
   return (

@@ -1,24 +1,36 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { SettingsDialog } from "@/components/overlay/SettingsDialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { WORKSPACE_MENU_ITEMS } from "@/config/workspace-navigation";
 import {
-  ANALYSIS_TYPE_COLORS,
   ANALYSIS_TYPE_LABELS,
+  ANALYSIS_TYPE_TEXT_COLORS,
 } from "@/constants/project";
 import { cn } from "@/lib/utils";
 import { usePanelStore } from "@/stores/panel-store";
 import { useProjectStore } from "@/stores/project-store";
-import { WORKSPACE_MENU_ITEMS } from "@/config/workspace-navigation";
 import {
   Box,
+  Check,
+  ChevronDown,
   ChevronLeft,
   CircleHelp,
+  GitBranch,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
@@ -26,13 +38,20 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { SettingsDialog } from "@/components/overlay/SettingsDialog";
+import { useState } from "react";
+
+const MOCK_BRANCHES = [
+  "main",
+  "develop",
+  "feature/auth",
+  "release/v1.0",
+  "hotfix/security",
+] as const;
 
 interface ProjectWorkspaceLeftPanelProps {
   /**
    * 외부에서 강제로 렌더 상태를 지정. ResponsiveLeftPanelHost 가 태블릿/모바일에서 사용.
-   * - "expanded": 220 펼침 강제
+   * - "expanded": 260 펼침 강제
    * - "rail": 60 레일 강제
    * - undefined: store 의 leftSidebarOpen 따라 자체 결정 (데스크탑 기본)
    */
@@ -52,29 +71,9 @@ export function ProjectWorkspaceLeftPanel({
     ? `/projects/${currentProject.project_id}`
     : "";
   const [settingsOpen, setSettingsOpen] = useState(false);
-
-  const [isTruncated, setIsTruncated] = useState(false);
-  const textRef = useRef<HTMLHeadingElement>(null);
-
-  useEffect(() => {
-    const checkTruncation = () => {
-      if (textRef.current) {
-        setIsTruncated(
-          textRef.current.scrollWidth > textRef.current.clientWidth,
-        );
-      }
-    };
-
-    checkTruncation();
-
-    const timer = setTimeout(checkTruncation, 100);
-
-    window.addEventListener("resize", checkTruncation);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", checkTruncation);
-    };
-  }, [currentProject?.name, leftSidebarOpen]);
+  const [selectedBranch, setSelectedBranch] = useState<string>(
+    currentProject?.branch ?? "main",
+  );
 
   const isActive = (href: string) => {
     if (href === "") return pathname === basePath;
@@ -82,7 +81,7 @@ export function ProjectWorkspaceLeftPanel({
   };
 
   // Forced state: 부모(Sheet/overlay) 가 폭을 결정하므로 motion.div 의 width 도 100% 로 따라간다.
-  const expandedWidth = state === undefined ? 220 : "100%";
+  const expandedWidth = state === undefined ? 260 : "100%";
   const collapsedWidth = state === undefined ? 60 : "100%";
 
   return (
@@ -107,17 +106,15 @@ export function ProjectWorkspaceLeftPanel({
             <div className="flex h-full w-full flex-col">
               {/* Header: back link + collapse button */}
               <div className="flex items-center justify-between px-3 py-2.5">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-fg-primary flex items-center gap-1.5"
-                  asChild
+                <Link
+                  href="/my-projects"
+                  className="text-fg-secondary hover:text-fg-primary group inline-flex items-center gap-1 leading-none transition-colors"
                 >
-                  <Link href="/my-projects">
-                    <ChevronLeft className="size-5" />
-                    <span className="text-sm font-medium">WORKSPACE</span>
-                  </Link>
-                </Button>
+                  <ChevronLeft className="size-4 shrink-0 transition-colors group-hover:text-fg-primary" />
+                  <span className="text-[12px] font-medium leading-none">
+                    프로젝트 목록
+                  </span>
+                </Link>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -134,86 +131,126 @@ export function ProjectWorkspaceLeftPanel({
                 </Tooltip>
               </div>
 
-              {/* Project info wrapped in a border box */}
-              {currentProject && (
-                <div className="px-3 py-2">
-                  <div className="border border-line-subtle rounded-lg p-3 bg-canvas-primary flex flex-col gap-2.5">
-                    {/* Row 1: Box icon + Project Name */}
-                    <div className="flex items-center gap-2">
-                      <Box className="size-4 text-icon-default shrink-0" />
-                      {isTruncated ? (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <h2
-                              ref={textRef}
-                              className="text-fg-primary truncate text-sm font-semibold leading-none cursor-help"
-                            >
-                              {currentProject.name}
-                            </h2>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="top"
-                            className="max-w-[200px] break-all"
-                          >
-                            {currentProject.name}
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : (
-                        <h2
-                          ref={textRef}
-                          className="text-fg-primary truncate text-sm font-semibold leading-none"
-                        >
-                          {currentProject.name}
-                        </h2>
-                      )}
-                    </div>
-                    {/* Row 2: analysisType (w-full single line) */}
-                    <div className="w-full">
-                      <Badge
-                        variant="ghost"
-                        className={cn(
-                          ANALYSIS_TYPE_COLORS[currentProject.analysis_type],
-                          "w-full justify-center px-2 py-0.5 text-[10px] rounded-sm",
-                        )}
-                      >
-                        {ANALYSIS_TYPE_LABELS[currentProject.analysis_type]}
-                      </Badge>
+              {/* Project info: 3행 stack (이름 / 분석 타입 / 브랜치) */}
+              {!currentProject ? (
+                <div className="border-line-subtle flex flex-col border-b px-5 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <Skeleton className="size-10 shrink-0 rounded-md" />
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-3.5 w-full" />
+                      <Skeleton className="h-3.5 w-3/5" />
                     </div>
                   </div>
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-7 w-full rounded-md" />
+                </div>
+              ) : (
+                <div className="border-line-subtle flex flex-col border-b px-5 py-2.5">
+                  {/* 1행: 아이콘 + 이름 (2줄 line-clamp) — 아이콘 wrapper 높이가 2줄 텍스트와 매칭 */}
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <div className="bg-brand-primary-soft flex size-8 shrink-0 items-center justify-center rounded-md">
+                      <Box className="text-brand-primary size-4" />
+                    </div>
+                    <h2 className="text-fg-primary line-clamp-2 min-w-0 flex-1 text-sm font-semibold leading-snug">
+                      {currentProject.name}
+                    </h2>
+                  </div>
+
+                  {/* 2행: 분석 타입 — 배경 없는 텍스트 */}
+                  <div
+                    className={cn(
+                      ANALYSIS_TYPE_TEXT_COLORS[currentProject.analysis_type],
+                      "w-full truncate text-xs font-medium text-center",
+                    )}
+                  >
+                    {ANALYSIS_TYPE_LABELS[currentProject.analysis_type]}
+                  </div>
+
+                  {/* 3행: 브랜치 셀렉터 */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        type="button"
+                        className="border-line-default hover:bg-canvas-surface-2 text-fg-secondary focus-visible:ring-ring/40 flex w-full items-center gap-2.5 rounded-md border bg-transparent px-3 py-2 text-xs leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 mt-1.5"
+                      >
+                        <GitBranch className="size-3.5 shrink-0" />
+                        <span className="text-fg-primary min-w-0 flex-1 truncate text-left">
+                          {selectedBranch}
+                        </span>
+                        <ChevronDown className="size-3.5 shrink-0 opacity-60" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-[220px]">
+                      <DropdownMenuLabel className="text-xs">
+                        브랜치 전환
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {MOCK_BRANCHES.map((branch) => {
+                        const isSelected = branch === selectedBranch;
+                        return (
+                          <DropdownMenuItem
+                            key={branch}
+                            onSelect={() => setSelectedBranch(branch)}
+                            className="text-xs"
+                          >
+                            <GitBranch className="size-3 shrink-0" />
+                            <span className="flex-1 truncate">{branch}</span>
+                            {isSelected && (
+                              <Check className="size-3.5 shrink-0" />
+                            )}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               )}
 
-              <nav className="flex-1 space-y-px pl-2 py-2">
-                {WORKSPACE_MENU_ITEMS.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-                  return (
-                    <Link
+              {!currentProject ? (
+                <nav className="flex-1 space-y-px pl-3 py-2">
+                  {WORKSPACE_MENU_ITEMS.map((item) => (
+                    <div
                       key={item.id}
-                      href={`${basePath}${item.href}`}
-                      className={cn(
-                        "group relative flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-normal transition-colors rounded-none",
-                        active
-                          ? "bg-canvas-surface-3 text-fg-primary"
-                          : "text-fg-secondary hover:bg-canvas-surface-3 hover:text-fg-primary",
-                      )}
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5"
                     >
-                      {active && (
-                        <div className="absolute top-0 left-0 h-full w-[3px] bg-brand-primary-hover dark:bg-fg-primary" />
-                      )}
-                      <Icon
+                      <Skeleton className="size-4 shrink-0 rounded-sm" />
+                      <Skeleton className="h-3.5 w-24" />
+                    </div>
+                  ))}
+                </nav>
+              ) : (
+                <nav className="flex-1 space-y-px pl-3 py-2">
+                  {WORKSPACE_MENU_ITEMS.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.id}
+                        href={`${basePath}${item.href}`}
                         className={cn(
-                          "size-4 shrink-0 transition-colors",
+                          "group relative flex w-full items-center gap-2.5 px-4 py-2.5 text-sm font-normal transition-colors rounded-none",
                           active
-                            ? "text-blue-600 dark:text-blue-500"
-                            : "text-icon-default group-hover:text-icon-active",
+                            ? "bg-canvas-surface-3 text-fg-primary"
+                            : "text-fg-secondary hover:bg-canvas-surface-3 hover:text-fg-primary",
                         )}
-                      />
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
+                      >
+                        {active && (
+                          <div className="absolute top-0 left-0 h-full w-[3px] bg-brand-primary-hover dark:bg-fg-primary" />
+                        )}
+                        <Icon
+                          className={cn(
+                            "size-4 shrink-0 transition-colors",
+                            active
+                              ? "text-blue-600 dark:text-blue-500"
+                              : "text-icon-default group-hover:text-icon-active",
+                          )}
+                        />
+                        <span>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </nav>
+              )}
 
               {/* Footer: Settings & Help */}
               <div className="border-t border-line-subtle mt-auto flex items-center justify-center gap-4 pt-3 pb-2">
@@ -274,7 +311,7 @@ export function ProjectWorkspaceLeftPanel({
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    aria-label="workspace 나가기"
+                    aria-label="프로젝트 목록"
                     className="size-8"
                     asChild
                   >
@@ -283,45 +320,56 @@ export function ProjectWorkspaceLeftPanel({
                     </Link>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">workspace 나가기</TooltipContent>
+                <TooltipContent side="right">프로젝트 목록</TooltipContent>
               </Tooltip>
 
               <div className="border-line-subtle my-1 w-8 border-t" />
 
               <nav className="w-full space-y-px px-2 py-2">
-                {WORKSPACE_MENU_ITEMS.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href);
-                  return (
-                    <Tooltip key={item.id}>
-                      <TooltipTrigger asChild>
-                        <Link
-                          href={`${basePath}${item.href}`}
-                          className={cn(
-                            "group relative flex w-full items-center justify-center py-2.5 transition-colors rounded-none",
-                            active
-                              ? "bg-canvas-surface-3 text-fg-primary"
-                              : "text-fg-secondary hover:bg-canvas-surface-3 hover:text-fg-primary",
-                          )}
-                          aria-label={item.label}
-                        >
-                          {active && (
-                            <div className="absolute top-0 left-0 h-full w-[3px] bg-brand-primary-hover dark:bg-fg-primary" />
-                          )}
-                          <Icon
-                            className={cn(
-                              "size-4 shrink-0 transition-colors",
-                              active
-                                ? "text-blue-600 dark:text-blue-500"
-                                : "text-icon-default group-hover:text-icon-active",
-                            )}
-                          />
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent side="right">{item.label}</TooltipContent>
-                    </Tooltip>
-                  );
-                })}
+                {!currentProject
+                  ? WORKSPACE_MENU_ITEMS.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex w-full items-center justify-center py-2.5"
+                      >
+                        <Skeleton className="size-4 rounded-sm" />
+                      </div>
+                    ))
+                  : WORKSPACE_MENU_ITEMS.map((item) => {
+                      const Icon = item.icon;
+                      const active = isActive(item.href);
+                      return (
+                        <Tooltip key={item.id}>
+                          <TooltipTrigger asChild>
+                            <Link
+                              href={`${basePath}${item.href}`}
+                              className={cn(
+                                "group relative flex w-full items-center justify-center py-2.5 transition-colors rounded-none",
+                                active
+                                  ? "bg-canvas-surface-3 text-fg-primary"
+                                  : "text-fg-secondary hover:bg-canvas-surface-3 hover:text-fg-primary",
+                              )}
+                              aria-label={item.label}
+                            >
+                              {active && (
+                                <div className="absolute top-0 left-0 h-full w-[3px] bg-brand-primary-hover dark:bg-fg-primary" />
+                              )}
+                              <Icon
+                                className={cn(
+                                  "size-4 shrink-0 transition-colors",
+                                  active
+                                    ? "text-blue-600 dark:text-blue-500"
+                                    : "text-icon-default group-hover:text-icon-active",
+                                )}
+                              />
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            {item.label}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
               </nav>
 
               <div className="mt-auto flex flex-col items-center gap-2 pb-2">

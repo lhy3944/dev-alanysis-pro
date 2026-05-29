@@ -133,22 +133,8 @@ export const ProjectGroupCard = memo(function ProjectGroupCard({
       >
         <div className="mb-3 flex items-start justify-between gap-4 w-full">
           <div className="flex items-center gap-3 min-w-0">
-            <div
-              className={cn(
-                "flex size-10 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
-                isExpanded
-                  ? "bg-accent-primary/20 text-accent-primary shadow-sm shadow-accent-primary/15 scale-105 ring-1 ring-accent-primary/20"
-                  : "bg-accent-primary/10 text-accent-primary group-hover:scale-105",
-              )}
-            >
-              <Package
-                className={cn(
-                  "size-5 transition-all duration-300",
-                  isExpanded
-                    ? "fill-accent-primary/25 stroke-current"
-                    : "fill-accent-primary/10 stroke-current",
-                )}
-              />
+            <div className="bg-brand-primary-soft flex size-10 shrink-0 items-center justify-center rounded-lg">
+              <Package className="text-brand-primary size-5" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2.5">

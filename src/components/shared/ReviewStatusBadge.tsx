@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  REVIEW_STATUS_CLASSES,
   REVIEW_STATUS_LABELS,
   REVIEW_STATUS_ORDER,
   REVIEW_STATUS_TEXT,
@@ -77,22 +76,22 @@ export function ReviewStatusBadge({
             <DropdownMenuItem
               key={s}
               onSelect={() => onChange?.(s)}
-              className="relative gap-2 pl-8"
+              className="gap-2"
             >
-              {isSelected && (
-                <Check
-                  className="text-fg-primary absolute left-2 size-3.5"
-                  aria-hidden
-                />
-              )}
               <span
                 className={cn(
-                  "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold leading-none",
-                  REVIEW_STATUS_CLASSES[s],
+                  "text-[13px] font-medium leading-none",
+                  REVIEW_STATUS_TEXT[s],
                 )}
               >
                 {REVIEW_STATUS_LABELS[s]}
               </span>
+              {isSelected && (
+                <Check
+                  className="text-fg-primary ml-auto size-3.5 shrink-0"
+                  aria-hidden
+                />
+              )}
             </DropdownMenuItem>
           );
         })}

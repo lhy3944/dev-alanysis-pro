@@ -14,9 +14,11 @@ export const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
 /**
  * Tailwind 클래스 짝 (bg + text). StatusBadge 와 동일한 soft chip 표현.
  *
- * 색 위계: 진행 중(in_review) 과 완료(reviewed) 만 색으로 강조하고,
- * 미처리(pending)·종결(false_positive) 은 무채색으로 둔다.
- * 사용자의 시선이 "지금 봐야 할 것" 에 정확히 가도록 한다.
+ * 색 위계:
+ * - 미처리(pending): 무채색 — 아직 손대지 않음
+ * - 진행 중(in_review): amber — 지금 봐야 할 것
+ * - 완료(reviewed): emerald — 긍정 종결
+ * - 오탐지(false_positive): red — 거절 종결 (이 finding 은 잘못된 경고)
  *
  * 드롭다운 목록처럼 "한 곳에 모든 상태를 보여주는" 컨텍스트에서 사용.
  * 인라인 행 표시는 [[REVIEW_STATUS_TEXT]] 의 text-only 변형을 권장.
@@ -25,7 +27,7 @@ export const REVIEW_STATUS_CLASSES: Record<ReviewStatus, string> = {
   pending: "bg-canvas-surface-2 text-fg-muted",
   in_review: "bg-status-amber-bg text-status-amber-fg",
   reviewed: "bg-status-emerald-bg text-status-emerald-fg",
-  false_positive: "bg-canvas-surface-2 text-fg-muted",
+  false_positive: "bg-status-red-bg text-status-red-fg",
 };
 
 /**
@@ -36,7 +38,7 @@ export const REVIEW_STATUS_TEXT: Record<ReviewStatus, string> = {
   pending: "text-fg-muted",
   in_review: "text-status-amber-fg",
   reviewed: "text-status-emerald-fg",
-  false_positive: "text-fg-muted",
+  false_positive: "text-status-red-fg",
 };
 
 export const REVIEW_STATUS_ORDER: ReviewStatus[] = [
