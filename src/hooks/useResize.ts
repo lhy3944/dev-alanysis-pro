@@ -65,6 +65,7 @@ function enforceMinChat(
   containerWidth: number,
   panelEl: HTMLElement,
   source: "resize" | "store",
+  maxCap: number,
 ) {
   const { rightPanelOpen, rightPanelWidth, leftSidebarOpen, isMobile } =
     usePanelStore.getState();
@@ -75,7 +76,7 @@ function enforceMinChat(
   const chatPx = getChatPx(containerWidth, sidebarPx, rightPanelWidth);
 
   if (chatPx >= MIN_CHAT_WIDTH) {
-    const maxPct = getMaxPct(containerWidth, sidebarPx);
+    const maxPct = Math.min(getMaxPct(containerWidth, sidebarPx), maxCap);
     const splitPct = getSplitPct(containerWidth, sidebarPx);
     const { layoutMode } = usePanelStore.getState();
 
@@ -122,7 +123,7 @@ function enforceMinChat(
   }
 
   // 오른쪽 패널 축소
-  const maxPct = getMaxPct(containerWidth, sidebarPx);
+  const maxPct = Math.min(getMaxPct(containerWidth, sidebarPx), maxCap);
   if (maxPct >= CLOSE_THRESHOLD) {
     const splitPct = getSplitPct(containerWidth, sidebarPx);
     const { mode } = resolveSnap(maxPct, maxPct, splitPct);
@@ -141,7 +142,10 @@ function enforceMinChat(
 export function useResize(
   containerRef: React.RefObject<HTMLElement | null>,
   panelRef: React.RefObject<HTMLElement | null>,
+  options?: { maxPct?: number },
 ) {
+  // 우측 패널 최대 폭(%). 미지정 시 100(= 본문 최소폭만 보장).
+  const maxCap = options?.maxPct ?? 100;
   const [isResizing, setIsResizing] = useState(false);
   const isDragging = useRef(false);
   const dragMoved = useRef(false);
@@ -176,17 +180,17 @@ export function useResize(
     const onWindowResize = () => {
       if (isDragging.current || !containerRef.current || !panelRef.current) return;
       const containerWidth = containerRef.current.getBoundingClientRect().width;
-      enforceMinChat(containerWidth, panelRef.current, "resize");
+      enforceMinChat(containerWidth, panelRef.current, "resize", maxCap);
     };
     window.addEventListener("resize", onWindowResize);
     return () => window.removeEventListener("resize", onWindowResize);
-  }, [containerRef, panelRef, getSidebarPx]);
+  }, [containerRef, panelRef, getSidebarPx, maxCap]);
 
   // 토글 프리셋 변경 시에도 제약 적용
   useEffect(() => {
     if (isDragging.current || !containerRef.current || !panelRef.current) return;
     const containerWidth = containerRef.current.getBoundingClientRect().width;
-    enforceMinChat(containerWidth, panelRef.current, "store");
+    enforceMinChat(containerWidth, panelRef.current, "store", maxCap);
   });
 
   // onDragEnd self-reference 방지
@@ -209,7 +213,7 @@ export function useResize(
         ((containerRect.right - clientX) / containerRect.width) * 100;
 
       const sidebarPx = getSidebarPx();
-      const maxPct = getMaxPct(containerRect.width, sidebarPx);
+      const maxPct = Math.min(getMaxPct(containerRect.width, sidebarPx), maxCap);
       const splitPct = getSplitPct(containerRect.width, sidebarPx);
       const { displayPct, mode } = resolveSnap(rawPct, maxPct, splitPct);
 
@@ -228,7 +232,7 @@ export function useResize(
         usePanelStore.setState({ layoutMode: mode });
       }
     },
-    [containerRef, panelRef, getSidebarPx],
+    [containerRef, panelRef, getSidebarPx, maxCap],
   );
 
   const onDragEnd = useCallback(() => {
@@ -242,7 +246,7 @@ export function useResize(
           const cw =
             containerRef.current?.getBoundingClientRect().width ?? window.innerWidth;
           const sidebarPx = getSidebarPx();
-          const maxPct = getMaxPct(cw, sidebarPx);
+          const maxPct = Math.min(getMaxPct(cw, sidebarPx), maxCap);
           const splitPct = getSplitPct(cw, sidebarPx);
           const pct = Math.min(
             rightPanelWidth > CLOSE_THRESHOLD ? rightPanelWidth : DEFAULT_WIDTH,
@@ -263,7 +267,7 @@ export function useResize(
         const cw =
           containerRef.current?.getBoundingClientRect().width ?? window.innerWidth;
         const sidebarPx = getSidebarPx();
-        const maxPct = getMaxPct(cw, sidebarPx);
+        const maxPct = Math.min(getMaxPct(cw, sidebarPx), maxCap);
         const splitPct = getSplitPct(cw, sidebarPx);
 
         if (isNaN(finalPct) || finalPct < CLOSE_THRESHOLD) {
@@ -288,7 +292,7 @@ export function useResize(
     window.removeEventListener("mouseup", onDragEndRef.current);
     window.removeEventListener("touchmove", onDrag);
     window.removeEventListener("touchend", onDragEndRef.current);
-  }, [onDrag, panelRef, containerRef, getSidebarPx]);
+  }, [onDrag, panelRef, containerRef, getSidebarPx, maxCap]);
 
   useEffect(() => {
     onDragEndRef.current = onDragEnd as EventListener;

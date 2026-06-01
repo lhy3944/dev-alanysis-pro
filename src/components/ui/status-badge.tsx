@@ -1,5 +1,5 @@
-import * as React from "react";
 import { cn } from "@/lib/utils";
+import * as React from "react";
 
 /**
  * StatusBadge — pill badge primitive driven by --status-* tokens.
@@ -41,16 +41,16 @@ const SOFT_TONE_CLASSES: Record<StatusTone, string> = {
 };
 
 const OUTLINE_TONE_CLASSES: Record<StatusTone, string> = {
-  amber: "border border-status-amber-fg/50 text-status-amber-fg",
-  emerald: "border border-status-emerald-fg/50 text-status-emerald-fg",
-  red: "border border-status-red-fg/50 text-status-red-fg",
-  blue: "border border-status-blue-fg/50 text-status-blue-fg",
-  cyan: "border border-status-cyan-fg/50 text-status-cyan-fg",
-  indigo: "border border-status-indigo-fg/50 text-status-indigo-fg",
-  orange: "border border-status-orange-fg/50 text-status-orange-fg",
-  purple: "border border-status-purple-fg/50 text-status-purple-fg",
-  teal: "border border-status-teal-fg/50 text-status-teal-fg",
-  neutral: "border border-line-strong text-fg-secondary",
+  amber: "border text-status-amber-fg",
+  emerald: "border text-status-emerald-fg",
+  red: "border text-status-red-fg",
+  blue: "border text-status-blue-fg",
+  cyan: "border text-status-cyan-fg",
+  indigo: "border text-status-indigo-fg",
+  orange: "border text-status-orange-fg",
+  purple: "border text-status-purple-fg",
+  teal: "border text-status-teal-fg",
+  neutral: "border text-fg-secondary",
 };
 
 interface StatusBadgeProps extends React.ComponentProps<"span"> {

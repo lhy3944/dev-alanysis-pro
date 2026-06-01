@@ -231,19 +231,10 @@ export const usePanelStore = create<PanelState>()(
 
       openCodeFile: (file) => {
         const state = get();
-        const current = state.codeViewer;
-        const existing = current?.files.find((f) => f.name === file.name);
-
-        const next: CodeViewerState = existing
-          ? { files: current!.files, activeFile: file.name }
-          : {
-              files: [...(current?.files ?? []), file],
-              activeFile: file.name,
-            };
-
+        // 탭 UI 미사용 — 단일 파일만 표시. 새 파일 클릭 시 기존 파일 교체.
         set({
           rightPanelView: "code-viewer",
-          codeViewer: next,
+          codeViewer: { files: [file], activeFile: file.name },
           rightPanelOpen: true,
           rightPanelWidth: state.rightPanelWidth || 50,
           layoutMode:

@@ -44,6 +44,7 @@ export function UnitTestListCard({
       {
         accessorKey: "name",
         header: "TEST CASE",
+        enableSorting: true,
         cell: ({ getValue }) => (
           <span className="text-fg-primary">{getValue<string>()}</span>
         ),
@@ -51,6 +52,7 @@ export function UnitTestListCard({
       {
         accessorKey: "status",
         header: "STATUS",
+        enableSorting: false,
         cell: ({ getValue }) => {
           const s = getValue<TestCaseStatus>();
           return (
@@ -62,7 +64,9 @@ export function UnitTestListCard({
       },
       {
         accessorKey: "duration_ms",
-        header: () => <div className="text-right">DURATION</div>,
+        header: "DURATION",
+        enableSorting: false,
+        meta: { align: "right" },
         cell: ({ getValue }) => {
           const v = getValue<number | null>();
           return (
@@ -93,7 +97,11 @@ export function UnitTestListCard({
       className={className}
       bodyClassName="p-0"
     >
-      <DataTable columns={columns} data={data.cases} />
+      <DataTable
+        columns={columns}
+        data={data.cases}
+        enableSorting
+      />
     </SectionCard>
   );
 }

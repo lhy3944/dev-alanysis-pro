@@ -35,7 +35,6 @@ import {
   PanelLeftOpen,
   Settings,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -50,10 +49,10 @@ const MOCK_BRANCHES = [
 
 interface ProjectWorkspaceLeftPanelProps {
   /**
-   * 외부에서 강제로 렌더 상태를 지정. ResponsiveLeftPanelHost 가 태블릿/모바일에서 사용.
-   * - "expanded": 260 펼침 강제
-   * - "rail": 60 레일 강제
-   * - undefined: store 의 leftSidebarOpen 따라 자체 결정 (데스크탑 기본)
+   * 렌더 상태를 지정. ResponsiveLeftPanelHost 가 결정해 넘긴다.
+   * - "expanded": 펼침 콘텐츠
+   * - "rail": 레일 콘텐츠
+   * - undefined: store 의 leftSidebarOpen 따라 자체 결정 (방어적 fallback)
    */
   state?: "expanded" | "rail";
 }
@@ -80,30 +79,10 @@ export function ProjectWorkspaceLeftPanel({
     return pathname.startsWith(`${basePath}${href}`);
   };
 
-  // Forced state: 부모(Sheet/overlay) 가 폭을 결정하므로 motion.div 의 width 도 100% 로 따라간다.
-  const expandedWidth = state === undefined ? 260 : "100%";
-  const collapsedWidth = state === undefined ? 60 : "100%";
-
-  return (
-    <>
-      <AnimatePresence mode="popLayout">
-        {leftSidebarOpen ? (
-          <motion.div
-            key="expanded"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{
-              width: expandedWidth,
-              opacity: 1,
-              transition: { type: "spring", stiffness: 400, damping: 30 },
-            }}
-            exit={{
-              width: 0,
-              opacity: 0,
-              transition: { duration: 0.2, ease: "easeOut" },
-            }}
-            className="h-full shrink-0 overflow-hidden"
-          >
-            <div className="flex h-full w-full flex-col">
+  // width 트랜지션은 호스트(ResponsiveLeftPanelHost)가 단독 소유한다.
+  // 패널은 펼침/레일 콘텐츠만 즉시 렌더한다. (이중 애니메이션 제거)
+  const expandedContent = (
+    <div className="flex h-full w-full flex-col">
               {/* Header: back link + collapse button */}
               <div className="flex items-center justify-between px-3 py-2.5">
                 <Link
@@ -133,7 +112,7 @@ export function ProjectWorkspaceLeftPanel({
 
               {/* Project info: 3행 stack (이름 / 분석 타입 / 브랜치) */}
               {!currentProject ? (
-                <div className="border-line-subtle flex flex-col border-b px-5 py-2.5">
+                <div className="border-line-subtle flex flex-col border-b px-3 py-2.5">
                   <div className="flex items-center gap-2.5">
                     <Skeleton className="size-10 shrink-0 rounded-md" />
                     <div className="flex-1 space-y-1.5">
@@ -145,7 +124,7 @@ export function ProjectWorkspaceLeftPanel({
                   <Skeleton className="h-7 w-full rounded-md" />
                 </div>
               ) : (
-                <div className="border-line-subtle flex flex-col border-b px-5 py-2.5">
+                <div className="border-line-subtle flex flex-col border-b px-3 py-2.5">
                   {/* 1행: 아이콘 + 이름 (2줄 line-clamp) — 아이콘 wrapper 높이가 2줄 텍스트와 매칭 */}
                   <div className="flex min-w-0 items-center gap-2.5">
                     <div className="bg-brand-primary-soft flex size-8 shrink-0 items-center justify-center rounded-md">
@@ -273,24 +252,10 @@ export function ProjectWorkspaceLeftPanel({
                 </Button>
               </div>
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="collapsed"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{
-              width: collapsedWidth,
-              opacity: 1,
-              transition: { type: "spring", stiffness: 400, damping: 30 },
-            }}
-            exit={{
-              width: 0,
-              opacity: 0,
-              transition: { duration: 0.2, ease: "easeOut" },
-            }}
-            className="h-full shrink-0 overflow-hidden"
-          >
-            <div className="flex h-full w-full flex-col items-center gap-2 py-3">
+  );
+
+  const railContent = (
+    <div className="flex h-full w-full flex-col items-center gap-2 py-3">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -403,10 +368,13 @@ export function ProjectWorkspaceLeftPanel({
                 </Tooltip>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+  );
 
+  return (
+    <>
+      <div className="h-full w-full overflow-hidden">
+        {leftSidebarOpen ? expandedContent : railContent}
+      </div>
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </>
   );

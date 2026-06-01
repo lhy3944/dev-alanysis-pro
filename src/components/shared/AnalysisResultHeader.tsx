@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 type AnalysisStatus = "complete" | "running" | "failed";
 
-interface DashboardHeaderProps {
+interface AnalysisResultHeaderProps {
   status: AnalysisStatus;
   /** "2023.11.24 14:30" 같이 이미 포맷된 문자열 */
   analyzedAtLabel: string;
@@ -33,13 +33,13 @@ const STATUS_STYLE: Record<
   },
 };
 
-export function DashboardHeader({
+export function AnalysisResultHeader({
   status,
   analyzedAtLabel,
   branch,
   title = "변경 영향 분석 결과",
   className,
-}: DashboardHeaderProps) {
+}: AnalysisResultHeaderProps) {
   const s = STATUS_STYLE[status];
   return (
     <header className={cn("mb-5 flex flex-col gap-1", className)}>

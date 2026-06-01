@@ -1,23 +1,22 @@
 "use client";
 
-import { Check, Copy, FileCode, X } from "lucide-react";
+import { Check, Copy, Download, FileCode, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { cn } from "@/lib/utils";
 import { usePanelStore } from "@/stores/panel-store";
 import { CodeViewerLazy } from "./CodeViewer.lazy";
 
 /**
  * 우측 패널의 코드 뷰어 컨텐츠.
- * 파일 탭(가로 스크롤) + 헤더(언어/복사) + 본문(monaco).
+ * 단일 파일 — 툴바(파일명 / 복사 / 다운로드 / 닫기) + 본문(monaco).
  */
 export function CodeViewerPanel() {
   const codeViewer = usePanelStore((s) => s.codeViewer);
-  const setActiveCodeFile = usePanelStore((s) => s.setActiveCodeFile);
-  const closeCodeFile = usePanelStore((s) => s.closeCodeFile);
 
-  if (!codeViewer || codeViewer.files.length === 0) {
+  const active = codeViewer?.files.find((f) => f.name === codeViewer.activeFile);
+
+  if (!active) {
     return (
       <div className="bg-canvas-surface text-fg-muted flex h-full items-center justify-center text-[12px]">
         왼쪽 표에서 테스트 파일을 클릭하세요.
@@ -25,72 +24,27 @@ export function CodeViewerPanel() {
     );
   }
 
-  const active = codeViewer.files.find(
-    (f) => f.name === codeViewer.activeFile,
-  );
-
   return (
     <div className="bg-canvas-primary flex h-full flex-col">
-      <div className="border-line-subtle flex shrink-0 items-center gap-1 overflow-x-auto border-b px-2">
-        {codeViewer.files.map((file) => {
-          const isActive = file.name === codeViewer.activeFile;
-          return (
-            <button
-              key={file.name}
-              type="button"
-              onClick={() => setActiveCodeFile(file.name)}
-              className={cn(
-                "group flex shrink-0 items-center gap-1.5 rounded-t-md border-b-2 px-3 py-2 text-[12px] transition-colors",
-                isActive
-                  ? "border-info text-fg-primary bg-canvas-surface font-semibold"
-                  : "text-fg-muted hover:text-fg-secondary hover:bg-canvas-surface-2 border-transparent",
-              )}
-            >
-              <FileCode className="size-3.5 shrink-0" aria-hidden />
-              <span className="max-w-[180px] truncate">{file.name}</span>
-              <span
-                role="button"
-                tabIndex={0}
-                aria-label={`${file.name} 탭 닫기`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeCodeFile(file.name);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.stopPropagation();
-                    closeCodeFile(file.name);
-                  }
-                }}
-                className="text-fg-tertiary hover:text-fg-primary ml-1 rounded-sm p-0.5"
-              >
-                <X className="size-3" aria-hidden />
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {active && <CodeViewerHeader file={active} />}
+      <CodeViewerToolbar file={active} />
 
       <div className="min-h-0 flex-1">
-        {active && (
-          <CodeViewerLazy
-            key={active.name}
-            code={active.code}
-            language={active.language}
-          />
-        )}
+        <CodeViewerLazy
+          key={active.name}
+          code={active.code}
+          language={active.language}
+        />
       </div>
     </div>
   );
 }
 
-function CodeViewerHeader({
+function CodeViewerToolbar({
   file,
 }: {
   file: { name: string; code: string; language: string };
 }) {
+  const resetRightPanel = usePanelStore((s) => s.resetRightPanel);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -103,13 +57,27 @@ function CodeViewerHeader({
     }
   };
 
+  const handleDownload = () => {
+    const blob = new Blob([file.code], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = file.name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   const lineCount = file.code.split("\n").length;
 
   return (
-    <div className="border-line-subtle flex h-9 shrink-0 items-center justify-between border-b px-3">
-      <span className="text-fg-muted truncate text-[11px]">{file.name}</span>
+    <div className="border-line-subtle flex h-10 shrink-0 items-center justify-between gap-2 border-b px-3">
+      <div className="flex min-w-0 items-center gap-1.5">
+        <FileCode className="text-icon-default size-3.5 shrink-0" aria-hidden />
+        <span className="text-fg-primary truncate text-[12px] font-medium">
+          {file.name}
+        </span>
+      </div>
       <div className="flex shrink-0 items-center gap-2">
-        <span className="text-fg-tertiary text-[11px] tabular-nums">
+        <span className="text-fg-tertiary text-[11px] tabular-nums max-md:hidden">
           {lineCount} lines
         </span>
         <StatusBadge tone="neutral" label={file.language} />
@@ -128,9 +96,28 @@ function CodeViewerHeader({
           ) : (
             <>
               <Copy className="size-3" aria-hidden />
-              코드 복사
+              복사
             </>
           )}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDownload}
+          className="h-7 gap-1 px-2 text-[11px]"
+          aria-label="다운로드"
+        >
+          <Download className="size-3" aria-hidden />
+          다운로드
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={resetRightPanel}
+          className="size-7"
+          aria-label="패널 닫기"
+        >
+          <X className="size-4" aria-hidden />
         </Button>
       </div>
     </div>

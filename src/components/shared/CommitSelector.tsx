@@ -36,7 +36,7 @@ export function CommitSelector({
           // 정렬 + chevron 우측 고정.
           // 너비는 부모 컨테이너를 채우되 min/max 로 가독성 범위 안에 둔다.
           // 좁은 화면에서는 줄어들고, 넓은 화면에서는 370px 에 멈춘다.
-          "bg-canvas-primary gap-1.5 !w-full min-w-[200px] max-w-[370px]",
+          "bg-canvas-primary gap-1.5 w-full! min-w-[200px] max-w-[370px]",
           "*:data-[slot=select-value]:flex-1",
           className,
         )}

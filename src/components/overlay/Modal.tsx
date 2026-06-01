@@ -13,10 +13,11 @@ import type { ModalOptions } from "@/stores/overlay-store";
 import type { ReactNode } from "react";
 
 const SIZE_CLASSES: Record<NonNullable<ModalOptions["size"]>, string> = {
-  sm: "max-w-[400px]",
-  md: "max-w-[520px]",
-  lg: "max-w-[640px]",
-  xl: "max-w-[800px]",
+  sm: "sm:max-w-[400px]",
+  md: "sm:max-w-[520px]",
+  lg: "sm:max-w-[640px]",
+  xl: "sm:max-w-[800px]",
+  "2xl": "sm:max-w-[1000px]",
 };
 
 interface ModalProps extends Omit<ModalOptions, "content"> {

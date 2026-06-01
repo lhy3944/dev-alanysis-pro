@@ -1,30 +1,34 @@
 "use client";
 
-import { Download, Share2 } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { layoutMaxW } from "@/config/layout";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { CommitSelector } from "@/components/dashboard/CommitSelector";
 import { MobileLeftPanelTrigger } from "@/components/layout/MobileLeftPanelTrigger";
+import { AnalysisResultHeader } from "@/components/shared/AnalysisResultHeader";
+import { CommitSelector } from "@/components/shared/CommitSelector";
 import { PageToolbar } from "@/components/shared/PageToolbar";
-import { BestOfNCard } from "@/components/unit-test/BestOfNCard";
-import { TestLogCard } from "@/components/unit-test/TestLogCard";
-import { UnitTestKpiStrip } from "@/components/unit-test/UnitTestKpiStrip";
-import { UnitTestVerificationCard } from "@/components/unit-test/UnitTestVerificationCard";
+import { ScrollNavButtons } from "@/components/shared/ScrollNavButtons";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BestOfNCard } from "@/components/unit-test/BestOfNCard";
+import { TestLogViewer } from "@/components/unit-test/TestLogViewer";
+import { UnitTestVerificationCard } from "@/components/unit-test/UnitTestVerificationCard";
+import { layoutMaxW } from "@/config/layout";
+import { useOverlay } from "@/hooks/useOverlay";
 import { cn } from "@/lib/utils";
 import { commitService } from "@/services/commit-service";
 import { unitTestService } from "@/services/unit-test-service";
 import { usePanelStore } from "@/stores/panel-store";
 import type { CommitOption } from "@/types/commit";
 import type { UnitTestAgentReport, UnitTestGroupKey } from "@/types/unit-test";
+import { Download, Logs, Share2 } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export default function UnitTestPage() {
   const { id } = useParams<{ id: string }>();
+  const overlay = useOverlay();
   const fullWidthMode = usePanelStore((s) => s.fullWidthMode);
   const resetRightPanel = usePanelStore((s) => s.resetRightPanel);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const [commits, setCommits] = useState<CommitOption[]>([]);
   const [commitId, setCommitId] = useState<string>();
@@ -136,8 +140,17 @@ export default function UnitTestPage() {
     }
   }, []);
 
+  const handleViewLog = useCallback(() => {
+    if (!report) return;
+    overlay.modal({
+      title: `${report.test_log_name}`,
+      size: "2xl",
+      content: <TestLogViewer log={report.test_log} />,
+    });
+  }, [overlay, report]);
+
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="relative flex h-full flex-col">
       <PageToolbar
         maxWidthClassName={layoutMaxW(fullWidthMode)}
         left={
@@ -155,10 +168,21 @@ export default function UnitTestPage() {
             <Button
               variant="outline"
               size="sm"
+              onClick={handleViewLog}
+              disabled={!report}
+              aria-label="Log"
+              className="max-md:size-8 max-md:px-0!"
+            >
+              <Logs className="size-4" />
+              <span className="max-md:hidden">Log</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleExportMarkdown}
               disabled={!report}
               aria-label="Export Markdown"
-              className="max-md:size-8 max-md:!px-0"
+              className="max-md:size-8 max-md:px-0!"
             >
               <Download className="size-4" />
               <span className="max-md:hidden">Export</span>
@@ -167,7 +191,7 @@ export default function UnitTestPage() {
               size="sm"
               onClick={handleShare}
               aria-label="Share"
-              className="max-md:size-8 max-md:!px-0"
+              className="max-md:size-8 max-md:px-0!"
             >
               <Share2 className="size-4" />
               <span className="max-md:hidden">
@@ -178,59 +202,48 @@ export default function UnitTestPage() {
         }
       />
 
-      <div
-        className={cn(
-          "mx-auto px-6 pb-6 transition-[max-width] duration-300 ease-in-out",
-          layoutMaxW(fullWidthMode),
-        )}
-      >
-        <DashboardHeader
-          title="Unit Test 결과 리포트"
-          status={report ? "complete" : "running"}
-          analyzedAtLabel={
-            currentCommit ? formatDateTime(currentCommit.created_at) : "—"
-          }
-          branch={currentCommit?.branch ?? "—"}
-        />
+      <ScrollArea className="min-h-0 flex-1" viewportRef={scrollRef}>
+        <div
+          className={cn(
+            "mx-auto px-6 pb-6 transition-[max-width] duration-300 ease-in-out",
+            layoutMaxW(fullWidthMode),
+          )}
+        >
+          <AnalysisResultHeader
+            title="Unit Test 결과 리포트"
+            status={report ? "complete" : "running"}
+            analyzedAtLabel={
+              currentCommit ? formatDateTime(currentCommit.created_at) : "—"
+            }
+            branch={currentCommit?.branch ?? "—"}
+          />
 
-        {error && (
-          <div className="border-destructive/40 bg-destructive-soft text-destructive-fg mb-4 rounded-lg border px-4 py-3 text-sm">
-            {error}
-          </div>
-        )}
+          {error && (
+            <div className="border-destructive/40 bg-destructive-soft text-destructive-fg mb-4 rounded-lg border px-4 py-3 text-sm">
+              {error}
+            </div>
+          )}
 
-        {isLoading || !report ? (
-          <LoadingGrid />
-        ) : (
-          <div className="flex flex-col gap-4">
-            <UnitTestKpiStrip
-              total={report.total}
-              groups={report.groups}
-              activeKey={activeKey}
-              onChange={setActiveKey}
-            />
-            <UnitTestVerificationCard
-              items={filteredItems}
-              totalItems={report.vis.length}
-              query={query}
-              onQueryChange={setQuery}
-              files={report.files}
-            />
-            <div className="grid grid-cols-12 items-start gap-4">
-              <BestOfNCard
-                className="col-span-12 lg:col-span-7"
-                rows={report.bestofn}
+          {isLoading || !report ? (
+            <LoadingGrid />
+          ) : (
+            <div className="flex flex-col gap-4">
+              <UnitTestVerificationCard
+                items={filteredItems}
+                totalItems={report.vis.length}
+                query={query}
+                onQueryChange={setQuery}
+                groups={report.groups}
+                activeKey={activeKey}
+                onActiveKeyChange={setActiveKey}
                 files={report.files}
               />
-              <TestLogCard
-                className="col-span-12 lg:col-span-5"
-                log={report.test_log}
-                name={report.test_log_name}
-              />
+              <BestOfNCard rows={report.bestofn} files={report.files} />
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </ScrollArea>
+      <ScrollNavButtons targetRef={scrollRef} />
     </div>
   );
 }
@@ -238,12 +251,8 @@ export default function UnitTestPage() {
 function LoadingGrid() {
   return (
     <div className="flex flex-col gap-4">
-      <Skeleton className="h-[96px] w-full" />
       <Skeleton className="h-[420px] w-full" />
-      <div className="grid grid-cols-12 gap-4">
-        <Skeleton className="col-span-12 h-[320px] lg:col-span-7" />
-        <Skeleton className="col-span-12 h-[320px] lg:col-span-5" />
-      </div>
+      <Skeleton className="h-[320px] w-full" />
     </div>
   );
 }

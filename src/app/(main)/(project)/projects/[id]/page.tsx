@@ -3,11 +3,12 @@
 import { FindingsCard } from "@/components/code-impact/FindingsCard";
 import { ModuleTopologyCard } from "@/components/code-impact/ModuleTopologyCard";
 import { AgentSummaryCard } from "@/components/dashboard/AgentSummaryCard";
-import { CommitSelector } from "@/components/dashboard/CommitSelector";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { MobileLeftPanelTrigger } from "@/components/layout/MobileLeftPanelTrigger";
 import { AssociatedRequirementsCard } from "@/components/requirement/AssociatedRequirementsCard";
+import { AnalysisResultHeader } from "@/components/shared/AnalysisResultHeader";
+import { CommitSelector } from "@/components/shared/CommitSelector";
 import { PageToolbar } from "@/components/shared/PageToolbar";
+import { ScrollNavButtons } from "@/components/shared/ScrollNavButtons";
 import { SystemTestListCard } from "@/components/system-test/SystemTestListCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,11 +30,12 @@ import type { SystemTestReport } from "@/types/system-test-report";
 import type { UnitTestReport } from "@/types/unit-test";
 import { Download, Share2 } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function ProjectDashboardPage() {
   const { id } = useParams<{ id: string }>();
   const fullWidthMode = usePanelStore((s) => s.fullWidthMode);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const [commits, setCommits] = useState<CommitOption[]>([]);
   const [commitId, setCommitId] = useState<string>();
@@ -112,21 +114,21 @@ export default function ProjectDashboardPage() {
       setCodeImpact((prev) =>
         prev
           ? {
-              ...prev,
-              findings: prev.findings.map((f) =>
-                f.id === findingId
-                  ? {
-                      ...f,
-                      review: {
-                        status: next,
-                        reviewer: next === "pending" ? null : CURRENT_USER,
-                        reviewed_at:
-                          next === "pending" ? null : new Date().toISOString(),
-                      },
-                    }
-                  : f,
-              ),
-            }
+            ...prev,
+            findings: prev.findings.map((f) =>
+              f.id === findingId
+                ? {
+                  ...f,
+                  review: {
+                    status: next,
+                    reviewer: next === "pending" ? null : CURRENT_USER,
+                    reviewed_at:
+                      next === "pending" ? null : new Date().toISOString(),
+                  },
+                }
+                : f,
+            ),
+          }
           : prev,
       );
       try {
@@ -143,7 +145,8 @@ export default function ProjectDashboardPage() {
   const currentCommit = commits.find((c) => c.commit_id === commitId);
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="relative h-full">
+      <div ref={scrollRef} className="h-full overflow-y-auto">
       <PageToolbar
         maxWidthClassName={layoutMaxW(fullWidthMode)}
         left={
@@ -162,7 +165,7 @@ export default function ProjectDashboardPage() {
               variant="outline"
               size="sm"
               aria-label="Export"
-              className="max-md:size-8 max-md:!px-0"
+              className="max-md:size-8 max-md:px-0!"
             >
               <Download className="size-4" />
               <span className="max-md:hidden">Export</span>
@@ -171,7 +174,7 @@ export default function ProjectDashboardPage() {
               variant="default"
               size="sm"
               aria-label="Share"
-              className="max-md:size-8 max-md:!px-0"
+              className="max-md:size-8 max-md:px-0!"
             >
               <Share2 className="size-4" />
               <span className="max-md:hidden">Share</span>
@@ -185,7 +188,7 @@ export default function ProjectDashboardPage() {
           layoutMaxW(fullWidthMode),
         )}
       >
-        <DashboardHeader
+        <AnalysisResultHeader
           status={codeImpact ? "complete" : "running"}
           analyzedAtLabel={
             currentCommit ? formatDateTime(currentCommit.created_at) : "—"
@@ -200,10 +203,10 @@ export default function ProjectDashboardPage() {
         )}
 
         {isLoading ||
-        !codeImpact ||
-        !requirement ||
-        !unitTest ||
-        !systemTest ? (
+          !codeImpact ||
+          !requirement ||
+          !unitTest ||
+          !systemTest ? (
           <LoadingGrid />
         ) : (
           <div className="grid grid-cols-12 items-start gap-4">
@@ -254,6 +257,8 @@ export default function ProjectDashboardPage() {
           </div>
         )}
       </div>
+      </div>
+      <ScrollNavButtons targetRef={scrollRef} />
     </div>
   );
 }

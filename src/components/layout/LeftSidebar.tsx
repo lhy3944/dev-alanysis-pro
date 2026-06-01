@@ -17,14 +17,14 @@ import {
   PanelLeftOpen,
   Plus,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
 
 interface LeftSidebarProps {
   /**
-   * 외부에서 강제로 렌더 상태를 지정. ResponsiveLeftPanelHost 가 태블릿/모바일에서 사용.
-   * - "expanded": 260 펼침 강제 (콘텐츠는 부모 컨테이너 폭을 채움)
-   * - "rail": 60 레일 강제 (콘텐츠는 부모 컨테이너 폭을 채움)
-   * - undefined: store 의 leftSidebarOpen 따라 자체 결정 + 애니메이션 (데스크탑 기본)
+   * 렌더 상태를 지정. ResponsiveLeftPanelHost 가 결정해 넘긴다.
+   * 콘텐츠는 부모 컨테이너 폭을 채우고, width 트랜지션은 호스트가 소유한다.
+   * - "expanded": 펼침 콘텐츠
+   * - "rail": 레일 콘텐츠
+   * - undefined: store 의 leftSidebarOpen 따라 자체 결정 (방어적 fallback)
    */
   state?: "expanded" | "rail";
 }
@@ -134,60 +134,13 @@ export function LeftSidebar({ state }: LeftSidebarProps = {}) {
     </div>
   );
 
-  // Forced state: 부모 컨테이너가 폭을 결정하므로 motion.div width 애니메이션 우회.
-  if (state !== undefined) {
-    return (
-      <>
-        <div className="h-full w-full overflow-hidden">
-          {leftSidebarOpen ? expandedContent : railContent}
-        </div>
-        <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
-      </>
-    );
-  }
-
+  // width 트랜지션은 호스트(ResponsiveLeftPanelHost)가 단독으로 소유한다.
+  // 패널은 펼침/레일 콘텐츠만 즉시 렌더한다.
   return (
     <>
-      <AnimatePresence mode="popLayout">
-        {leftSidebarOpen ? (
-          <motion.div
-            key="expanded"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{
-              width: 260,
-              opacity: 1,
-              transition: { type: "spring", stiffness: 400, damping: 30 },
-            }}
-            exit={{
-              width: 0,
-              opacity: 0,
-              transition: { duration: 0.2, ease: "easeOut" },
-            }}
-            className="h-full shrink-0 overflow-hidden"
-          >
-            {expandedContent}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="collapsed"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{
-              width: 60,
-              opacity: 1,
-              transition: { type: "spring", stiffness: 400, damping: 30 },
-            }}
-            exit={{
-              width: 0,
-              opacity: 0,
-              transition: { duration: 0.2, ease: "easeOut" },
-            }}
-            className="h-full shrink-0 overflow-hidden"
-          >
-            {railContent}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      <div className="h-full w-full overflow-hidden">
+        {leftSidebarOpen ? expandedContent : railContent}
+      </div>
       <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </>
   );

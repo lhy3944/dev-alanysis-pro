@@ -1,8 +1,5 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
-import { Award } from "lucide-react";
-import { useMemo } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { SectionCard } from "@/components/shared/SectionCard";
 import { Button } from "@/components/ui/button";
@@ -11,6 +8,9 @@ import { detectLanguage } from "@/lib/monaco-language";
 import { cn } from "@/lib/utils";
 import { usePanelStore } from "@/stores/panel-store";
 import type { UnitTestBestOfNRow } from "@/types/unit-test";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Award } from "lucide-react";
+import { useMemo } from "react";
 
 interface BestOfNCardProps {
   rows: UnitTestBestOfNRow[];
@@ -67,6 +67,7 @@ export function BestOfNCard({ rows, files, className }: BestOfNCardProps) {
         accessorKey: "label",
         header: "라벨",
         size: 160,
+        meta: { align: "center" },
         cell: ({ getValue }) => {
           const label = getValue<string>();
           const isBest = label.includes("BEST") || label === "SELECTED";
@@ -96,9 +97,6 @@ export function BestOfNCard({ rows, files, className }: BestOfNCardProps) {
     <SectionCard
       title={`Best-of-N 채택 결과 (${rows.length}건)`}
       icon={Award}
-      headerRight={
-        <span className="text-fg-muted text-[12px]">· BEST_BEHAVIORAL</span>
-      }
       className={className}
       bodyClassName="p-0"
     >

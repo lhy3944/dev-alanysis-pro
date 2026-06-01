@@ -24,7 +24,7 @@ export interface ModalOptions {
   description?: string;
   content: ReactNode;
   footer?: ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   showCloseButton?: boolean;
   onClose?: () => void;
 }
